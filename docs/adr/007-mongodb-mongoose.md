@@ -1,7 +1,7 @@
 # ADR-007: MongoDB con Mongoose como Capa de Persistencia
 
 **Fecha:** 2026-01-01  
-**Estado:** Aceptado
+**Estado:** Sustituido por [ADR-018: PostgreSQL con Prisma](018-postgresql-prisma.md) (2026-09-06)
 
 ---
 

@@ -36,7 +36,7 @@ permission-based access control embedded in JWTs.
 |---|---|
 | Framework | [NestJS](https://nestjs.com/) 11 |
 | Language | TypeScript 5.7 |
-| Database | MongoDB (via Mongoose 9) |
+| Database | PostgreSQL 18 (via Prisma 7) |
 | Architecture | Clean Architecture + CQRS (`@nestjs/cqrs`) |
 | Auth | JWT (`@nestjs/jwt`, Passport) + bcrypt |
 | File storage | Cloudflare R2 (S3-compatible) |
@@ -53,7 +53,9 @@ permission-based access control embedded in JWTs.
 
 - Node.js 20+
 - [pnpm](https://pnpm.io/)
-- A MongoDB instance (local or [MongoDB Atlas](https://cloud.mongodb.com))
+- A PostgreSQL 18 instance. For local work:
+  `docker compose -f src/infrastructure/migrations/sql/docker-compose.yml up -d --wait`
+  (listens on port 5433 and applies the schema on first start)
 - (Optional, for file uploads) A Cloudflare R2 bucket
 - (Optional, for transactional email) A Brevo account
 
@@ -75,7 +77,7 @@ permission-based access control embedded in JWTs.
 
    | Variable | Purpose |
    |---|---|
-   | `MONGODB_URI` | MongoDB connection string |
+   | `DATABASE_URL` | PostgreSQL connection string |
    | `JWT_SECRET` | Secret used to sign auth tokens |
    | `APP_URL` | Base URL of this API (used in emails/links) |
    | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL` | Cloudflare R2 file storage |
@@ -94,6 +96,7 @@ pnpm start:dev      # dev server with hot-reload
 pnpm build          # production build
 pnpm start:prod     # run the built app
 pnpm test           # unit tests
+pnpm test:db        # repository tests against a real Postgres (needs Docker)
 pnpm test:e2e       # end-to-end tests
 pnpm test:cov       # unit tests with coverage
 pnpm lint           # eslint --fix
@@ -125,7 +128,7 @@ Architecture. Dependencies only point inward:
 ```
 presentation/    → HTTP layer: controllers, DTOs, Swagger decorators
        ↓
-infrastructure/  → external concerns: MongoDB, JWT, email, storage
+infrastructure/  → external concerns: PostgreSQL, JWT, email, storage
        ↓
 application/     → use cases: Commands/Queries + their handlers
        ↓
@@ -136,8 +139,8 @@ domain/          → entities, value objects, repository interfaces
 `infrastructure` depends on `application`, `application` depends on
 `domain`, and nothing depends on `presentation` except the framework
 bootstrap. Repository **interfaces** live in `domain/`; concrete
-implementations (e.g. Mongoose) live in `infrastructure/`. Handlers depend
-on the interface via dependency injection and have no knowledge of MongoDB.
+implementations (e.g. Prisma) live in `infrastructure/`. Handlers depend
+on the interface via dependency injection and have no knowledge of PostgreSQL.
 
 Each layer is further split by feature, so related code stays co-located.
 Example — the `unit` feature:
@@ -156,8 +159,8 @@ src/application/unit/
 └── queries/GetUnitsByProperty/
 
 src/infrastructure/persistence/
-├── repositories/mongo-unit.repository.ts  ← implementation
-└── schemas/unit.schema.ts
+├── repositories/prisma-unit.repository.ts  ← implementation
+└── prisma/prisma.service.ts
 
 src/presentation/
 ├── controllers/unit.controller.ts

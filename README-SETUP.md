@@ -40,8 +40,8 @@
 
 - **NestJS** - Framework backend
 - **TypeScript** - Lenguaje de programación
-- **MongoDB Atlas** - Base de datos (Cloud)
-- **Mongoose** - ODM para MongoDB
+- **PostgreSQL 18** - Base de datos
+- **Prisma 7** - ORM
 - **Passport & JWT** - Autenticación
 - **Bcrypt** - Encriptación de contraseñas
 - **Swagger** - Documentación de API
@@ -57,18 +57,21 @@
 
    El archivo \`.env\` ya está configurado con:
    \`\`\`env
-   MONGO_URI=yourMongoUrl
-   appName=yourClusterName
+   DATABASE_URL=postgresql://lymon:lymon@127.0.0.1:5433/lymon?schema=public
    JWT_SECRET=yourJwt-Secret
    JWT_EXPIRES_IN=yourJwtExpiration
    PORT=yourPort
    NODE_ENV=development
    \`\`\`
 
-   ⚠️ **IMPORTANTE:** Si tienes problemas de conexión a MongoDB:
-   - Verifica que tu IP esté en la lista blanca de MongoDB Atlas
-   - Ve a MongoDB Atlas → Network Access → Add IP Address
-   - Agrega tu IP actual o usa "Allow Access from Anywhere" (0.0.0.0/0) para desarrollo
+   ⚠️ **IMPORTANTE:** levanta Postgres antes de arrancar la API:
+
+   ```bash
+   docker compose -f src/infrastructure/migrations/sql/docker-compose.yml up -d --wait
+   ```
+
+   Escucha en el puerto **5433** (no 5432) y aplica `postgres-schema.sql` en el primer
+   arranque. Para recrearla desde cero: `./scripts/db-reset.sh`.
 
 3. **Compilar el proyecto:**
    \`\`\`bash
@@ -212,8 +215,8 @@ src/
 │ │ ├── hotels/
 │ │ └── rooms/
 │ └── persistence/
-│ └── mongoose/ # Implementación de repositorios con Mongoose
-│ ├── schemas/
+│ └── persistence/ # Implementación de repositorios con Prisma
+│ ├── prisma/ # PrismaService + cliente generado
 │ └── repositories/
 └── main.ts # Punto de entrada
 \`\`\`
@@ -228,9 +231,9 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 El token se obtiene al hacer login o al registrarse.
 
-## 📊 Colecciones de MongoDB
+## 📊 Tablas de PostgreSQL
 
-La aplicación crea automáticamente las siguientes colecciones:
+El esquema vive en `src/infrastructure/migrations/sql/postgres-schema.sql`:
 
 - **users** - Usuarios de la plataforma
 - **hotels** - Hoteles registrados
@@ -241,11 +244,11 @@ La aplicación crea automáticamente las siguientes colecciones:
 
 1. **Seguridad:**
    - En producción, cambia el `JWT_SECRET` por uno más seguro
-   - No compartas las credenciales de MongoDB Atlas
+   - No compartas las credenciales de la base de datos
    - Configura CORS apropiadamente para tu dominio
 
-2. **MongoDB Atlas:**
-   - Si hay problemas de conexión, verifica la configuración de Network Access en MongoDB Atlas
+2. **PostgreSQL:**
+   - Si hay problemas de conexión, revisa que el contenedor `lymon-pg` esté arriba y escuchando en 5433
 
 3. **Desarrollo:**
    - La aplicación usa hot-reload en modo desarrollo
@@ -254,18 +257,18 @@ La aplicación crea automáticamente las siguientes colecciones:
 
 ## 🐛 Solución de Problemas
 
-### Error de conexión a MongoDB
+### Error de conexión a PostgreSQL
 
-\`\`\`
-ERROR [MongooseModule] Unable to connect to the database
-\`\`\`
+```
+Can't reach database server at 127.0.0.1:5433
+```
 
 **Solución:**
 
-1. Ve a MongoDB Atlas (https://cloud.mongodb.com)
-2. Navega a: Network Access
-3. Agrega tu IP actual o usa "0.0.0.0/0" para permitir todas las IPs
-4. Espera 1-2 minutos y reinicia la aplicación
+1. Verifica que el contenedor esté arriba: `docker ps | grep lymon-pg`
+2. Si no lo está: `docker compose -f src/infrastructure/migrations/sql/docker-compose.yml up -d --wait`
+3. Confirma que `DATABASE_URL` en `.env` apunta al puerto **5433**
+4. Si el esquema cambió, recrea la base: `./scripts/db-reset.sh`
 
 ### Error de ejecución de scripts en PowerShell
 
@@ -284,7 +287,7 @@ Si tienes problemas o preguntas, revisa:
 
 1. La documentación de Swagger en `/api/docs`
 2. Los logs de la aplicación en la consola
-3. El estado de MongoDB Atlas
+3. El estado del contenedor `lymon-pg`
 
 ## 🎯 Próximos Pasos Sugeridos
 

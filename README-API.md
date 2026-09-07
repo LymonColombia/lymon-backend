@@ -73,7 +73,7 @@ Registra un nuevo colaborador en el hotel.
 **Response exitoso (201):**
 ```json
 {
-  "id": "mongodb-id",
+  "id": "uuid",
   "name": "Juan",
   "lastName": "Pérez",
   "email": "juan.perez@hotel.com",
@@ -211,14 +211,12 @@ Ahí encontrarás la documentación interactiva de Swagger con todos los endpoin
 ## Configuración para Conexión a Base de Datos
 
 ### Archivo `.env`
-Cuando tengas MongoDB disponible, descomenta y configura:
+Configura la conexión a PostgreSQL:
 
 ```env
-# MongoDB Connection
-MONGO_URI=mongodb://localhost:27017/lymon-hotel
+# PostgreSQL Connection
+DATABASE_URL=postgresql://lymon:lymon@127.0.0.1:5433/lymon?schema=public
 
-# O si usas MongoDB Atlas:
-# MONGO_URI=mongodb+srv://usuario:password@cluster.mongodb.net/lymon-hotel
 
 # Application
 PORT=3000
@@ -278,7 +276,7 @@ src/
 │   │   └── rooms/
 │   │       └── rooms.module.ts ✅
 │   └── persistence/
-│       └── mongoose/
+│       └── prisma/
 │           ├── hotel.schema.ts ✅
 │           ├── colaborator.schema.ts ✅
 │           ├── room-type.schema.ts ✅
@@ -300,8 +298,8 @@ src/
 
 ## Próximos Pasos para Integración
 
-### Backend (cuando tengas MongoDB):
-1. Descomentar `MONGO_URI` en `.env`
+### Backend:
+1. Configurar `DATABASE_URL` en `.env`
 2. Configurar la cadena de conexión correcta
 3. Reiniciar el servidor
 4. Los endpoints funcionarán automáticamente

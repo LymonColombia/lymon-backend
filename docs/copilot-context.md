@@ -14,7 +14,7 @@ Además, el sistema incluye una landing privada por cliente que permite reservas
 
 - Framework: NestJS
 - Lenguaje: TypeScript
-- Base de datos: MongoDB
+- Base de datos: PostgreSQL (Prisma)
 - Arquitectura: Arquitectura limpia con capas:
   - Domain
   - Application
@@ -24,7 +24,7 @@ Además, el sistema incluye una landing privada por cliente que permite reservas
 
 ### Base de datos
 
-MongoDB
+PostgreSQL
 
 ### Frontend
 
