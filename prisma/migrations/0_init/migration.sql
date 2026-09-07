@@ -1,3 +1,8 @@
+-- Baseline for LYMON-1128. Copied verbatim from
+-- src/infrastructure/migrations/sql/postgres-schema.sql (minus its BEGIN/COMMIT, which Prisma supplies).
+-- Keeps CHECK constraints in migration history, where schema.prisma cannot
+-- express them, so the shadow database matches the real one.
+
 -- Postgres schema mapped 1:1 from src/domain entities.
 -- Source of truth today is MongoDB (mongoose); this is the relational equivalent.
 --
@@ -23,7 +28,6 @@
 --   sessions, workflow_configs, workflow_executions
 -- Do not copy these in the ETL.
 
-BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS citext;  -- case-insensitive emails
 
@@ -722,4 +726,3 @@ CREATE TABLE audit_logs (
 CREATE INDEX ON audit_logs (tenant_id, created_at DESC);
 CREATE INDEX ON audit_logs (entity_type, entity_id);
 
-COMMIT;

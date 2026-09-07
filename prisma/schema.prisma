@@ -1,0 +1,715 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/infrastructure/persistence/prisma/generated"
+  previewFeatures = ["partialIndexes"]
+  moduleFormat    = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model audit_logs {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String   @db.Uuid
+  user_id        String   @db.Uuid
+  user_email     String   @db.Citext
+  action         String
+  entity_type    String
+  entity_id      String?  @db.Uuid
+  metadata       Json?
+  previous_value Json?
+  new_value      Json?
+  ip_address     String?
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  tenants        tenants  @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([entity_type, entity_id])
+  @@index([tenant_id, created_at(sort: Desc)])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model carts {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  guest_account_id String             @unique(map: "carts_guest_account_id_idx", where: raw("(status = 'OPEN'::text)")) @db.Uuid
+  experience_items Json               @default("[]")
+  reservation_item Json?
+  status           String             @default("OPEN")
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime           @default(now()) @db.Timestamptz(6)
+  guest_accounts   guest_accounts     @relation(fields: [guest_account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  payment_sessions payment_sessions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model conversations {
+  id                     String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id              String           @db.Uuid
+  guest_id               String           @db.Uuid
+  reservation_id         String?          @db.Uuid
+  channels               String[]         @default([])
+  subject                String
+  last_message_at        DateTime         @default(now()) @db.Timestamptz(6)
+  last_message_preview   String           @default("")
+  unread_count_for_staff Int              @default(0)
+  unread_count_for_guest Int              @default(0)
+  status                 String           @default("open")
+  created_at             DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime         @default(now()) @db.Timestamptz(6)
+  guests                 guests           @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reservations           reservations?    @relation(fields: [reservation_id], references: [id], onUpdate: NoAction)
+  tenants                tenants          @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  guest_messages         guest_messages[]
+
+  @@index([guest_id])
+  @@index([tenant_id, status, last_message_at(sort: Desc)])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model experience_purchases {
+  id                String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id         String         @db.Uuid
+  guest_account_id  String         @db.Uuid
+  experience_id     String         @db.Uuid
+  reservation_id    String?        @db.Uuid
+  selected_date     DateTime?      @db.Date
+  quantity          Int
+  unit_price_cop    BigInt
+  total_price_cop   BigInt
+  status            String         @default("PENDING")
+  payment_reference String?
+  created_at        DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime       @default(now()) @db.Timestamptz(6)
+  experiences       experiences    @relation(fields: [experience_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  guest_accounts    guest_accounts @relation(fields: [guest_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reservations      reservations?  @relation(fields: [reservation_id], references: [id], onUpdate: NoAction)
+  tenants           tenants        @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([experience_id, selected_date], where: raw("(status <> 'CANCELLED'::text)"))
+  @@index([guest_account_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model experiences {
+  id                         String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id                  String                 @db.Uuid
+  scope                      String
+  property_id                String?                @db.Uuid
+  name                       String
+  description                String
+  city                       String
+  category                   String
+  price_cop                  BigInt
+  minimum_participants       Int                    @default(1)
+  capacity                   Int
+  availability_type          String
+  recurrence                 Json?
+  allow_standalone_purchase  Boolean                @default(true)
+  allow_reservation_purchase Boolean                @default(true)
+  min_notice_hours           Int                    @default(0)
+  purchase_cutoff_hours      Int                    @default(0)
+  media_keys                 String[]               @default([])
+  status                     String                 @default("ACTIVE")
+  created_at                 DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime               @default(now()) @db.Timestamptz(6)
+  deleted_at                 DateTime?              @db.Timestamptz(6)
+  experience_purchases       experience_purchases[]
+  properties                 properties?            @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants                    tenants                @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([tenant_id, status], where: raw("(deleted_at IS NULL)"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_accounts {
+  id                        String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                     String                 @unique @db.Citext
+  password_hash             String
+  full_name                 String
+  first_name                String?
+  last_name                 String?
+  phone                     String?
+  status                    String                 @default("pending_verification")
+  email_verified            Boolean                @default(false)
+  email_verification_token  String?
+  email_verification_expiry DateTime?              @db.Timestamptz(6)
+  password_reset_token      String?
+  password_reset_expiry     DateTime?              @db.Timestamptz(6)
+  password_changed_at       DateTime?              @db.Timestamptz(6)
+  profile_photo_key         String?
+  pending_email             String?                @db.Citext
+  email_change_token        String?
+  email_change_expiry       DateTime?              @db.Timestamptz(6)
+  created_at                DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime               @default(now()) @db.Timestamptz(6)
+  carts                     carts?
+  experience_purchases      experience_purchases[]
+  guests                    guests[]
+  payment_sessions          payment_sessions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_emails {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String   @db.Uuid
+  guest_id    String   @db.Uuid
+  subject     String
+  status      String
+  attachments Json     @default("[]")
+  message_id  String?
+  sent_by_id  String?  @db.Uuid
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  guests      guests   @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       users?   @relation(fields: [sent_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tenants     tenants  @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([tenant_id, guest_id, created_at(sort: Desc)])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_messages {
+  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String         @db.Uuid
+  guest_id            String         @db.Uuid
+  conversation_id     String?        @db.Uuid
+  reservation_id      String?        @db.Uuid
+  channel             String
+  direction           String
+  status              String
+  from_address        String
+  to_addresses        String[]
+  provider            String?
+  provider_message_id String?
+  template_id         String?
+  sent_by_actor_id    String?        @db.Uuid
+  sent_by_actor_email String?        @db.Citext
+  attachments         Json           @default("[]")
+  preview             String
+  body                String?
+  body_html           String?
+  failure_reason      String?
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime       @default(now()) @db.Timestamptz(6)
+  deleted_at          DateTime?      @db.Timestamptz(6)
+  conversations       conversations? @relation(fields: [conversation_id], references: [id], onUpdate: NoAction)
+  guests              guests         @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reservations        reservations?  @relation(fields: [reservation_id], references: [id], onUpdate: NoAction)
+  tenants             tenants        @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([provider, provider_message_id], map: "guest_messages_provider_provider_message_id_idx", where: raw("(provider_message_id IS NOT NULL)"))
+  @@index([conversation_id, created_at])
+  @@index([tenant_id, guest_id, created_at(sort: Desc)])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_notes {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String    @db.Uuid
+  guest_id   String    @db.Uuid
+  note       String
+  type       String    @default("general")
+  status     String    @default("not_pinned")
+  created_by String    @db.Uuid
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at DateTime? @db.Timestamptz(6)
+  users      users     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  guests     guests    @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants    tenants   @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([guest_id], where: raw("(deleted_at IS NULL)"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_preference_catalog_items {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String   @db.Uuid
+  category   String
+  source     String
+  key        String?
+  label      String?
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  tenants    tenants  @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, category, key])
+  @@index([tenant_id])
+}
+
+model guest_tag_assignments {
+  guest_id     String     @db.Uuid
+  guest_tag_id String     @db.Uuid
+  guests       guests     @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  guest_tags   guest_tags @relation(fields: [guest_tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([guest_id, guest_tag_id])
+}
+
+model guest_tags {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id             String?                 @db.Uuid
+  name                  String
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  guest_tag_assignments guest_tag_assignments[]
+  tenants               tenants?                @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, name])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guests {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  guest_account_id      String?                 @db.Uuid
+  document_type         String?
+  document_number       String?
+  country_code          String?
+  first_name            String?
+  last_name             String?
+  full_name             String
+  primary_email         String                  @db.Citext
+  phone                 String?
+  status                String                  @default("active")
+  preferences           Json                    @default("[]")
+  total_bookings        Int                     @default(0)
+  total_nights          Int                     @default(0)
+  total_spend           Decimal                 @default(0) @db.Decimal(14, 2)
+  last_stay_at          DateTime?               @db.Timestamptz(6)
+  last_property_id      String?                 @db.Uuid
+  last_unit_id          String?                 @db.Uuid
+  pending_email         String?                 @db.Citext
+  email_change_token    String?
+  email_change_expiry   DateTime?               @db.Timestamptz(6)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  conversations         conversations[]
+  guest_emails          guest_emails[]
+  guest_messages        guest_messages[]
+  guest_notes           guest_notes[]
+  guest_tag_assignments guest_tag_assignments[]
+  guest_accounts        guest_accounts?         @relation(fields: [guest_account_id], references: [id], onUpdate: NoAction)
+  properties            properties?             @relation(fields: [last_property_id], references: [id], onUpdate: NoAction)
+  units                 units?                  @relation(fields: [last_unit_id], references: [id], onUpdate: NoAction)
+  tenants               tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  refund_requests       refund_requests[]
+  reservations          reservations[]
+  unit_ratings          unit_ratings[]
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, primary_email])
+  @@index([guest_account_id])
+  @@index([tenant_id])
+}
+
+model incident_reports {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String     @db.Uuid
+  property_id     String     @db.Uuid
+  created_by      String     @db.Uuid
+  title           String
+  description     String
+  attachment_urls String[]   @default([])
+  created_at      DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime   @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?  @db.Timestamptz(6)
+  users           users      @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties      properties @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants         tenants    @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([property_id, created_at(sort: Desc)], where: raw("(deleted_at IS NULL)"))
+}
+
+model inventory_item_categories {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String            @db.Uuid
+  name            String
+  description     String?
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  tenants         tenants           @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  inventory_items inventory_items[]
+
+  @@unique([tenant_id, name])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model inventory_items {
+  id                        String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id                 String                    @db.Uuid
+  property_id               String                    @db.Uuid
+  sku                       String
+  name                      String
+  category_id               String                    @db.Uuid
+  unit                      String
+  min_stock                 Decimal                   @default(0) @db.Decimal(14, 3)
+  current_stock             Decimal                   @default(0) @db.Decimal(14, 3)
+  supplier_id               String?                   @db.Uuid
+  created_at                DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                  @default(now()) @db.Timestamptz(6)
+  deleted_at                DateTime?                 @db.Timestamptz(6)
+  inventory_item_categories inventory_item_categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties                properties                @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  suppliers                 suppliers?                @relation(fields: [supplier_id], references: [id], onUpdate: NoAction)
+  tenants                   tenants                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  inventory_movements       inventory_movements[]
+
+  @@unique([tenant_id, property_id, sku], map: "inventory_items_tenant_id_property_id_sku_idx", where: raw("(deleted_at IS NULL)"))
+  @@index([property_id])
+  @@index([tenant_id], where: raw("((current_stock <= min_stock) AND (deleted_at IS NULL))"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model inventory_movements {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String          @db.Uuid
+  property_id     String          @db.Uuid
+  item_id         String          @db.Uuid
+  type            String
+  quantity        Decimal         @db.Decimal(14, 3)
+  reason          String
+  reference       String?
+  actor_id        String          @db.Uuid
+  actor_email     String          @db.Citext
+  created_at      DateTime        @default(now()) @db.Timestamptz(6)
+  inventory_items inventory_items @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  properties      properties      @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants         tenants         @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([item_id, created_at(sort: Desc)])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payment_sessions {
+  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String         @db.Uuid
+  guest_account_id    String         @db.Uuid
+  cart_id             String         @db.Uuid
+  reference           String         @unique
+  amount_in_cents     BigInt
+  currency            String         @default("COP") @db.Char(3)
+  public_key          String
+  signature_integrity String
+  redirect_url        String?
+  expiration_time     DateTime?      @db.Timestamptz(6)
+  provider_reference  String?        @unique(map: "payment_sessions_provider_reference_idx", where: raw("(provider_reference IS NOT NULL)"))
+  status              String         @default("PENDING")
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime       @default(now()) @db.Timestamptz(6)
+  carts               carts          @relation(fields: [cart_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  guest_accounts      guest_accounts @relation(fields: [guest_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tenants             tenants        @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([cart_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model properties {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  name                  String
+  slug                  String
+  description           String
+  property_type         String
+  address               String
+  city                  String
+  state                 String
+  country               String
+  zip_code              String
+  lat                   Decimal                 @db.Decimal(9, 6)
+  lng                   Decimal                 @db.Decimal(9, 6)
+  check_in_time         DateTime                @db.Time(6)
+  check_out_time        DateTime                @db.Time(6)
+  cancellation_policy   String
+  host_phone            String
+  host_email            String                  @db.Citext
+  image_key             String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at            DateTime?               @db.Timestamptz(6)
+  experiences           experiences[]
+  guests                guests[]
+  incident_reports      incident_reports[]
+  inventory_items       inventory_items[]
+  inventory_movements   inventory_movements[]
+  tenants               tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  shifts                shifts[]
+  units                 units[]
+  user_role_assignments user_role_assignments[]
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, slug])
+  @@index([tenant_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model refund_requests {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String       @db.Uuid
+  reservation_id String       @db.Uuid
+  guest_id       String       @db.Uuid
+  amount         Decimal      @db.Decimal(14, 2)
+  status         String       @default("PENDING")
+  requested_by   String
+  reviewed_by    String?      @db.Uuid
+  reviewed_at    DateTime?    @db.Timestamptz(6)
+  reason         String?
+  created_at     DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime     @default(now()) @db.Timestamptz(6)
+  guests         guests       @relation(fields: [guest_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reservations   reservations @relation(fields: [reservation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          users?       @relation(fields: [reviewed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tenants        tenants      @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([tenant_id, status])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reservations {
+  id                      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id               String                 @db.Uuid
+  property_id             String                 @db.Uuid
+  unit_id                 String                 @db.Uuid
+  guest_id                String                 @db.Uuid
+  check_in                DateTime               @db.Date
+  check_out               DateTime               @db.Date
+  source                  String
+  status                  String                 @default("PENDING")
+  guests_count            Int
+  price_per_night         Decimal                @db.Decimal(14, 2)
+  total_price             Decimal                @db.Decimal(14, 2)
+  notes                   String?
+  reservation_number      BigInt?
+  check_in_info           Json                   @default("[]")
+  external_reservation_id String?
+  cancelled_at            DateTime?              @db.Timestamptz(6)
+  cancellation_reason     String?
+  check_in_actual_at      DateTime?              @db.Timestamptz(6)
+  check_out_actual_at     DateTime?              @db.Timestamptz(6)
+  created_at              DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime               @default(now()) @db.Timestamptz(6)
+  conversations           conversations[]
+  experience_purchases    experience_purchases[]
+  guest_messages          guest_messages[]
+  refund_requests         refund_requests[]
+  tenants                 tenants                @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  guests                  guests                 @relation(fields: [tenant_id, guest_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  units                   units                  @relation(fields: [tenant_id, property_id, unit_id], references: [tenant_id, property_id, id], onDelete: NoAction, onUpdate: NoAction)
+  unit_ratings            unit_ratings?
+
+  @@unique([tenant_id, reservation_number])
+  @@unique([external_reservation_id, source], map: "reservations_external_reservation_id_source_idx", where: raw("(external_reservation_id IS NOT NULL)"))
+  @@index([guest_id])
+  @@index([tenant_id, status])
+  @@index([unit_id, check_in, check_out], where: raw("(status <> 'CANCELLED'::text)"))
+}
+
+model roles {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                  String                  @unique
+  permissions           String[]                @default([])
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  user_role_assignments user_role_assignments[]
+}
+
+model shift_staff_members {
+  shift_id String @db.Uuid
+  user_id  String @db.Uuid
+  shifts   shifts @relation(fields: [shift_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users    users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([shift_id, user_id])
+  @@index([user_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model shifts {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String                @db.Uuid
+  property_id         String                @db.Uuid
+  name                String
+  start_date          DateTime              @db.Date
+  end_date            DateTime?             @db.Date
+  start_hour          DateTime              @db.Time(6)
+  end_hour            DateTime              @db.Time(6)
+  start_minutes       Int
+  end_minutes         Int
+  weekdays            Int[]                 @db.SmallInt
+  notes               String?
+  created_by          String?               @db.Uuid
+  created_by_email    String?               @db.Citext
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime              @default(now()) @db.Timestamptz(6)
+  shift_staff_members shift_staff_members[]
+  users               users?                @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties          properties            @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants             tenants               @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([tenant_id, property_id, start_date])
+}
+
+model suppliers {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String            @db.Uuid
+  name            String
+  contact_email   String            @db.Citext
+  contact_phone   String
+  country         String
+  city            String
+  nit             String
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?         @db.Timestamptz(6)
+  inventory_items inventory_items[]
+  tenants         tenants           @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, nit], map: "suppliers_tenant_id_nit_idx", where: raw("(deleted_at IS NULL)"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tenants {
+  id                             String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                           String
+  slug                           String                           @unique
+  owner_email                    String                           @db.Citext
+  plan                           String
+  email_verified                 Boolean                          @default(false)
+  contact_phone                  String?
+  address                        String?
+  description                    String?
+  logo_key                       String?
+  theme                          Json?
+  trial_ends_at                  DateTime?                        @db.Timestamptz(6)
+  created_at                     DateTime                         @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime                         @default(now()) @db.Timestamptz(6)
+  deleted_at                     DateTime?                        @db.Timestamptz(6)
+  audit_logs                     audit_logs[]
+  conversations                  conversations[]
+  experience_purchases           experience_purchases[]
+  experiences                    experiences[]
+  guest_emails                   guest_emails[]
+  guest_messages                 guest_messages[]
+  guest_notes                    guest_notes[]
+  guest_preference_catalog_items guest_preference_catalog_items[]
+  guest_tags                     guest_tags[]
+  guests                         guests[]
+  incident_reports               incident_reports[]
+  inventory_item_categories      inventory_item_categories[]
+  inventory_items                inventory_items[]
+  inventory_movements            inventory_movements[]
+  payment_sessions               payment_sessions[]
+  properties                     properties[]
+  refund_requests                refund_requests[]
+  reservations                   reservations[]
+  shifts                         shifts[]
+  suppliers                      suppliers[]
+  unit_ratings                   unit_ratings[]
+  units                          units[]
+  users                          users[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model unit_ratings {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String       @db.Uuid
+  unit_id        String       @db.Uuid
+  guest_id       String       @db.Uuid
+  reservation_id String       @unique(map: "unit_ratings_reservation_id_idx", where: raw("(deleted_at IS NULL)")) @db.Uuid
+  rate           Int          @db.SmallInt
+  message        String?
+  created_at     DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime     @default(now()) @db.Timestamptz(6)
+  deleted_at     DateTime?    @db.Timestamptz(6)
+  guests         guests       @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reservations   reservations @relation(fields: [reservation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants        tenants      @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  units          units        @relation(fields: [unit_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([unit_id], where: raw("(deleted_at IS NULL)"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model units {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  property_id           String                  @db.Uuid
+  name                  String
+  description           String
+  inventory_count       Int
+  max_guests            Int
+  standard_guests       Int
+  bedrooms              Json                    @default("[]")
+  bathrooms_count       Int
+  is_shared             Boolean                 @default(false)
+  amenities             String[]                @default([])
+  media_keys            String[]                @default([])
+  price_per_night       Decimal                 @db.Decimal(14, 2)
+  rating                Decimal?                @db.Decimal(2, 1)
+  external_airbnb_id    String?
+  external_booking_id   String?
+  external_vrbo_id      String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at            DateTime?               @db.Timestamptz(6)
+  guests                guests[]
+  reservations          reservations[]
+  unit_ratings          unit_ratings[]
+  tenants               tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  properties            properties              @relation(fields: [tenant_id, property_id], references: [tenant_id, id], onDelete: Cascade, onUpdate: NoAction)
+  user_role_assignments user_role_assignments[]
+
+  @@unique([tenant_id, property_id, id])
+  @@index([property_id])
+  @@index([tenant_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_role_assignments {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String      @db.Uuid
+  user_id     String      @db.Uuid
+  role_id     String      @db.Uuid
+  scope_type  String
+  property_id String?     @db.Uuid
+  unit_id     String?     @db.Uuid
+  roles       roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties  properties? @relation(fields: [tenant_id, property_id], references: [tenant_id, id], onDelete: Cascade, onUpdate: NoAction)
+  units       units?      @relation(fields: [tenant_id, property_id, unit_id], references: [tenant_id, property_id, id], onDelete: Cascade, onUpdate: NoAction)
+  users       users       @relation(fields: [tenant_id, user_id], references: [tenant_id, id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, role_id, scope_type, property_id, unit_id])
+  @@index([tenant_id, property_id])
+  @@index([user_id])
+}
+
+model users {
+  id                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id              String                  @db.Uuid
+  email                  String                  @db.Citext
+  password_hash          String
+  is_owner               Boolean                 @default(false)
+  email_verified         Boolean                 @default(false)
+  full_name              String?
+  document               String?
+  tutorial_completed     Boolean                 @default(false)
+  reset_password_token   String?
+  reset_password_expires DateTime?               @db.Timestamptz(6)
+  password_changed_at    DateTime?               @db.Timestamptz(6)
+  created_at             DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at             DateTime?               @db.Timestamptz(6)
+  guest_emails           guest_emails[]
+  guest_notes            guest_notes[]
+  incident_reports       incident_reports[]
+  refund_requests        refund_requests[]
+  shift_staff_members    shift_staff_members[]
+  shifts                 shifts[]
+  user_role_assignments  user_role_assignments[]
+  tenants                tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, email], map: "users_unique_active_email_tenant", where: raw("(deleted_at IS NULL)"))
+  @@index([tenant_id, deleted_at])
+}

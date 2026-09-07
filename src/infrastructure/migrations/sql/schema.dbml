@@ -26,22 +26,9 @@ Table "tenants" [headercolor: #2E86AB, note: 'src/domain/tenant/entities/tenant.
 Table "roles" [headercolor: #2E86AB, note: 'src/domain/role/entities/role.entity.ts'] {
   "id" uuid [pk, default: `gen_random_uuid()`]
   "name" text [unique, not null]
-  "permissions" "text[]" [not null, default: '{}']
+  "permissions" "text[]" [not null, default: '{}', note: 'Permission enum, src/domain/role/value-objects/permission.vo.ts']
   "created_at" timestamptz [not null, default: `now()`]
   "updated_at" timestamptz [not null, default: `now()`]
-
-  Checks {
-    `permissions <@ ARRAY[
-    'TENANT_SETTINGS_VIEW', 'TENANT_SETTINGS_EDIT', 'TENANT_BILLING_VIEW',
-    'TENANT_USERS_MANAGE', 'PROPERTY_VIEW', 'PROPERTY_CREATE', 'PROPERTY_EDIT',
-    'PROPERTY_DELETE', 'UNIT_VIEW', 'UNIT_CREATE', 'UNIT_EDIT', 'UNIT_DELETE',
-    'EXPERIENCE_EDIT', 'EXPERIENCE_DELETE', 'RESERVATION_VIEW', 'RESERVATION_CREATE',
-    'RESERVATION_EDIT', 'RESERVATION_DELETE', 'FINANCE_VIEW', 'FINANCE_CREATE',
-    'FINANCE_EDIT', 'CRM_VIEW', 'CRM_MANAGE', 'INTEGRATION_VIEW', 'INTEGRATION_MANAGE',
-    'AUDIT_VIEW', 'INCIDENT_REPORT_CREATE', 'INCIDENT_REPORT_READ', 'INCIDENT_REPORT_EDIT',
-    'INCIDENT_REPORT_DELETE'
-  ]::text[]` [name: 'permissions_values']
-  }
 }
 
 Table "users" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity.ts'] {
@@ -62,23 +49,29 @@ Table "users" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity
   "deleted_at" timestamptz
 
   Indexes {
-    (tenant_id, email) [unique]
+    (tenant_id, email) [unique, name: 'users_unique_active_email_tenant', note: 'partial: WHERE deleted_at IS NULL']
+    (tenant_id, deleted_at)
+    (tenant_id, id) [unique, note: 'FK target, see user_role_assignments']
   }
 }
 
-Table "user_role_assignments" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity.ts (RoleAssignment[])'] {
+Table "user_role_assignments" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity.ts (RoleAssignment[]) - one row per scoped resource; the repository regroups them into the array the JWT expects'] {
   "id" uuid [pk, default: `gen_random_uuid()`]
+  "tenant_id" uuid [not null]
   "user_id" uuid [not null]
   "role_id" uuid [not null]
   "scope_type" text [not null, check: `scope_type IN ('TENANT', 'PROPERTY', 'UNIT')`]
-  "resource_ids" "uuid[]" [not null, default: '{}']
+  "property_id" uuid [note: 'NULL for TENANT scope']
+  "unit_id" uuid [note: "NULL unless scope_type = 'UNIT'"]
 
   Checks {
-    `scope_type = 'TENANT' OR cardinality(resource_ids) > 0`
+    `(scope_type = 'TENANT' AND property_id IS NULL AND unit_id IS NULL) OR (scope_type = 'PROPERTY' AND property_id IS NOT NULL AND unit_id IS NULL) OR (scope_type = 'UNIT' AND property_id IS NOT NULL AND unit_id IS NOT NULL)`
   }
 
   Indexes {
+    (user_id, role_id, scope_type, property_id, unit_id) [unique, note: 'NULLS NOT DISTINCT']
     user_id
+    (tenant_id, property_id)
   }
 }
 
@@ -108,6 +101,7 @@ Table "properties" [headercolor: #3F7D20, note: 'src/domain/property/entities/pr
 
   Indexes {
     (tenant_id, slug) [unique]
+    (tenant_id, id) [unique, note: 'FK target: children pin (tenant_id, property_id) together']
     tenant_id
   }
 }
@@ -127,10 +121,10 @@ Table "units" [headercolor: #3F7D20, note: 'src/domain/unit/entities/unit.entity
   "amenities" "text[]" [not null, default: '{}']
   "media_keys" "text[]" [not null, default: '{}']
   "price_per_night" numeric(14,2) [not null, check: `price_per_night >= 0`]
-  "airbnb_id" text
-  "booking_id" text
-  "vrbo_id" text
   "rating" numeric(2,1) [check: `rating BETWEEN 0 AND 5`]
+  "external_airbnb_id" text
+  "external_booking_id" text
+  "external_vrbo_id" text
   "created_at" timestamptz [not null, default: `now()`]
   "updated_at" timestamptz [not null, default: `now()`]
   "deleted_at" timestamptz
@@ -140,6 +134,7 @@ Table "units" [headercolor: #3F7D20, note: 'src/domain/unit/entities/unit.entity
   }
 
   Indexes {
+    (tenant_id, property_id, id) [unique, note: 'FK target for reservations']
     tenant_id
     property_id
   }
@@ -196,6 +191,7 @@ Table "guests" [headercolor: #B5651D, note: 'src/domain/guest/entities/guest.ent
 
   Indexes {
     (tenant_id, primary_email) [unique]
+    (tenant_id, id) [unique, note: 'FK target, see reservations']
     tenant_id
     guest_account_id
   }
@@ -203,12 +199,12 @@ Table "guests" [headercolor: #B5651D, note: 'src/domain/guest/entities/guest.ent
 
 Table "guest_tags" [headercolor: #B5651D, note: 'src/domain/guest-tag/entities/guest-tag.entity.ts'] {
   "id" uuid [pk, default: `gen_random_uuid()`]
-  "tenant_id" uuid [not null]
+  "tenant_id" uuid [note: 'NULL = platform-wide tag']
   "name" text [not null]
   "created_at" timestamptz [not null, default: `now()`]
 
   Indexes {
-    (tenant_id, name) [unique]
+    (tenant_id, name) [unique, note: 'NULLS NOT DISTINCT']
   }
 }
 
@@ -350,14 +346,14 @@ Table "reservations" [headercolor: #C0392B, note: 'src/domain/reservation/entiti
   "guest_id" uuid [not null]
   "check_in" date [not null]
   "check_out" date [not null]
-  "source" text [not null, check: `source IN ('MANUAL', 'DIRECT', 'AIRBNB', 'BOOKING', 'VRBO')`]
+  "source" text [not null, check: `source IN ('MANUAL', 'DIRECT')`]
   "status" text [not null, check: `status IN ('PENDING', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED', 'NO_SHOW')`, default: 'PENDING']
   "guests_count" integer [not null, check: `guests_count > 0`]
   "price_per_night" numeric(14,2) [not null, check: `price_per_night >= 0`]
   "total_price" numeric(14,2) [not null, check: `total_price >= 0`]
   "notes" text
+  "reservation_number" bigint [note: 'per-tenant customer-visible number; max(+1) on insert, guarded by the unique index']
   "external_reservation_id" text
-  "reservation_number" bigint
   "check_in_info" jsonb [not null, default: '[]']
   "cancelled_at" timestamptz
   "cancellation_reason" text
@@ -375,7 +371,6 @@ Table "reservations" [headercolor: #C0392B, note: 'src/domain/reservation/entiti
     (tenant_id, status)
     guest_id
     (unit_id, check_in, check_out)
-    (source, external_reservation_id) [unique]
   }
 }
 
@@ -404,7 +399,7 @@ Table "refund_requests" [headercolor: #C0392B, note: 'src/domain/refund/entities
   "guest_id" uuid [not null]
   "amount" numeric(14,2) [not null, check: `amount >= 0`]
   "status" text [not null, check: `status IN ('PENDING', 'APPROVED', 'DENIED')`, default: 'PENDING']
-  "requested_by" uuid [not null]
+  "requested_by" text [not null, note: 'actor kind, e.g. guest']
   "reviewed_by" uuid
   "reviewed_at" timestamptz
   "reason" text
@@ -559,6 +554,7 @@ Table "incident_reports" [headercolor: #16A085, note: 'src/domain/incident-repor
   "attachment_urls" "text[]" [not null, default: '{}']
   "created_at" timestamptz [not null, default: `now()`]
   "updated_at" timestamptz [not null, default: `now()`]
+  "deleted_at" timestamptz
 
   Indexes {
     (property_id, created_at)
@@ -609,9 +605,10 @@ Table "inventory_items" [headercolor: #5D6D7E, note: 'src/domain/inventory/entit
   "supplier_id" uuid
   "created_at" timestamptz [not null, default: `now()`]
   "updated_at" timestamptz [not null, default: `now()`]
+  "deleted_at" timestamptz
 
   Indexes {
-    (tenant_id, property_id, sku) [unique]
+    (tenant_id, property_id, sku) [unique, note: 'partial: WHERE deleted_at IS NULL']
     property_id
     tenant_id
   }
@@ -640,33 +637,16 @@ Table "audit_logs" [headercolor: #566573, note: 'src/domain/audit/entities/audit
   "tenant_id" uuid [not null]
   "user_id" uuid [not null]
   "user_email" citext [not null]
-  "action" text [not null]
+  "action" text [not null, note: 'AuditAction enum, src/domain/audit/value-objects/audit-action.vo.ts']
   "entity_type" text [not null]
   "entity_id" uuid
   "metadata" jsonb
   "previous_value" jsonb
   "new_value" jsonb
-  "ip_address" inet
+  "ip_address" text
   "created_at" timestamptz [not null, default: `now()`]
 
   Checks {
-    `action IN (
-    'AUTH_LOGIN', 'TENANT_REGISTERED', 'TENANT_PROFILE_UPDATED', 'USER_INVITED',
-    'USER_PASSWORD_CHANGED', 'USER_EMAIL_VERIFIED', 'USER_UPDATED', 'PROPERTY_CREATED',
-    'PROPERTY_UPDATED', 'PROPERTY_DELETED', 'UNIT_CREATED', 'UNIT_UPDATED', 'UNIT_DELETED',
-    'INCIDENT_REPORT_CREATED', 'INCIDENT_REPORT_UPDATED', 'INCIDENT_REPORT_DELETED',
-    'RESERVATION_CREATED', 'RESERVATION_CONFIRMED', 'RESERVATION_UPDATED',
-    'RESERVATION_CANCELLED', 'RESERVATION_CHECKED_IN', 'RESERVATION_CHECKED_OUT',
-    'RESERVATION_NO_SHOW', 'RESERVATION_PAID', 'SHIFT_CREATED', 'SHIFT_UPDATED',
-    'SHIFT_DELETED', 'SUPPLIER_CREATED', 'SUPPLIER_UPDATED', 'SUPPLIER_DELETED',
-    'EXPERIENCE_CREATED', 'EXPERIENCE_UPDATED', 'EXPERIENCE_DELETED',
-    'EXPERIENCE_PURCHASED', 'CART_CHECKED_OUT', 'UNIT_RATING_CREATED', 'GUEST_NOTE_CREATED',
-    'GUEST_NOTE_UPDATED', 'GUEST_NOTE_DELETED', 'GUEST_NOTE_PIN_TOGGLED',
-    'GUEST_TAGS_ASSIGNED', 'GUEST_PREFERENCES_SAVED', 'GUEST_MESSAGE_SENT',
-    'GUEST_MESSAGE_INBOUND_RECEIVED', 'GUEST_MESSAGE_DELIVERY_STATUS_UPDATED',
-    'GUEST_CATALOG_ITEM_CREATED', 'GUEST_CATALOG_ITEM_UPDATED',
-    'GUEST_CATALOG_ITEM_DELETED', 'GUEST_CATALOG_ITEM_TOGGLED'
-  )` [name: 'action_values']
     `entity_type IN (
     'AUTH', 'TENANT', 'USER', 'PROPERTY', 'UNIT', 'INCIDENT_REPORT', 'RESERVATION', 'SHIFT',
     'SUPPLIER', 'EXPERIENCE', 'EXPERIENCE_PURCHASE', 'CART', 'UNIT_RATING', 'GUEST_NOTE',
@@ -682,7 +662,13 @@ Table "audit_logs" [headercolor: #566573, note: 'src/domain/audit/entities/audit
 
 Ref:"tenants"."id" <? "users"."tenant_id" [delete: cascade]
 
-Ref:"users"."id" <? "user_role_assignments"."user_id" [delete: cascade]
+Ref:"users".("tenant_id","id") <? "user_role_assignments".("tenant_id","user_id") [delete: cascade]
+
+// MATCH SIMPLE on purpose: a NULL column switches the FK off, which is what lets one
+// table hold all three scope shapes. Do not tighten to MATCH FULL.
+Ref:"properties".("tenant_id","id") <? "user_role_assignments".("tenant_id","property_id") [delete: cascade]
+
+Ref:"units".("tenant_id","property_id","id") <? "user_role_assignments".("tenant_id","property_id","unit_id") [delete: cascade]
 
 Ref:"roles"."id" <? "user_role_assignments"."role_id"
 
@@ -690,7 +676,7 @@ Ref:"tenants"."id" <? "properties"."tenant_id" [delete: cascade]
 
 Ref:"tenants"."id" <? "units"."tenant_id" [delete: cascade]
 
-Ref:"properties"."id" <? "units"."property_id" [delete: cascade]
+Ref:"properties".("tenant_id","id") <? "units".("tenant_id","property_id") [delete: cascade]
 
 Ref:"tenants"."id" <? "guests"."tenant_id" [delete: cascade]
 
@@ -732,11 +718,10 @@ Ref:"users"."id" ?<? "guest_emails"."sent_by_id"
 
 Ref:"tenants"."id" <? "reservations"."tenant_id" [delete: cascade]
 
-Ref:"properties"."id" <? "reservations"."property_id"
 
-Ref:"units"."id" <? "reservations"."unit_id"
+Ref:"units".("tenant_id","property_id","id") <? "reservations".("tenant_id","property_id","unit_id")
 
-Ref:"guests"."id" <? "reservations"."guest_id"
+Ref:"guests".("tenant_id","id") <? "reservations".("tenant_id","guest_id")
 
 Ref:"reservations"."id" ?<? "conversations"."reservation_id" [delete: set null]
 
@@ -870,3 +855,4 @@ TableGroup inventory {
 TableGroup audit {
   audit_logs
 }
+

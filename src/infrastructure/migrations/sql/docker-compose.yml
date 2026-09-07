@@ -1,0 +1,39 @@
+# Local Postgres to try the schema against:
+#
+#   cd src/infrastructure/migrations/sql
+#   docker compose up -d --wait
+#   docker compose exec -T postgres psql -U lymon -d lymon -v ON_ERROR_STOP=1 < schema-smoke.sql
+#
+# postgres-schema.sql runs automatically on FIRST start only (init scripts are skipped
+# once the data volume exists). After editing the schema:
+#
+#   docker compose down -v && docker compose up -d --wait
+#
+# Port 5433, not 5432, so it does not fight whatever else you have listening.
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: lymon-pg
+    environment:
+      POSTGRES_USER: lymon
+      POSTGRES_PASSWORD: lymon
+      POSTGRES_DB: lymon
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./postgres-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      # postgres:18+ keeps its data in a versioned subdirectory, so the mount goes one
+      # level up at /var/lib/postgresql (mounting .../data makes the image refuse to start)
+      - lymon-pg-data:/var/lib/postgresql
+    healthcheck:
+      # -h 127.0.0.1 on purpose: during init the entrypoint runs a temporary server on
+      # the unix socket only, so a socket-based pg_isready reports ready while the
+      # schema is still loading and the server is about to restart. TCP only comes up
+      # when the real one does.
+      test: ['CMD-SHELL', 'pg_isready -U lymon -d lymon -h 127.0.0.1']
+      interval: 3s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  lymon-pg-data:
