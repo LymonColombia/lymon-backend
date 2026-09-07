@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# npm/yarn lockfiles — this repo uses pnpm
+package-lock.json
+yarn.lock
+
 # Logs
 logs
 *.log
@@ -77,3 +81,6 @@ docs/user-stories.feature
 #Claude
 /.claude
 CLAUDE.md
+
+# Prisma client (generated; `pnpm prisma generate` runs on postinstall)
+/src/infrastructure/persistence/prisma/generated
