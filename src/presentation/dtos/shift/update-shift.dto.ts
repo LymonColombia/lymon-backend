@@ -22,7 +22,7 @@ export class UpdateShiftDto {
   name?: string;
 
   @ApiPropertyOptional({
-    example: '680c79f38b4f98f4f6383b13',
+    example: '680c79f3-8b4f-98f4-f638-3b1300000000',
     description: 'Property id where shift takes place',
   })
   @IsOptional()

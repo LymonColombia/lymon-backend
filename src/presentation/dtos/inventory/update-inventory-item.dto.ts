@@ -1,5 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsMongoId, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 
 export class UpdateInventoryItemDto {
   @ApiPropertyOptional({ example: 'Soap Bar Premium' })
@@ -7,10 +13,10 @@ export class UpdateInventoryItemDto {
   @IsString()
   name?: string;
 
-  @ApiPropertyOptional({ example: '6650a1b2c3d4e5f6a7b8c9d0' })
+  @ApiPropertyOptional({ example: '6650a1b2-c3d4-e5f6-a7b8-c9d000000000' })
   @IsOptional()
   @IsString()
-  @IsMongoId()
+  @IsUUID()
   categoryId?: string;
 
   @ApiPropertyOptional({ example: 'piece' })

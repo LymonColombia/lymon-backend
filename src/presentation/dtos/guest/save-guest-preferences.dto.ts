@@ -5,7 +5,7 @@ import { Type } from 'class-transformer';
 export class GuestPreferenceItemDto {
   @ApiProperty({
     description: 'ID of the catalog item to assign as a preference',
-    example: '64a1f2b3c4d5e6f7a8b9c0d1',
+    example: '64a1f2b3-c4d5-e6f7-a8b9-c0d100000000',
   })
   @IsString()
   @IsNotEmpty()

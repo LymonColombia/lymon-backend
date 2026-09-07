@@ -3,10 +3,10 @@ import {
   IsArray,
   IsDateString,
   IsInt,
-  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -14,12 +14,12 @@ import { SetCartReservationDto } from './set-cart-reservation.dto';
 
 class CheckoutCartExperienceItemDto {
   @ApiProperty()
-  @IsMongoId()
+  @IsUUID()
   @IsNotEmpty()
   tenantId: string;
 
   @ApiProperty()
-  @IsMongoId()
+  @IsUUID()
   @IsNotEmpty()
   experienceId: string;
 

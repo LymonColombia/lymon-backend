@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 
 export class RecordInventoryMovementDto {
-  @ApiProperty({ example: '67c6c7f15fbad8ce3df4d7f1' })
+  @ApiProperty({ example: '67c6c7f1-5fba-d8ce-3df4-d7f100000000' })
   @IsString()
   @IsNotEmpty()
   itemId: string;
