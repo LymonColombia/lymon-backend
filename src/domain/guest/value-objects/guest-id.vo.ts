@@ -1,3 +1,5 @@
+import { isUuid } from '@/domain/shared/value-objects/uuid.util';
+
 export class GuestId {
   private constructor(private readonly value: string) {}
 
@@ -6,7 +8,7 @@ export class GuestId {
       throw new Error('GuestId cannot be empty');
     }
 
-    if (!/^[0-9a-fA-F]{24}$/.test(value)) {
+    if (!isUuid(value)) {
       throw new Error('Invalid GuestId format');
     }
 

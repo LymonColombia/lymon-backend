@@ -1,10 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 
 export class GuestEmailId {
   private constructor(private readonly value: string) {}
 
   static create(): GuestEmailId {
-    return new GuestEmailId(uuidv4());
+    return new GuestEmailId(randomUUID());
   }
 
   static createFromString(value: string): GuestEmailId {

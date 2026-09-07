@@ -63,7 +63,6 @@ export class UpdateShiftCommandHandler implements ICommandHandler<UpdateShiftCom
 
     const shiftData = this.resolveShiftData(command, shift);
     this.validateShiftData(shiftData);
-    this.validateObjectId(command.propertyId, 'property');
 
     const staffMembers = await this.getStaffMembers(
       shiftData.nextStaffMemberIds,
@@ -347,16 +346,6 @@ export class UpdateShiftCommandHandler implements ICommandHandler<UpdateShiftCom
       return null;
     }
     return typeof value === 'string' ? value : undefined;
-  }
-
-  private validateObjectId(value: string | undefined, fieldName: string): void {
-    if (!value) {
-      return;
-    }
-
-    if (!/^[a-fA-F0-9]{24}$/.test(value)) {
-      throw new BadRequestException(`Invalid ${fieldName} ID format`);
-    }
   }
 
   private async getStaffMembers(
