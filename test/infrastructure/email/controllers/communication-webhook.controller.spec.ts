@@ -11,7 +11,7 @@ import {
 } from '@/application/guest-message/commands/update-message-delivery-status/update-message-delivery-status.command';
 import { DomainException } from '@/domain/shared/exceptions/domain.exception';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
 const VALID_SIGNATURE = 'valid-sig';
 const RAW_BODY = Buffer.from('{"event":"delivered"}');
 

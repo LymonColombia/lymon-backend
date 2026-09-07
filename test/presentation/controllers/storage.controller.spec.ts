@@ -3,9 +3,9 @@ import { QueryBus } from '@nestjs/cqrs';
 import { GeneratePresignedUrlQuery } from '@/application/storage/queries/generate-presigned-url/generate-presigned-url.query';
 
 const baseUser = {
-  userId: '65f1a1a2b3c4d5e6f7a8b9c1',
+  userId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
   email: 'owner@test.com',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
   activePlan: 'TRIAL',
   isOwner: true,
   emailVerified: true,

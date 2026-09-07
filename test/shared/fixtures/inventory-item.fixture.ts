@@ -9,7 +9,7 @@ import { TENANT_FIXTURE_DEFAULTS } from '@test/shared/fixtures/tenant.fixture';
 import { INVENTORY_ITEM_CATEGORY_FIXTURE_DEFAULTS } from '@test/shared/fixtures/inventory-item-category.fixture';
 
 export const INVENTORY_ITEM_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c3',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
   tenantId: TENANT_FIXTURE_DEFAULTS.id,
   propertyId: PROPERTY_FIXTURE_DEFAULTS.id,
   sku: 'SKU-001',

@@ -19,7 +19,7 @@ function makeUnitFixture(name = 'Casa del Mar'): Unit {
   return Unit.reconstitute({
     id: UnitId.create(UNIT_ID),
     tenantId: TenantId.createFromString(TENANT_ID),
-    propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c9'),
+    propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c900000000'),
     basicInfo: { name, description: 'Desc' },
     inventoryConfig: { inventoryCount: 1 },
     capacityConfig: { maxGuests: 2, standardGuests: 2 },

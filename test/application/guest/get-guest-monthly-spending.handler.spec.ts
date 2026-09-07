@@ -6,8 +6,8 @@ describe('GetGuestMonthlySpendingHandler', () => {
   let handler: GetGuestMonthlySpendingHandler;
   let reservationRepository: ReturnType<typeof createReservationRepositoryMock>;
 
-  const tenantId = '65f1a1a2b3c4d5e6f7a8b9c2';
-  const guestId = '65f1a1a2b3c4d5e6f7a8b9c0';
+  const tenantId = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
+  const guestId = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
 
   beforeEach(() => {
     reservationRepository = createReservationRepositoryMock();

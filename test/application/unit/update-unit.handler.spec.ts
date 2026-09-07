@@ -20,9 +20,9 @@ import { createEventEmitterMock } from '@test/shared/mocks/services/event-emitte
 import { createR2StorageServiceMock } from '@test/shared/mocks/services/r2-storage.mock';
 import { makeReservation } from '@test/shared/fixtures/reservation.fixture';
 
-const UNIT_ID = '65f1a1a2b3c4d5e6f7a8b9c4';
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c2';
-const PROPERTY_ID = '65f1a1a2b3c4d5e6f7a8b9c3';
+const UNIT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
+const PROPERTY_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000';
 
 function makeUnit(
   overrides?: Partial<{
@@ -155,7 +155,7 @@ describe('UpdateUnitHandler', () => {
 
   it('throws NotFoundException when unit belongs to a different tenant', async () => {
     unitRepository.findById.mockResolvedValue(
-      makeUnit({ tenantId: '65f1a1a2b3c4d5e6f7a8b9c9' }),
+      makeUnit({ tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000' }),
     );
 
     await expect(
@@ -174,7 +174,7 @@ describe('UpdateUnitHandler', () => {
         checkOut: new Date('2030-01-05T10:00:00Z'),
       }),
       makeReservation({
-        id: '65f1a1a2b3c4d5e6f7a8b9d9',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9d900000000',
         unitId: UNIT_ID,
         tenantId: TENANT_ID,
         propertyId: PROPERTY_ID,

@@ -12,7 +12,7 @@ import { Location } from '@/domain/property/value-objects/location.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 
 describe('Property Entity', () => {
-  const tenantId = TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0');
+  const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
   const propertyType = PropertyType.create(PropertyTypeEnum.CASA);
   const location = Location.create(4.6097, -74.0817);
   const cancellationPolicy = CancellationPolicy.create(
@@ -108,7 +108,7 @@ describe('Property Entity', () => {
 
   describe('reconstitute', () => {
     it('should reconstitute a property with all data', () => {
-      const id = PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1');
+      const id = PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000');
       const createdAt = new Date('2025-01-01');
       const updatedAt = new Date('2025-03-24');
 
@@ -141,7 +141,7 @@ describe('Property Entity', () => {
     });
 
     it('should reconstitute with deletedAt as undefined and default to null', () => {
-      const id = PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1');
+      const id = PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000');
       const createdAt = new Date('2025-01-01');
       const updatedAt = new Date('2025-03-24');
 
@@ -170,7 +170,7 @@ describe('Property Entity', () => {
     });
 
     it('should reconstitute with deletedAt as a Date', () => {
-      const id = PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1');
+      const id = PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000');
       const createdAt = new Date('2025-01-01');
       const updatedAt = new Date('2025-03-24');
       const deletedAt = new Date('2025-03-25');

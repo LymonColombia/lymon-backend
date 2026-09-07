@@ -9,10 +9,10 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo';
 
 export const EXPERIENCE_PURCHASE_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8bc01',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c2',
-  guestAccountId: '65f1a1a2b3c4d5e6f7a8b9c0',
-  experienceId: '65f1a1a2b3c4d5e6f7a8bb10',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-bc0100000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+  guestAccountId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+  experienceId: '65f1a1a2-b3c4-d5e6-f7a8-bb1000000000',
   quantity: 2,
   unitPriceCop: 50000,
   totalPriceCop: 100000,

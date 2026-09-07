@@ -37,7 +37,7 @@ describe('AssignGuestTagsHandler', () => {
       const vip = makeGuestTag({ name: 'vip' });
       const family = makeGuestTag({
         name: 'family',
-        id: '65f1a1a2b3c4d5e6f7000002',
+        id: '65f1a1a2-b3c4-d5e6-f700-000200000000',
       });
 
       tagRepository.findByNames.mockResolvedValue([vip, family]);

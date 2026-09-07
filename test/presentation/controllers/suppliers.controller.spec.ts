@@ -9,9 +9,9 @@ describe('SuppliersController', () => {
   let queryBus: { execute: jest.Mock };
 
   const user = {
-    userId: '65f1a1a2b3c4d5e6f7a8b9c1',
+    userId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
     email: 'admin@test.com',
-    tenantId: '65f1a1a2b3c4d5e6f7a8b9c2',
+    tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
     roleAssignments: [
       {
         roleId: 'r1',
@@ -35,7 +35,7 @@ describe('SuppliersController', () => {
     queryBus.execute.mockResolvedValue({
       suppliers: [
         {
-          supplierId: '65f1a1a2b3c4d5e6f7a8b9c4',
+          supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
           name: 'Fresh Supplies Inc.',
           contactEmail: 'contact@freshsupplies.com',
           contactPhone: '+12025550123',
@@ -66,7 +66,7 @@ describe('SuppliersController', () => {
       message: 'Suppliers retrieved successfully',
       data: [
         {
-          supplierId: '65f1a1a2b3c4d5e6f7a8b9c4',
+          supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
           name: 'Fresh Supplies Inc.',
           contactEmail: 'contact@freshsupplies.com',
           contactPhone: '+12025550123',
@@ -104,7 +104,7 @@ describe('SuppliersController', () => {
 
   it('creates a supplier and returns supplier id', async () => {
     commandBus.execute.mockResolvedValue({
-      supplierId: '65f1a1a2b3c4d5e6f7a8b9c4',
+      supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
     });
 
     const result = await controller.createSupplier(user, {
@@ -119,14 +119,14 @@ describe('SuppliersController', () => {
     expect(commandBus.execute).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
       message: 'Supplier created successfully',
-      data: { supplierId: '65f1a1a2b3c4d5e6f7a8b9c4' },
+      data: { supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000' },
     });
   });
 
   it('dispatches DeleteSupplierCommand for supplier delete', async () => {
     commandBus.execute.mockResolvedValue(undefined);
 
-    await controller.deleteSupplier(user, '65f1a1a2b3c4d5e6f7a8b9c4');
+    await controller.deleteSupplier(user, '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000');
 
     expect(commandBus.execute).toHaveBeenCalledTimes(1);
     expect(commandBus.execute).toHaveBeenCalledWith(

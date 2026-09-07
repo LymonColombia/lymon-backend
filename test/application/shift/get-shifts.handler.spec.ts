@@ -10,10 +10,10 @@ import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 
 function makeShift(overrides?: { weekdays?: number[] | null }): Shift {
   return Shift.reconstitute({
-    id: ShiftId.createFromString('65f1a1a2b3c4d5e6f7a8b9d0'),
-    tenantId: TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0'),
-    staffMemberIds: [UserId.createFromString('65f1a1a2b3c4d5e6f7a8b9c1')],
-    propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c3'),
+    id: ShiftId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d000000000'),
+    tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+    staffMemberIds: [UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000')],
+    propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000'),
     name: 'Morning Cleaning',
     startDate: new Date('2026-03-01T00:00:00.000Z'),
     endDate: new Date('2026-03-31T00:00:00.000Z'),
@@ -31,9 +31,9 @@ function makeShift(overrides?: { weekdays?: number[] | null }): Shift {
 }
 
 describe('GetShiftsHandler', () => {
-  const tenantId = '65f1a1a2b3c4d5e6f7a8b9c0';
-  const actorUserId = '65f1a1a2b3c4d5e6f7a8b9c1';
-  const otherUserId = '65f1a1a2b3c4d5e6f7a8b9c2';
+  const tenantId = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+  const actorUserId = '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000';
+  const otherUserId = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
 
   let shiftRepository: jest.Mocked<ShiftRepository>;
   let handler: GetShiftsHandler;

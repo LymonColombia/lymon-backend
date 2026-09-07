@@ -10,9 +10,9 @@ import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-accou
 import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo';
 
 export const CART_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8bb01',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c2',
-  guestAccountId: '65f1a1a2b3c4d5e6f7a8b9c0',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-bb0100000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+  guestAccountId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
   status: CartStatusEnum.OPEN,
   createdAt: new Date('2030-01-01T10:00:00Z'),
   updatedAt: new Date('2030-01-01T10:00:00Z'),
@@ -54,9 +54,9 @@ export function makeCartItem(
   }>,
 ): CartItem {
   return CartItem.create({
-    tenantId: overrides?.tenantId ?? '65f1a1a2b3c4d5e6f7a8b9c2',
+    tenantId: overrides?.tenantId ?? '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
     experienceId: ExperienceId.create(
-      overrides?.experienceId ?? '65f1a1a2b3c4d5e6f7a8bb10',
+      overrides?.experienceId ?? '65f1a1a2-b3c4-d5e6-f7a8-bb1000000000',
     ),
     experienceName: overrides?.experienceName ?? 'Test Experience',
     selectedDate: overrides?.selectedDate ?? null,

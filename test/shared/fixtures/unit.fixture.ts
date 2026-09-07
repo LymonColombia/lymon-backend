@@ -3,9 +3,9 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 
 export const UNIT_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c4',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c2',
-  propertyId: '65f1a1a2b3c4d5e6f7a8b9c3',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+  propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
   name: 'Test Unit',
   description: 'A test unit',
   inventoryCount: 5,

@@ -39,9 +39,9 @@ describe('CreateReservationHandler', () => {
 
   function makeUnit() {
     return Unit.reconstitute({
-      id: UnitId.create('65f1a1a2b3c4d5e6f7a8b9c8'),
-      tenantId: TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0'),
-      propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1'),
+      id: UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'),
+      tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+      propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
       basicInfo: {
         name: 'Unit 1',
         description: 'Nice unit',
@@ -77,7 +77,7 @@ describe('CreateReservationHandler', () => {
 
   function makeGuest() {
     return Guest.create({
-      tenantId: TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0'),
+      tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
       fullName: 'John Doe',
       primaryEmail: 'john@example.com',
       identity: {},
@@ -88,10 +88,10 @@ describe('CreateReservationHandler', () => {
     unitRepository.findById.mockResolvedValue(null);
 
     const cmd = new CreateReservationCommand(
-      '65f1a1a2b3c4d5e6f7a8b9c0',
-      '65f1a1a2b3c4d5e6f7a8b9c1',
-      '65f1a1a2b3c4d5e6f7a8b9c8',
-      '65f1a1a2b3c4d5e6f7a8b9d1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c800000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9d100000000',
       new Date(Date.now() + 24 * 60 * 60 * 1000),
       new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       1,
@@ -111,10 +111,10 @@ describe('CreateReservationHandler', () => {
     guestRepository.findById.mockResolvedValue(null);
 
     const cmd = new CreateReservationCommand(
-      '65f1a1a2b3c4d5e6f7a8b9c0',
-      '65f1a1a2b3c4d5e6f7a8b9c1',
-      '65f1a1a2b3c4d5e6f7a8b9c8',
-      '65f1a1a2b3c4d5e6f7a8b9d1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c800000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9d100000000',
       new Date(Date.now() + 24 * 60 * 60 * 1000),
       new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       1,
@@ -149,10 +149,10 @@ describe('CreateReservationHandler', () => {
     );
 
     const cmd = new CreateReservationCommand(
-      '65f1a1a2b3c4d5e6f7a8b9c0',
-      '65f1a1a2b3c4d5e6f7a8b9c1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
       unit.getId()!.toString(),
-      '65f1a1a2b3c4d5e6f7a8b9d1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9d100000000',
       new Date(Date.now() + 24 * 60 * 60 * 1000),
       new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       1,
@@ -172,13 +172,13 @@ describe('CreateReservationHandler', () => {
     unitRepository.findById.mockResolvedValue(unit);
     guestRepository.findById.mockResolvedValue(makeGuest());
     reservationRepository.findByUnitAndDateRange.mockResolvedValue([]);
-    reservationRepository.save.mockResolvedValue('65f1a1a2b3c4d5e6f7a8b9c3');
+    reservationRepository.save.mockResolvedValue('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000');
 
     const cmd = new CreateReservationCommand(
-      '65f1a1a2b3c4d5e6f7a8b9c0',
-      '65f1a1a2b3c4d5e6f7a8b9c1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
       unit.getId()!.toString(),
-      '65f1a1a2b3c4d5e6f7a8b9d1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9d100000000',
       new Date(Date.now() + 24 * 60 * 60 * 1000),
       new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       1,
@@ -192,7 +192,7 @@ describe('CreateReservationHandler', () => {
     const result = await handler.execute(cmd);
 
     expect(result).toBeInstanceOf(CreateReservationResult);
-    expect(result.reservationId).toBe('65f1a1a2b3c4d5e6f7a8b9c3');
+    expect(result.reservationId).toBe('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000');
     expect(reservationRepository.save).toHaveBeenCalledTimes(1);
     expect(eventEmitter.emit).toHaveBeenCalled();
   });

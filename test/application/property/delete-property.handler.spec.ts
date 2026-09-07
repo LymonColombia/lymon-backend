@@ -33,8 +33,8 @@ describe('DeletePropertyHandler', () => {
       await expect(
         handler.execute(
           new DeletePropertyCommand(
-            '65f1a1a2b3c4d5e6f7a8b9c1',
-            '65f1a1a2b3c4d5e6f7a8b9c0',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'user-123',
             'user@example.com',
           ),
@@ -51,14 +51,14 @@ describe('DeletePropertyHandler', () => {
   describe('when property belongs to another tenant', () => {
     it('throws NotFoundException', async () => {
       propertyRepository.findById.mockResolvedValue(
-        makeProperty({ tenantId: '65f1a1a2b3c4d5e6f7a8b9c9' }),
+        makeProperty({ tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000' }),
       );
 
       await expect(
         handler.execute(
           new DeletePropertyCommand(
-            '65f1a1a2b3c4d5e6f7a8b9c1',
-            '65f1a1a2b3c4d5e6f7a8b9c0',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'user-123',
             'user@example.com',
           ),
@@ -80,8 +80,8 @@ describe('DeletePropertyHandler', () => {
       await expect(
         handler.execute(
           new DeletePropertyCommand(
-            '65f1a1a2b3c4d5e6f7a8b9c1',
-            '65f1a1a2b3c4d5e6f7a8b9c0',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'user-123',
             'user@example.com',
           ),
@@ -100,8 +100,8 @@ describe('DeletePropertyHandler', () => {
       await expect(
         handler.execute(
           new DeletePropertyCommand(
-            '65f1a1a2b3c4d5e6f7a8b9c1',
-            '65f1a1a2b3c4d5e6f7a8b9c0',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'user-123',
             'user@example.com',
           ),
@@ -112,12 +112,12 @@ describe('DeletePropertyHandler', () => {
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+          tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           userId: 'user-123',
           userEmail: 'user@example.com',
           action: 'PROPERTY_DELETED',
           entityType: 'PROPERTY',
-          entityId: '65f1a1a2b3c4d5e6f7a8b9c1',
+          entityId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
         }),
       );
     });
