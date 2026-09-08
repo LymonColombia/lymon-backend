@@ -28,9 +28,15 @@ Ninguna de estas inconsistencias era detectable sin la base de datos como árbit
 Usamos **PostgreSQL 18** accedido con **Prisma 7** (`prisma-client` + el driver
 adapter `@prisma/adapter-pg`, sin motor Rust).
 
-- El esquema vive en `prisma/schema.prisma`, introspectado una sola vez desde
+- El esquema vive en `prisma/schema/`, repartido por dominio (`tenant.prisma`,
+  `property.prisma`, `guest.prisma`, `reservation.prisma`, `messaging.prisma`,
+  `commerce.prisma`, `inventory.prisma`, `ops.prisma`), con `generator` y `datasource`
+  en `schema.prisma`. Los límites son los mismos que las secciones de
+  `postgres-schema.sql`. Introspectado una sola vez desde
   `src/infrastructure/migrations/sql/postgres-schema.sql`. A partir de ahí
   `prisma migrate dev` gobierna los cambios.
+  `prisma7.config.ts` apunta al **directorio** `prisma/schema`: apuntar a un archivo
+  hace que Prisma ignore los demás `.prisma` en silencio, sin error.
 - Los `CHECK` no se pueden expresar en `schema.prisma`: viven en el SQL de las
   migraciones (`prisma/migrations/0_init/migration.sql`). **Hay que revisar cada
   migración generada antes de aplicarla.** Los índices parciales sí sobreviven a la

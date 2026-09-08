@@ -1,0 +1,59 @@
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reservations {
+  id                      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id               String                 @db.Uuid
+  property_id             String                 @db.Uuid
+  unit_id                 String                 @db.Uuid
+  guest_id                String                 @db.Uuid
+  check_in                DateTime               @db.Date
+  check_out               DateTime               @db.Date
+  source                  String
+  status                  String                 @default("PENDING")
+  guests_count            Int
+  price_per_night         Decimal                @db.Decimal(14, 2)
+  total_price             Decimal                @db.Decimal(14, 2)
+  notes                   String?
+  reservation_number      BigInt?
+  check_in_info           Json                   @default("[]")
+  external_reservation_id String?
+  cancelled_at            DateTime?              @db.Timestamptz(6)
+  cancellation_reason     String?
+  check_in_actual_at      DateTime?              @db.Timestamptz(6)
+  check_out_actual_at     DateTime?              @db.Timestamptz(6)
+  created_at              DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime               @default(now()) @db.Timestamptz(6)
+  conversations           conversations[]
+  experience_purchases    experience_purchases[]
+  guest_messages          guest_messages[]
+  refund_requests         refund_requests[]
+  tenants                 tenants                @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  guests                  guests                 @relation(fields: [tenant_id, guest_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  units                   units                  @relation(fields: [tenant_id, property_id, unit_id], references: [tenant_id, property_id, id], onDelete: NoAction, onUpdate: NoAction)
+  unit_ratings            unit_ratings?
+
+  @@unique([tenant_id, reservation_number])
+  @@unique([external_reservation_id, source], map: "reservations_external_reservation_id_source_idx", where: raw("(external_reservation_id IS NOT NULL)"))
+  @@index([guest_id])
+  @@index([tenant_id, status])
+  @@index([unit_id, check_in, check_out], where: raw("(status <> 'CANCELLED'::text)"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model unit_ratings {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String       @db.Uuid
+  unit_id        String       @db.Uuid
+  guest_id       String       @db.Uuid
+  reservation_id String       @unique(map: "unit_ratings_reservation_id_idx", where: raw("(deleted_at IS NULL)")) @db.Uuid
+  rate           Int          @db.SmallInt
+  message        String?
+  created_at     DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime     @default(now()) @db.Timestamptz(6)
+  deleted_at     DateTime?    @db.Timestamptz(6)
+  guests         guests       @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reservations   reservations @relation(fields: [reservation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants        tenants      @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  units          units        @relation(fields: [unit_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([unit_id], where: raw("(deleted_at IS NULL)"))
+}

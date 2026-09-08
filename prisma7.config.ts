@@ -9,7 +9,9 @@ try {
 }
 
 export default defineConfig({
-  schema: 'prisma/schema.prisma',
+  // A directory, not a file: the models live in prisma/schema/*.prisma and a path to
+  // a single file makes prisma silently ignore its siblings (prisma#28673).
+  schema: 'prisma/schema',
   migrations: {
     path: 'prisma/migrations',
   },

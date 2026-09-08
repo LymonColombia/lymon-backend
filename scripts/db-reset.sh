@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Rebuilds the local Postgres from postgres-schema.sql, re-introspects it into
-# prisma/schema.prisma, refreshes the 0_init baseline and regenerates the client.
+# prisma/schema/, refreshes the 0_init baseline and regenerates the client.
+# db pull keeps each model in the domain file it already lives in; a model landing in
+# prisma/schema/introspected.prisma means it is new to the SQL schema and needs filing.
 # Run after editing the SQL schema. Requires Docker.
 set -euo pipefail
 cd "$(dirname "$0")/.."
