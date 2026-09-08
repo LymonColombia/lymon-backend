@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { Email } from '@/domain/shared/value-objects/email.vo';
 import {
   RoleAssignment,
@@ -124,7 +128,7 @@ export class PrismaUserRepository implements UserRepository {
       return assignment.scope.resourceIds.map((unitId) => {
         const propertyId = propertyByUnit.get(unitId);
         if (!propertyId) {
-          throw new ConflictException(
+          throw new BadRequestException(
             `Cannot assign a UNIT-scoped role: unit ${unitId} does not belong to this tenant.`,
           );
         }
