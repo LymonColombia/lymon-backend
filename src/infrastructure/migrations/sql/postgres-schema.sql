@@ -415,7 +415,6 @@ CREATE TABLE reservations (
   reservation_number      bigint,
   check_in_info           jsonb NOT NULL DEFAULT '[]',   -- TravelerInfo[]
   -- the booking's id on the OTA it came from; the dedup key for imports
-  external_reservation_id text,
   cancelled_at            timestamptz,
   cancellation_reason     text,
   check_in_actual_at      timestamptz,
@@ -429,10 +428,6 @@ CREATE TABLE reservations (
   FOREIGN KEY (tenant_id, property_id, unit_id) REFERENCES units (tenant_id, property_id, id),
   FOREIGN KEY (tenant_id, guest_id) REFERENCES guests (tenant_id, id)
 );
--- partial, like the mongo index it replaces: only imported reservations carry one,
--- and two OTAs may legitimately reuse an id, so source is part of the key
-CREATE UNIQUE INDEX ON reservations (external_reservation_id, source)
-  WHERE external_reservation_id IS NOT NULL;
 CREATE INDEX ON reservations (tenant_id, status);
 CREATE INDEX ON reservations (guest_id);
 -- availability-checker.domain-service: overlap lookups on a unit's date window

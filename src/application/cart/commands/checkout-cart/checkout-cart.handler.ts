@@ -402,7 +402,6 @@ export class CheckoutCartHandler implements ICommandHandler<CheckoutCartCommand>
       guestsCount: item.guestsCount,
       pricePerNight: item.pricePerNight,
       notes: item.notes,
-      externalReservationId: null,
     });
   }
 

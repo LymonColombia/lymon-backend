@@ -77,7 +77,6 @@ export class PrismaReservationRepository
       price_per_night: reservation.getPricePerNight(),
       total_price: reservation.getTotalPrice(),
       notes: reservation.getNotes(),
-      external_reservation_id: reservation.getExternalReservationId(),
       cancelled_at: reservation.getCancelledAt(),
       cancellation_reason: reservation.getCancellationReason(),
       check_in_actual_at: reservation.getCheckInActualAt(),
@@ -295,16 +294,6 @@ export class PrismaReservationRepository
     return rows.map((row) => this.toDomain(row));
   }
 
-  async findByExternalId(
-    source: ReservationSourceEnum,
-    externalId: string,
-  ): Promise<Reservation | null> {
-    const row = await this.prisma.reservations.findFirst({
-      where: { source, external_reservation_id: externalId },
-    });
-    return row ? this.toDomain(row) : null;
-  }
-
   async existsActiveByPropertyId(
     tenantId: string,
     propertyId: string,
@@ -459,7 +448,6 @@ export class PrismaReservationRepository
       pricePerNight: row.price_per_night.toNumber(),
       totalPrice: row.total_price.toNumber(),
       notes: row.notes,
-      externalReservationId: row.external_reservation_id,
       cancelledAt: row.cancelled_at,
       cancellationReason: row.cancellation_reason,
       checkInActualAt: row.check_in_actual_at,

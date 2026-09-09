@@ -63,7 +63,6 @@ export function makeReservation(
     pricePerNight: merged.pricePerNight,
     totalPrice: merged.totalPrice,
     notes: null,
-    externalReservationId: null,
     cancelledAt: null,
     cancellationReason: null,
     checkInActualAt: null,

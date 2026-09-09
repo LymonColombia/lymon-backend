@@ -1,7 +1,6 @@
 import { Reservation } from '../entities/reservation.entity';
 import { ReservationId } from '../value-objects/reservation-id.vo';
 import { DateRange } from '../value-objects/date-range.vo';
-import { ReservationSourceEnum } from '../value-objects/reservation-source.vo';
 import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
 import { TransactionContextData } from '@/domain/shared/transaction-manager.interface';
 
@@ -47,10 +46,6 @@ export interface ReservationRepository {
     unitId: UnitId,
     fromDate: Date,
   ): Promise<Reservation[]>;
-  findByExternalId(
-    source: ReservationSourceEnum,
-    externalId: string,
-  ): Promise<Reservation | null>;
   existsActiveByPropertyId(
     tenantId: string,
     propertyId: string,

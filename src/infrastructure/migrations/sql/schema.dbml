@@ -353,7 +353,6 @@ Table "reservations" [headercolor: #C0392B, note: 'src/domain/reservation/entiti
   "total_price" numeric(14,2) [not null, check: `total_price >= 0`]
   "notes" text
   "reservation_number" bigint [note: 'per-tenant customer-visible number; max(+1) on insert, guarded by the unique index']
-  "external_reservation_id" text
   "check_in_info" jsonb [not null, default: '[]']
   "cancelled_at" timestamptz
   "cancellation_reason" text

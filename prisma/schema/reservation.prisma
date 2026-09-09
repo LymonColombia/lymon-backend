@@ -15,7 +15,6 @@ model reservations {
   notes                   String?
   reservation_number      BigInt?
   check_in_info           Json                   @default("[]")
-  external_reservation_id String?
   cancelled_at            DateTime?              @db.Timestamptz(6)
   cancellation_reason     String?
   check_in_actual_at      DateTime?              @db.Timestamptz(6)
@@ -32,7 +31,6 @@ model reservations {
   unit_ratings            unit_ratings?
 
   @@unique([tenant_id, reservation_number])
-  @@unique([external_reservation_id, source], map: "reservations_external_reservation_id_source_idx", where: raw("(external_reservation_id IS NOT NULL)"))
   @@index([guest_id])
   @@index([tenant_id, status])
   @@index([unit_id, check_in, check_out], where: raw("(status <> 'CANCELLED'::text)"))

@@ -38,7 +38,6 @@ describe('PrismaReservationRepository', () => {
       checkIn?: string;
       checkOut?: string;
       price?: number;
-      externalId?: string;
       source?: ReservationSourceEnum;
       confirmed?: boolean;
     } = {},
@@ -55,7 +54,6 @@ describe('PrismaReservationRepository', () => {
       source: ReservationSource.create(overrides.source ?? ReservationSourceEnum.DIRECT),
       guestsCount: 2,
       pricePerNight: overrides.price ?? 250000,
-      externalReservationId: overrides.externalId,
     });
 
   const withStatus = async (status: ReservationStatusEnum, overrides = {}) => {
@@ -227,15 +225,8 @@ describe('PrismaReservationRepository', () => {
     expect((await repo.getLifecycleStatusByGuestIds([])).size).toBe(0);
   });
 
-  it('finds by external id and reports active reservations per property and unit', async () => {
-    await withStatus(ReservationStatusEnum.CONFIRMED, { externalId: 'air-999' });
-
-    expect(
-      await repo.findByExternalId(ReservationSourceEnum.DIRECT, 'air-999'),
-    ).not.toBeNull();
-    expect(
-      await repo.findByExternalId(ReservationSourceEnum.MANUAL, 'air-999'),
-    ).toBeNull();
+  it('reports active reservations per property and unit', async () => {
+    await withStatus(ReservationStatusEnum.CONFIRMED);
 
     expect(await repo.existsActiveByPropertyId(ids.tenantId, ids.propertyId)).toBe(true);
     expect(await repo.existsActiveByUnitId(ids.tenantId, ids.unitId)).toBe(true);
