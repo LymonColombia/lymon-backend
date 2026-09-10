@@ -498,4 +498,27 @@ export class MongoReservationRepository
       updatedAt: doc.updatedAt,
     });
   }
+
+  async getLastStayAt(tenantId: string, guestId: string): Promise<Date | null> {
+    const result = await this.reservationModel.aggregate<{
+      lastStayAt: Date | null;
+    }>([
+      {
+        $match: {
+          tenantId: new Types.ObjectId(tenantId),
+          guestId: new Types.ObjectId(guestId),
+          status: ReservationStatusEnum.CHECKED_OUT,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          // Actual checkout when recorded, otherwise the scheduled one.
+          lastStayAt: { $max: { $ifNull: ['$checkOutActualAt', '$checkOut'] } },
+        },
+      },
+    ]);
+
+    return result[0]?.lastStayAt ?? null;
+  }
 }

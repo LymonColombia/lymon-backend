@@ -68,4 +68,5 @@ export interface ReservationRepository {
     fromDate: Date,
     toDate: Date,
   ): Promise<{ year: number; month: number; totalSpend: number }[]>;
+  getLastStayAt(tenantId: string, guestId: string): Promise<Date | null>;
 }
