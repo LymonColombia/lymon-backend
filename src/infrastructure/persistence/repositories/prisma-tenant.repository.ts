@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import {
   Tenant,
@@ -10,6 +9,7 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { PlanType } from '@/domain/tenant/value-objects/plan-type.vo';
 import { TenantTheme } from '@/domain/tenant/value-objects/tenant-theme';
 import { generateUniqueSlug } from '@/domain/shared/utils/slug.util';
+import { uuidv7 } from '@/domain/shared/value-objects/uuid.util';
 import { PrismaService } from '@/infrastructure/persistence/prisma/prisma.service';
 import {
   Prisma,
@@ -57,8 +57,8 @@ export class PrismaTenantRepository implements TenantRepository {
     }
 
     // slug is NOT NULL and derived from the id, so mint the uuid here instead of
-    // letting gen_random_uuid() do it — one insert rather than insert-then-update.
-    const newId = randomUUID();
+    // letting the database's uuidv7() do it — one insert rather than insert-then-update.
+    const newId = uuidv7();
     await this.prisma.tenants.create({
       data: {
         ...data,

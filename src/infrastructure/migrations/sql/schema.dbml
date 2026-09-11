@@ -6,7 +6,7 @@ allowed values show up on each column. Paste into https://dbdiagram.io.'''
 }
 
 Table "tenants" [headercolor: #2E86AB, note: 'src/domain/tenant/entities/tenant.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "name" text [not null, check: `btrim(name) <> ''`]
   "slug" text [unique, not null]
   "owner_email" citext [not null]
@@ -24,7 +24,7 @@ Table "tenants" [headercolor: #2E86AB, note: 'src/domain/tenant/entities/tenant.
 }
 
 Table "roles" [headercolor: #2E86AB, note: 'src/domain/role/entities/role.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "name" text [unique, not null]
   "permissions" "text[]" [not null, default: '{}', note: 'Permission enum, src/domain/role/value-objects/permission.vo.ts']
   "created_at" timestamptz [not null, default: `now()`]
@@ -32,7 +32,7 @@ Table "roles" [headercolor: #2E86AB, note: 'src/domain/role/entities/role.entity
 }
 
 Table "users" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "email" citext [not null]
   "password_hash" text [not null]
@@ -56,7 +56,7 @@ Table "users" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity
 }
 
 Table "user_role_assignments" [headercolor: #2E86AB, note: 'src/domain/user/entities/user.entity.ts (RoleAssignment[]) - one row per scoped resource; the repository regroups them into the array the JWT expects'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "user_id" uuid [not null]
   "role_id" uuid [not null]
@@ -76,7 +76,7 @@ Table "user_role_assignments" [headercolor: #2E86AB, note: 'src/domain/user/enti
 }
 
 Table "properties" [headercolor: #3F7D20, note: 'src/domain/property/entities/property.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "name" text [not null]
   "slug" text [not null]
@@ -107,7 +107,7 @@ Table "properties" [headercolor: #3F7D20, note: 'src/domain/property/entities/pr
 }
 
 Table "units" [headercolor: #3F7D20, note: 'src/domain/unit/entities/unit.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "property_id" uuid [not null]
   "name" text [not null]
@@ -141,7 +141,7 @@ Table "units" [headercolor: #3F7D20, note: 'src/domain/unit/entities/unit.entity
 }
 
 Table "guest_accounts" [headercolor: #B5651D, note: 'src/domain/guest-account/entities/guest-account.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "email" citext [unique, not null]
   "password_hash" text [not null]
   "full_name" text [not null]
@@ -164,7 +164,7 @@ Table "guest_accounts" [headercolor: #B5651D, note: 'src/domain/guest-account/en
 }
 
 Table "guests" [headercolor: #B5651D, note: 'src/domain/guest/entities/guest.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_account_id" uuid
   "document_type" text
@@ -198,7 +198,7 @@ Table "guests" [headercolor: #B5651D, note: 'src/domain/guest/entities/guest.ent
 }
 
 Table "guest_tags" [headercolor: #B5651D, note: 'src/domain/guest-tag/entities/guest-tag.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [note: 'NULL = platform-wide tag']
   "name" text [not null]
   "created_at" timestamptz [not null, default: `now()`]
@@ -218,7 +218,7 @@ Table "guest_tag_assignments" [headercolor: #B5651D, note: 'src/domain/guest/ent
 }
 
 Table "guest_preference_catalog_items" [headercolor: #B5651D, note: 'src/domain/guest-preference/entities/guest-preference-catalog-item.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "category" text [not null, check: `category IN ('DIETARY', 'ROOM', 'ACCESSIBILITY', 'OTHER')`]
   "source" text [not null, check: `source IN ('PREDEFINED', 'CUSTOM')`]
@@ -247,7 +247,7 @@ Table "guest_preference_catalog_items" [headercolor: #B5651D, note: 'src/domain/
 }
 
 Table "guest_notes" [headercolor: #B5651D, note: 'src/domain/guest-note/entities/guest-note.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_id" uuid [not null]
   "note" text [not null]
@@ -264,7 +264,7 @@ Table "guest_notes" [headercolor: #B5651D, note: 'src/domain/guest-note/entities
 }
 
 Table "conversations" [headercolor: #7D3C98, note: 'src/domain/conversation/entities/conversation.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_id" uuid [not null]
   "reservation_id" uuid
@@ -291,7 +291,7 @@ Table "conversations" [headercolor: #7D3C98, note: 'src/domain/conversation/enti
 }
 
 Table "guest_messages" [headercolor: #7D3C98, note: 'src/domain/guest-message/entities/guest-message.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_id" uuid [not null]
   "conversation_id" uuid
@@ -323,7 +323,7 @@ Table "guest_messages" [headercolor: #7D3C98, note: 'src/domain/guest-message/en
 }
 
 Table "guest_emails" [headercolor: #7D3C98, note: 'src/domain/guest-email/entities/guest-email.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_id" uuid [not null]
   "subject" text [not null]
@@ -339,7 +339,7 @@ Table "guest_emails" [headercolor: #7D3C98, note: 'src/domain/guest-email/entiti
 }
 
 Table "reservations" [headercolor: #C0392B, note: 'src/domain/reservation/entities/reservation.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "property_id" uuid [not null]
   "unit_id" uuid [not null]
@@ -374,7 +374,7 @@ Table "reservations" [headercolor: #C0392B, note: 'src/domain/reservation/entiti
 }
 
 Table "unit_ratings" [headercolor: #C0392B, note: 'src/domain/unit-rating/entities/unit-rating.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "unit_id" uuid [not null]
   "guest_id" uuid [not null]
@@ -392,7 +392,7 @@ Table "unit_ratings" [headercolor: #C0392B, note: 'src/domain/unit-rating/entiti
 }
 
 Table "refund_requests" [headercolor: #C0392B, note: 'src/domain/refund/entities/refund-request.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "reservation_id" uuid [not null]
   "guest_id" uuid [not null]
@@ -415,7 +415,7 @@ Table "refund_requests" [headercolor: #C0392B, note: 'src/domain/refund/entities
 }
 
 Table "experiences" [headercolor: #B7950B, note: 'src/domain/experience/entities/experience.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "scope" text [not null, check: `scope IN ('GLOBAL', 'PROPERTY')`]
   "property_id" uuid
@@ -449,7 +449,7 @@ Table "experiences" [headercolor: #B7950B, note: 'src/domain/experience/entities
 }
 
 Table "carts" [headercolor: #B7950B, note: 'src/domain/cart/entities/cart.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "guest_account_id" uuid [not null]
   "experience_items" jsonb [not null, default: '[]']
   "reservation_item" jsonb
@@ -463,7 +463,7 @@ Table "carts" [headercolor: #B7950B, note: 'src/domain/cart/entities/cart.entity
 }
 
 Table "experience_purchases" [headercolor: #B7950B, note: 'src/domain/experience-purchase/entities/experience-purchase.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_account_id" uuid [not null]
   "experience_id" uuid [not null]
@@ -484,7 +484,7 @@ Table "experience_purchases" [headercolor: #B7950B, note: 'src/domain/experience
 }
 
 Table "payment_sessions" [headercolor: #B7950B, note: 'src/domain/payment/entities/payment-session.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "guest_account_id" uuid [not null]
   "cart_id" uuid [not null]
@@ -507,7 +507,7 @@ Table "payment_sessions" [headercolor: #B7950B, note: 'src/domain/payment/entiti
 }
 
 Table "shifts" [headercolor: #16A085, note: 'src/domain/shift/entities/shift.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "property_id" uuid [not null]
   "name" text [not null]
@@ -544,7 +544,7 @@ Table "shift_staff_members" [headercolor: #16A085, note: 'src/domain/shift/entit
 }
 
 Table "incident_reports" [headercolor: #16A085, note: 'src/domain/incident-report/entities/incident-report.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "property_id" uuid [not null]
   "created_by" uuid [not null]
@@ -561,7 +561,7 @@ Table "incident_reports" [headercolor: #16A085, note: 'src/domain/incident-repor
 }
 
 Table "suppliers" [headercolor: #5D6D7E, note: 'src/domain/inventory/entities/supplier.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "name" text [not null]
   "contact_email" citext [not null]
@@ -579,7 +579,7 @@ Table "suppliers" [headercolor: #5D6D7E, note: 'src/domain/inventory/entities/su
 }
 
 Table "inventory_item_categories" [headercolor: #5D6D7E, note: 'src/domain/inventory/entities/inventory-item-category.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "name" text [not null]
   "description" text
@@ -592,7 +592,7 @@ Table "inventory_item_categories" [headercolor: #5D6D7E, note: 'src/domain/inven
 }
 
 Table "inventory_items" [headercolor: #5D6D7E, note: 'src/domain/inventory/entities/inventory-item.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "property_id" uuid [not null]
   "sku" text [not null]
@@ -614,7 +614,7 @@ Table "inventory_items" [headercolor: #5D6D7E, note: 'src/domain/inventory/entit
 }
 
 Table "inventory_movements" [headercolor: #5D6D7E, note: 'src/domain/inventory/entities/inventory-movement.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "property_id" uuid [not null]
   "item_id" uuid [not null]
@@ -632,7 +632,7 @@ Table "inventory_movements" [headercolor: #5D6D7E, note: 'src/domain/inventory/e
 }
 
 Table "audit_logs" [headercolor: #566573, note: 'src/domain/audit/entities/audit-log.entity.ts'] {
-  "id" uuid [pk, default: `gen_random_uuid()`]
+  "id" uuid [pk, default: `uuidv7()`]
   "tenant_id" uuid [not null]
   "user_id" uuid [not null]
   "user_email" citext [not null]

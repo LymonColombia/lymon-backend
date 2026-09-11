@@ -1,6 +1,6 @@
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model carts {
-  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
   guest_account_id String             @unique(map: "carts_guest_account_id_idx", where: raw("(status = 'OPEN'::text)")) @db.Uuid
   experience_items Json               @default("[]")
   reservation_item Json?
@@ -13,7 +13,7 @@ model carts {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model experiences {
-  id                         String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                         String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id                  String                 @db.Uuid
   scope                      String
   property_id                String?                @db.Uuid
@@ -44,7 +44,7 @@ model experiences {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model experience_purchases {
-  id                String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id         String         @db.Uuid
   guest_account_id  String         @db.Uuid
   experience_id     String         @db.Uuid
@@ -68,7 +68,7 @@ model experience_purchases {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model payment_sessions {
-  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                  String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id           String         @db.Uuid
   guest_account_id    String         @db.Uuid
   cart_id             String         @db.Uuid
@@ -92,7 +92,7 @@ model payment_sessions {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model refund_requests {
-  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id      String       @db.Uuid
   reservation_id String       @db.Uuid
   guest_id       String       @db.Uuid

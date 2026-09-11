@@ -1,6 +1,6 @@
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model shifts {
-  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                  String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id           String                @db.Uuid
   property_id         String                @db.Uuid
   name                String
@@ -35,7 +35,7 @@ model shift_staff_members {
 }
 
 model incident_reports {
-  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id       String     @db.Uuid
   property_id     String     @db.Uuid
   created_by      String     @db.Uuid
@@ -54,7 +54,7 @@ model incident_reports {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model audit_logs {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id      String   @db.Uuid
   user_id        String   @db.Uuid
   user_email     String   @db.Citext

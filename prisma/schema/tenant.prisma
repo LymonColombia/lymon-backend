@@ -1,6 +1,6 @@
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model tenants {
-  id                             String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                             String                           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name                           String
   slug                           String                           @unique
   owner_email                    String                           @db.Citext
@@ -41,7 +41,7 @@ model tenants {
 }
 
 model users {
-  id                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                     String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id              String                  @db.Uuid
   email                  String                  @db.Citext
   password_hash          String
@@ -71,7 +71,7 @@ model users {
 }
 
 model roles {
-  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name                  String                  @unique
   permissions           String[]                @default([])
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
@@ -81,7 +81,7 @@ model roles {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model user_role_assignments {
-  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id   String      @db.Uuid
   user_id     String      @db.Uuid
   role_id     String      @db.Uuid

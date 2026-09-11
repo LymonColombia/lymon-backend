@@ -1,6 +1,6 @@
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model properties {
-  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id             String                  @db.Uuid
   name                  String
   slug                  String
@@ -39,7 +39,7 @@ model properties {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model units {
-  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id             String                  @db.Uuid
   property_id           String                  @db.Uuid
   name                  String

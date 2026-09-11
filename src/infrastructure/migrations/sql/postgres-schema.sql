@@ -2,7 +2,7 @@
 -- Source of truth today is MongoDB (mongoose); this is the relational equivalent.
 --
 -- Conventions:
---   * ids            -> uuid, gen_random_uuid() (pgcrypto built in since PG13)
+--   * ids            -> uuid, uuidv7() (built in since PG18; time-ordered, so inserts append to the pk index)
 --   * dates          -> timestamptz
 --   * domain enums   -> text + CHECK (col IN (...)); the enum stays in TS, the DB
 --                       just validates the value. Adding a case = ALTER the CHECK,
@@ -33,7 +33,7 @@ CREATE EXTENSION IF NOT EXISTS citext;  -- case-insensitive emails
 
 -- src/domain/tenant/entities/tenant.entity.ts
 CREATE TABLE tenants (
-  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id             uuid PRIMARY KEY DEFAULT uuidv7(),
   name           text        NOT NULL CHECK (btrim(name) <> ''),
   slug           text        NOT NULL UNIQUE,
   owner_email    citext      NOT NULL,           -- Email VO
@@ -52,7 +52,7 @@ CREATE TABLE tenants (
 
 -- src/domain/role/entities/role.entity.ts  (system-wide, not tenant scoped)
 CREATE TABLE roles (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          uuid PRIMARY KEY DEFAULT uuidv7(),
   name        text         NOT NULL UNIQUE,
   -- values come from the Permission enum, src/domain/role/value-objects/permission.vo.ts
   -- ponytail: no CHECK — rows are seeded from that enum (role-seed.service.ts) and
@@ -66,7 +66,7 @@ CREATE TABLE roles (
 
 -- src/domain/user/entities/user.entity.ts  (staff / owner)
 CREATE TABLE users (
-  id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                    uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id             uuid   NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   email                 citext NOT NULL,
   password_hash         text   NOT NULL,
@@ -95,7 +95,7 @@ CREATE INDEX ON users (tenant_id, deleted_at);
 -- scope target can be a real FK. The repository regroups them into the array the
 -- JWT and ScopeGuard already expect.
 CREATE TABLE user_role_assignments (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id   uuid NOT NULL,
   user_id     uuid NOT NULL,
   role_id     uuid NOT NULL REFERENCES roles(id),   -- plain FK: roles are global
@@ -124,7 +124,7 @@ CREATE INDEX ON user_role_assignments (tenant_id, property_id);
 
 -- src/domain/property/entities/property.entity.ts
 CREATE TABLE properties (
-  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                  uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id           uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   name                text NOT NULL,
   slug                text NOT NULL,
@@ -153,7 +153,7 @@ CREATE INDEX ON properties (tenant_id);
 
 -- src/domain/unit/entities/unit.entity.ts
 CREATE TABLE units (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id              uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id       uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   property_id     uuid NOT NULL,
   name            text NOT NULL,
@@ -201,7 +201,7 @@ ALTER TABLE user_role_assignments
 
 -- src/domain/guest-account/entities/guest-account.entity.ts  (guest portal login)
 CREATE TABLE guest_accounts (
-  id                        uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                        uuid PRIMARY KEY DEFAULT uuidv7(),
   email                     citext NOT NULL UNIQUE,
   password_hash             text   NOT NULL,
   full_name                 text   NOT NULL,
@@ -225,7 +225,7 @@ CREATE TABLE guest_accounts (
 
 -- src/domain/guest/entities/guest.entity.ts  (tenant-side CRM record)
 CREATE TABLE guests (
-  id                 uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                 uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id          uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_account_id   uuid REFERENCES guest_accounts(id) ON DELETE SET NULL,
   document_type      text,                     -- GuestIdentity VO
@@ -258,7 +258,7 @@ CREATE INDEX ON guests (guest_account_id);
 
 -- src/domain/guest-tag/entities/guest-tag.entity.ts
 CREATE TABLE guest_tags (
-  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id         uuid PRIMARY KEY DEFAULT uuidv7(),
   -- NULL = platform-wide tag, seeded for every tenant. The domain calls that tenant
   -- '__platform__' (GuestTag.PLATFORM_TENANT_ID), which is not a uuid and has no
   -- tenants row; the repository maps the sentinel to NULL and back.
@@ -278,7 +278,7 @@ CREATE TABLE guest_tag_assignments (
 
 -- src/domain/guest-preference/entities/guest-preference-catalog-item.entity.ts
 CREATE TABLE guest_preference_catalog_items (
-  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id         uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id  uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   category   text NOT NULL CHECK (category IN ('DIETARY', 'ROOM', 'ACCESSIBILITY', 'OTHER')),
   source     text   NOT NULL CHECK (source IN ('PREDEFINED', 'CUSTOM')),
@@ -302,7 +302,7 @@ CREATE INDEX ON guest_preference_catalog_items (tenant_id);
 
 -- src/domain/guest-note/entities/guest-note.entity.ts
 CREATE TABLE guest_notes (
-  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id         uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id  uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_id   uuid NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
   note       text NOT NULL,
@@ -321,7 +321,7 @@ CREATE INDEX ON guest_notes (guest_id) WHERE deleted_at IS NULL;
 
 -- src/domain/conversation/entities/conversation.entity.ts
 CREATE TABLE conversations (
-  id                     uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                     uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id              uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_id               uuid NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
   reservation_id         uuid,  -- FK added after reservations exists
@@ -343,7 +343,7 @@ CREATE INDEX ON conversations (guest_id);
 
 -- src/domain/guest-message/entities/guest-message.entity.ts
 CREATE TABLE guest_messages (
-  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                  uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id           uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_id            uuid NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
   conversation_id     uuid REFERENCES conversations(id) ON DELETE SET NULL,
@@ -375,7 +375,7 @@ CREATE UNIQUE INDEX ON guest_messages (provider, provider_message_id)
 
 -- src/domain/guest-email/entities/guest-email.entity.ts
 CREATE TABLE guest_emails (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id   uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_id    uuid NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
   subject     text NOT NULL,
@@ -393,7 +393,7 @@ CREATE INDEX ON guest_emails (tenant_id, guest_id, created_at DESC);
 
 -- src/domain/reservation/entities/reservation.entity.ts
 CREATE TABLE reservations (
-  id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                      uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id               uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   property_id             uuid NOT NULL,
   unit_id                 uuid NOT NULL,
@@ -439,7 +439,7 @@ ALTER TABLE guest_messages ADD FOREIGN KEY (reservation_id) REFERENCES reservati
 
 -- src/domain/unit-rating/entities/unit-rating.entity.ts
 CREATE TABLE unit_ratings (
-  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id             uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id      uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   unit_id        uuid NOT NULL REFERENCES units(id) ON DELETE CASCADE,
   guest_id       uuid NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
@@ -456,7 +456,7 @@ CREATE INDEX ON unit_ratings (unit_id) WHERE deleted_at IS NULL;
 
 -- src/domain/refund/entities/refund-request.entity.ts
 CREATE TABLE refund_requests (
-  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id             uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id      uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   reservation_id uuid NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
   guest_id       uuid NOT NULL REFERENCES guests(id),
@@ -480,7 +480,7 @@ CREATE INDEX ON refund_requests (tenant_id, status);
 
 -- src/domain/experience/entities/experience.entity.ts
 CREATE TABLE experiences (
-  id                         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                         uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id                  uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   scope                      text NOT NULL CHECK (scope IN ('GLOBAL', 'PROPERTY')),
   property_id                uuid REFERENCES properties(id) ON DELETE CASCADE,
@@ -512,7 +512,7 @@ CREATE INDEX ON experiences (tenant_id, status) WHERE deleted_at IS NULL;
 -- ponytail: jsonb — the cart is short-lived and always read whole. Promote to a
 -- cart_items table only if you start querying across carts by experience.
 CREATE TABLE carts (
-  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id               uuid PRIMARY KEY DEFAULT uuidv7(),
   guest_account_id uuid NOT NULL REFERENCES guest_accounts(id) ON DELETE CASCADE,
   experience_items jsonb NOT NULL DEFAULT '[]',
   reservation_item jsonb,
@@ -525,7 +525,7 @@ CREATE UNIQUE INDEX ON carts (guest_account_id) WHERE status = 'OPEN';
 
 -- src/domain/experience-purchase/entities/experience-purchase.entity.ts
 CREATE TABLE experience_purchases (
-  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id         uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_account_id  uuid NOT NULL REFERENCES guest_accounts(id),
   experience_id     uuid NOT NULL REFERENCES experiences(id),
@@ -546,7 +546,7 @@ CREATE INDEX ON experience_purchases (guest_account_id);
 
 -- src/domain/payment/entities/payment-session.entity.ts
 CREATE TABLE payment_sessions (
-  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id                  uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id           uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   guest_account_id    uuid NOT NULL REFERENCES guest_accounts(id),
   cart_id             uuid NOT NULL REFERENCES carts(id),
@@ -572,7 +572,7 @@ CREATE UNIQUE INDEX ON payment_sessions (provider_reference)
 
 -- src/domain/shift/entities/shift.entity.ts
 CREATE TABLE shifts (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id              uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id       uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   property_id     uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   name            text NOT NULL,
@@ -602,7 +602,7 @@ CREATE INDEX ON shift_staff_members (user_id);
 
 -- src/domain/incident-report/entities/incident-report.entity.ts
 CREATE TABLE incident_reports (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id              uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id       uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   property_id     uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   created_by      uuid NOT NULL REFERENCES users(id),
@@ -622,7 +622,7 @@ CREATE INDEX ON incident_reports (property_id, created_at DESC)
 
 -- src/domain/inventory/entities/supplier.entity.ts
 CREATE TABLE suppliers (
-  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id            uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id     uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   name          text   NOT NULL,
   contact_email citext NOT NULL,
@@ -638,7 +638,7 @@ CREATE UNIQUE INDEX ON suppliers (tenant_id, nit) WHERE deleted_at IS NULL;
 
 -- src/domain/inventory/entities/inventory-item-category.entity.ts
 CREATE TABLE inventory_item_categories (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id   uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   name        text NOT NULL,
   description text,
@@ -649,7 +649,7 @@ CREATE TABLE inventory_item_categories (
 
 -- src/domain/inventory/entities/inventory-item.entity.ts
 CREATE TABLE inventory_items (
-  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id            uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id     uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   property_id   uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   sku           text NOT NULL,
@@ -673,7 +673,7 @@ CREATE INDEX ON inventory_items (tenant_id)
 
 -- src/domain/inventory/entities/inventory-movement.entity.ts  (append-only ledger)
 CREATE TABLE inventory_movements (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id   uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   item_id     uuid NOT NULL REFERENCES inventory_items(id) ON DELETE CASCADE,
@@ -693,7 +693,7 @@ CREATE INDEX ON inventory_movements (item_id, created_at DESC);
 
 -- src/domain/audit/entities/audit-log.entity.ts  (append-only)
 CREATE TABLE audit_logs (
-  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id             uuid PRIMARY KEY DEFAULT uuidv7(),
   tenant_id      uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   user_id        uuid   NOT NULL,
   user_email     citext NOT NULL,

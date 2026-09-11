@@ -1,4 +1,28 @@
-import { isUuid } from '@/domain/shared/value-objects/uuid.util';
+import { isUuid, uuidv7 } from '@/domain/shared/value-objects/uuid.util';
+
+describe('uuidv7', () => {
+  it('is a version 7, RFC 9562 variant uuid carrying the current millisecond', () => {
+    const before = Date.now();
+    const id = uuidv7();
+    const after = Date.now();
+
+    expect(isUuid(id)).toBe(true);
+    expect(id[14]).toBe('7');
+    expect('89ab').toContain(id[19]);
+    const ms = parseInt(id.replace(/-/g, '').slice(0, 12), 16);
+    expect(ms).toBeGreaterThanOrEqual(before);
+    expect(ms).toBeLessThanOrEqual(after);
+  });
+
+  it('sorts by creation time across milliseconds', () => {
+    const now = jest.spyOn(Date, 'now');
+    now.mockReturnValueOnce(1_700_000_000_000).mockReturnValueOnce(1_700_000_000_001);
+    const [first, second] = [uuidv7(), uuidv7()];
+    now.mockRestore();
+
+    expect(first < second).toBe(true);
+  });
+});
 
 describe('isUuid', () => {
   it('accepts a canonical uuid in either case', () => {

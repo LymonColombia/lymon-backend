@@ -1,6 +1,6 @@
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model inventory_items {
-  id                        String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                        String                    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id                 String                    @db.Uuid
   property_id               String                    @db.Uuid
   sku                       String
@@ -25,7 +25,7 @@ model inventory_items {
 }
 
 model inventory_item_categories {
-  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id       String            @db.Uuid
   name            String
   description     String?
@@ -39,7 +39,7 @@ model inventory_item_categories {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model inventory_movements {
-  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id       String          @db.Uuid
   property_id     String          @db.Uuid
   item_id         String          @db.Uuid
@@ -58,7 +58,7 @@ model inventory_movements {
 }
 
 model suppliers {
-  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
   tenant_id       String            @db.Uuid
   name            String
   contact_email   String            @db.Citext

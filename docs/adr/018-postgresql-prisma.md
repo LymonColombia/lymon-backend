@@ -41,9 +41,10 @@ adapter `@prisma/adapter-pg`, sin motor Rust).
   migraciones (`prisma/migrations/0_init/migration.sql`). **Hay que revisar cada
   migración generada antes de aplicarla.** Los índices parciales sí sobreviven a la
   introspección (`@@index(..., where: raw(...))`).
-- Los ids son `uuid` con `gen_random_uuid()`; los genera la base de datos, salvo
+- Los ids son `uuid` v7 con `uuidv7()`: ordenados por tiempo, así cada inserción
+  va al final del índice de la llave primaria. Los genera la base de datos, salvo
   donde el dominio ya los creaba (`ConversationId`, `GuestEmailId`,
-  `GuestMessageId`).
+  `GuestMessageId`), que usan `uuidv7()` de `uuid.util.ts`.
 - El aislamiento multi-tenant se declara con llaves foráneas compuestas —
   `reservations (tenant_id, unit_id) → units (tenant_id, id)` — de modo que una
   referencia cruzada entre tenants falla con `23503`. Los repositorios **igual**

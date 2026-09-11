@@ -1,10 +1,10 @@
-import { randomUUID } from 'node:crypto';
+import { uuidv7 } from '@/domain/shared/value-objects/uuid.util';
 
 export class ConversationId {
   private constructor(private readonly value: string) {}
 
   static create(): ConversationId {
-    return new ConversationId(randomUUID());
+    return new ConversationId(uuidv7());
   }
 
   static createFromString(value: string): ConversationId {
