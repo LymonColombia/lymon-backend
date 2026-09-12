@@ -32,7 +32,14 @@
     "test:all": "pnpm run test && pnpm run test:security && pnpm run test:performance",
     "sonar": "pnpm run test:cov && sonar-scanner",
     "postinstall": "prisma generate",
-    "test:db": "jest --config ./test/jest-integration.json --runInBand"
+    "test:db": "jest --config ./test/jest-integration.json --runInBand",
+    "dev": "pnpm db:up && pnpm db:deploy && pnpm start:dev",
+    "dev:fresh": "pnpm db:down && pnpm dev",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down -v",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset --force"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1047.0",

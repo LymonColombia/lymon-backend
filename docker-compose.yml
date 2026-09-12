@@ -1,13 +1,12 @@
-# Local Postgres to try the schema against:
+# Local Postgres for development. The app and the Prisma CLI run on the host; only the
+# database is containerised, and it is disposable — its contents are rebuilt from
+# prisma/migrations, never from a checked-in SQL dump.
 #
-#   cd src/infrastructure/migrations/sql
-#   docker compose up -d --wait
-#   docker compose exec -T postgres psql -U lymon -d lymon -v ON_ERROR_STOP=1 < schema-smoke.sql
-#
-# postgres-schema.sql runs automatically on FIRST start only (init scripts are skipped
-# once the data volume exists). After editing the schema:
-#
-#   docker compose down -v && docker compose up -d --wait
+#   pnpm db:up       start it
+#   pnpm db:deploy   apply pending migrations
+#   pnpm db:migrate  create a migration from prisma/schema changes, and apply it
+#   pnpm db:reset    drop everything and replay the migration chain from scratch
+#   pnpm db:down     stop it and delete the volume
 #
 # Port 5433, not 5432, so it does not fight whatever else you have listening.
 services:
@@ -21,15 +20,14 @@ services:
     ports:
       - '5433:5432'
     volumes:
-      - ./postgres-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       # postgres:18+ keeps its data in a versioned subdirectory, so the mount goes one
       # level up at /var/lib/postgresql (mounting .../data makes the image refuse to start)
       - lymon-pg-data:/var/lib/postgresql
     healthcheck:
       # -h 127.0.0.1 on purpose: during init the entrypoint runs a temporary server on
       # the unix socket only, so a socket-based pg_isready reports ready while the
-      # schema is still loading and the server is about to restart. TCP only comes up
-      # when the real one does.
+      # server is still starting and about to restart. TCP only comes up when the real
+      # one does.
       test: ['CMD-SHELL', 'pg_isready -U lymon -d lymon -h 127.0.0.1']
       interval: 3s
       retries: 20

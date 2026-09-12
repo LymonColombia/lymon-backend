@@ -53,9 +53,8 @@ permission-based access control embedded in JWTs.
 
 - Node.js 20+
 - [pnpm](https://pnpm.io/)
-- A PostgreSQL 18 instance. For local work:
-  `docker compose -f src/infrastructure/migrations/sql/docker-compose.yml up -d --wait`
-  (listens on port 5433 and applies the schema on first start)
+- A PostgreSQL 18 instance. For local work: `pnpm db:up`
+  (Docker, listens on port 5433; fill it with `pnpm db:deploy`)
 - (Optional, for file uploads) A Cloudflare R2 bucket
 - (Optional, for transactional email) A Brevo account
 
@@ -100,7 +99,20 @@ pnpm test:db        # repository tests against a real Postgres (needs Docker)
 pnpm test:e2e       # end-to-end tests
 pnpm test:cov       # unit tests with coverage
 pnpm lint           # eslint --fix
+
+pnpm db:up          # start the local Postgres container
+pnpm db:down        # stop it and delete its volume
+pnpm db:deploy      # apply pending migrations
+pnpm db:migrate     # create a migration from prisma/schema changes, and apply it
+pnpm db:reset       # drop everything and replay the migration chain
 ```
+
+### Changing the schema
+
+`prisma/schema/*.prisma` is the source of truth. Edit a model, run `pnpm db:migrate
+--name <what_changed>`, then **read the generated SQL** before committing it — CHECK
+constraints live only in the migration files, so a generated migration can silently drop
+them. Commit the schema change and its migration together.
 
 Once running, the API is available at `http://localhost:<PORT>` and
 interactive docs at `http://localhost:<PORT>/api/docs`.

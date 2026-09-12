@@ -67,11 +67,12 @@
    ⚠️ **IMPORTANTE:** levanta Postgres antes de arrancar la API:
 
    ```bash
-   docker compose -f src/infrastructure/migrations/sql/docker-compose.yml up -d --wait
+   pnpm db:up
+   pnpm db:deploy
    ```
 
-   Escucha en el puerto **5433** (no 5432) y aplica `postgres-schema.sql` en el primer
-   arranque. Para recrearla desde cero: `./scripts/db-reset.sh`.
+   Escucha en el puerto **5433** (no 5432). La base arranca vacía y se llena aplicando
+   las migraciones de `prisma/migrations`. Para recrearla desde cero: `pnpm db:reset`.
 
 3. **Compilar el proyecto:**
    \`\`\`bash
@@ -266,9 +267,9 @@ Can't reach database server at 127.0.0.1:5433
 **Solución:**
 
 1. Verifica que el contenedor esté arriba: `docker ps | grep lymon-pg`
-2. Si no lo está: `docker compose -f src/infrastructure/migrations/sql/docker-compose.yml up -d --wait`
+2. Si no lo está: `pnpm db:up`
 3. Confirma que `DATABASE_URL` en `.env` apunta al puerto **5433**
-4. Si el esquema cambió, recrea la base: `./scripts/db-reset.sh`
+4. Si el esquema cambió, aplica las migraciones: `pnpm db:deploy` (o `pnpm db:reset`)
 
 ### Error de ejecución de scripts en PowerShell
 
