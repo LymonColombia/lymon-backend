@@ -1,4 +1,4 @@
--- Does the schema hold? Run it against a database that already has postgres-schema.sql:
+-- Does the schema hold? Run it against a database migrated with `pnpm db:deploy`:
 --   docker compose exec -T postgres psql -U lymon -d lymon -v ON_ERROR_STOP=1 < schema-smoke.sql
 -- Silence + "SMOKE OK" = every constraint below fired the way it should.
 -- Everything runs in one transaction and rolls back, so it leaves no rows behind.
@@ -42,7 +42,7 @@ SELECT tenant_id, id, 'Unit', 'd', 1, 4, 2, 1, 250000 FROM properties;
 INSERT INTO guests (tenant_id, full_name, primary_email)
 SELECT id, 'Guest', slug || '.guest@example.com' FROM tenants;
 
--- roles are global and schema-seed.sql may have put them there already
+-- roles are global and the boot seed may have put them there already
 INSERT INTO roles (name, permissions) VALUES ('STAFF', ARRAY['PROPERTY_VIEW'])
 ON CONFLICT (name) DO NOTHING;
 
@@ -130,7 +130,7 @@ END $$;
 DO $$
 DECLARE got bigint[];
 BEGIN
-  -- scoped to this tenant: schema-seed.sql may have left rows under other tenants
+  -- scoped to this tenant: the boot seed may have left rows under other tenants
   SELECT array_agg(r.reservation_number ORDER BY r.reservation_number) INTO got
   FROM reservations r JOIN a ON a.tenant_id = r.tenant_id;
   IF got <> ARRAY[1, 2, 3]::bigint[] THEN

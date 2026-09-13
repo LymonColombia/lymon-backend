@@ -35,6 +35,8 @@ adapter `@prisma/adapter-pg`, sin motor Rust).
   `postgres-schema.sql`. Introspectado una sola vez desde
   `src/infrastructure/migrations/sql/postgres-schema.sql`. A partir de ahí
   `prisma migrate dev` gobierna los cambios.
+  `postgres-schema.sql` se eliminó después: `prisma/migrations/` es la única fuente
+  del esquema, y `pnpm test:db` construye su base con `prisma migrate deploy`.
   `prisma7.config.ts` apunta al **directorio** `prisma/schema`: apuntar a un archivo
   hace que Prisma ignore los demás `.prisma` en silencio, sin error.
 - Los `CHECK` no se pueden expresar en `schema.prisma`: viven en el SQL de las
@@ -86,6 +88,7 @@ repositorio quedaron intactos, y con ellos los handlers y controladores.
 
 ## Referencias
 
-- `src/infrastructure/migrations/sql/postgres-schema.sql` — esquema y convenciones
+- `prisma/schema/` — esquema; convenciones al inicio de `schema.prisma`
+- `prisma/migrations/` — historial del esquema, incluidos los `CHECK`
 - `src/infrastructure/migrations/sql/schema-smoke.sql` — pruebas de restricciones
 - `test/integration/` — repositorios verificados contra Postgres real (`pnpm test:db`)

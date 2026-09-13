@@ -234,7 +234,7 @@ El token se obtiene al hacer login o al registrarse.
 
 ## 📊 Tablas de PostgreSQL
 
-El esquema vive en `src/infrastructure/migrations/sql/postgres-schema.sql`:
+El esquema vive en `prisma/schema/` y cada cambio se aplica con una migración en `prisma/migrations/`:
 
 - **users** - Usuarios de la plataforma
 - **hotels** - Hoteles registrados

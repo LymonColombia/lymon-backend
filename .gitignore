@@ -84,3 +84,5 @@ CLAUDE.md
 
 # Prisma client (generated; `pnpm prisma generate` runs on postinstall)
 /src/infrastructure/persistence/prisma/generated
+
+*.tsbuildinfo

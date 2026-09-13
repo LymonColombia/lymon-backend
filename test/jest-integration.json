@@ -1,5 +1,5 @@
 {
-  "//": "Repository tests against a throwaway <db>_test database, created by globalSetup from postgres-schema.sql. Never touches the development database. Run: pnpm test:db",
+  "//": "Repository tests against a throwaway <db>_test database, created by globalSetup from prisma/migrations. Never touches the development database. Run: pnpm test:db",
   "moduleFileExtensions": [
     "js",
     "json",
