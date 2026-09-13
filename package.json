@@ -16,7 +16,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:cov:scope": "jest --coverage --coverageDirectory=coverage/scope --testPathPatterns=\"test/application/(incident-report/(create-incident-report|get-incident-reports-by-property|update-incident-report)|tenant/(update-tenant-profile|get-tenant-profile)|auth/login|property/(create-property|get-properties-by-tenant)|tenant/register-tenant|user/verify-email|role/get-system-roles|guest-auth/(recover-guest-password|verify-guest-email|login-guest|register-guest-account))|test/infrastructure/(auth/guards/(jwt-auth|permission)|persistence/repositories/(mongo-incident-report|mongo-tenant|mongo-role|mongo-guest-account))|test/presentation/controllers/(incident-report|tenant|role|guest-auth)|test/domain/(tenant/value-objects/plan-type|guest-account/entities/guest-account.entity|guest-account/value-objects/guest-account-id)\"",
+    "test:cov:scope": "jest --coverage --coverageDirectory=coverage/scope --testPathPatterns=\"test/application/(incident-report/(create-incident-report|get-incident-reports-by-property|update-incident-report)|tenant/(update-tenant-profile|get-tenant-profile)|auth/login|property/(create-property|get-properties-by-tenant)|tenant/register-tenant|user/verify-email|role/get-system-roles|guest-auth/(recover-guest-password|verify-guest-email|login-guest|register-guest-account))|test/infrastructure/auth/guards/(jwt-auth|permission)|test/presentation/controllers/(incident-report|tenant|role|guest-auth)|test/domain/(tenant/value-objects/plan-type|guest-account/entities/guest-account.entity|guest-account/value-objects/guest-account-id)\"",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:security": "cypress run --spec 'cypress/security/**/*.cy.ts'",
@@ -30,7 +30,16 @@
     "test:perf:smoke": "node performance/k6/dist/run-k6.mjs performance/k6/dist/smoke-auth-login.js",
     "test:performance": "pnpm run test:perf:smoke && pnpm run test:perf:properties && pnpm run test:perf:units && pnpm run test:perf:inventory && pnpm run test:perf:audit-logs && pnpm run test:perf:incident-reports && pnpm run test:perf:reservations",
     "test:all": "pnpm run test && pnpm run test:security && pnpm run test:performance",
-    "sonar": "pnpm run test:cov && sonar-scanner"
+    "sonar": "pnpm run test:cov && sonar-scanner",
+    "postinstall": "prisma generate",
+    "test:db": "jest --config ./test/jest-integration.json --runInBand",
+    "dev": "pnpm db:up && pnpm db:deploy && pnpm start:dev",
+    "dev:fresh": "pnpm db:down && pnpm dev",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down -v",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset --force"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1047.0",
@@ -43,27 +52,25 @@
     "@nestjs/cqrs": "^11.0.3",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/jwt": "^11.0.2",
-    "@nestjs/mongoose": "^11.0.4",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.1.1",
     "@nestjs/swagger": "^11.2.5",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "@types/nodemailer": "^6.4.14",
     "axios": "^1.16.1",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "email-validator": "^2.0.4",
-    "mongodb": "^7.0.0",
-    "mongoose": "^9.1.5",
     "nodemailer": "^6.9.8",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "swagger-ui-dist": "^5.31.0",
-    "uuid": "^13.0.0"
+    "swagger-ui-dist": "^5.31.0"
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^7.1.0",
@@ -87,6 +94,7 @@
     "globals": "^16.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
+    "prisma": "7.10.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -124,7 +132,8 @@
       "src/**/*.ts",
       "!src/**/*.d.ts",
       "!src/main.ts",
-      "!src/**/*.module.ts"
+      "!src/**/*.module.ts",
+      "!src/infrastructure/persistence/prisma/generated/**"
     ],
     "coverageDirectory": "./coverage",
     "coverageReporters": [
@@ -132,6 +141,17 @@
       "text",
       "text-summary"
     ],
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/test/integration/"
+    ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma"
+    ]
   }
 }

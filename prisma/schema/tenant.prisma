@@ -1,0 +1,99 @@
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tenants {
+  id                             String                           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name                           String
+  slug                           String                           @unique
+  owner_email                    String                           @db.Citext
+  plan                           String
+  email_verified                 Boolean                          @default(false)
+  contact_phone                  String?
+  address                        String?
+  description                    String?
+  logo_key                       String?
+  theme                          Json?
+  trial_ends_at                  DateTime?                        @db.Timestamptz(6)
+  created_at                     DateTime                         @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime                         @default(now()) @db.Timestamptz(6)
+  deleted_at                     DateTime?                        @db.Timestamptz(6)
+  audit_logs                     audit_logs[]
+  conversations                  conversations[]
+  experience_purchases           experience_purchases[]
+  experiences                    experiences[]
+  guest_emails                   guest_emails[]
+  guest_messages                 guest_messages[]
+  guest_notes                    guest_notes[]
+  guest_preference_catalog_items guest_preference_catalog_items[]
+  guest_tags                     guest_tags[]
+  guests                         guests[]
+  incident_reports               incident_reports[]
+  inventory_item_categories      inventory_item_categories[]
+  inventory_items                inventory_items[]
+  inventory_movements            inventory_movements[]
+  payment_sessions               payment_sessions[]
+  properties                     properties[]
+  refund_requests                refund_requests[]
+  reservations                   reservations[]
+  shifts                         shifts[]
+  suppliers                      suppliers[]
+  unit_ratings                   unit_ratings[]
+  units                          units[]
+  users                          users[]
+}
+
+model users {
+  id                     String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id              String                  @db.Uuid
+  email                  String                  @db.Citext
+  password_hash          String
+  is_owner               Boolean                 @default(false)
+  email_verified         Boolean                 @default(false)
+  full_name              String?
+  document               String?
+  tutorial_completed     Boolean                 @default(false)
+  reset_password_token   String?
+  reset_password_expires DateTime?               @db.Timestamptz(6)
+  password_changed_at    DateTime?               @db.Timestamptz(6)
+  created_at             DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at             DateTime?               @db.Timestamptz(6)
+  guest_emails           guest_emails[]
+  guest_notes            guest_notes[]
+  incident_reports       incident_reports[]
+  refund_requests        refund_requests[]
+  shift_staff_members    shift_staff_members[]
+  shifts                 shifts[]
+  user_role_assignments  user_role_assignments[]
+  tenants                tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, email], map: "users_unique_active_email_tenant", where: raw("(deleted_at IS NULL)"))
+  @@index([tenant_id, deleted_at])
+}
+
+model roles {
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name                  String                  @unique
+  permissions           String[]                @default([])
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  user_role_assignments user_role_assignments[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_role_assignments {
+  id          String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id   String      @db.Uuid
+  user_id     String      @db.Uuid
+  role_id     String      @db.Uuid
+  scope_type  String
+  property_id String?     @db.Uuid
+  unit_id     String?     @db.Uuid
+  roles       roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties  properties? @relation(fields: [tenant_id, property_id], references: [tenant_id, id], onDelete: Cascade, onUpdate: NoAction)
+  units       units?      @relation(fields: [tenant_id, property_id, unit_id], references: [tenant_id, property_id, id], onDelete: Cascade, onUpdate: NoAction)
+  users       users       @relation(fields: [tenant_id, user_id], references: [tenant_id, id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, role_id, scope_type, property_id, unit_id])
+  @@index([tenant_id, property_id])
+  @@index([user_id])
+}

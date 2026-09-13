@@ -1,0 +1,128 @@
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guests {
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  guest_account_id      String?                 @db.Uuid
+  document_type         String?
+  document_number       String?
+  country_code          String?
+  first_name            String?
+  last_name             String?
+  full_name             String
+  primary_email         String                  @db.Citext
+  phone                 String?
+  status                String                  @default("active")
+  preferences           Json                    @default("[]")
+  total_bookings        Int                     @default(0)
+  total_nights          Int                     @default(0)
+  total_spend           Decimal                 @default(0) @db.Decimal(14, 2)
+  last_stay_at          DateTime?               @db.Timestamptz(6)
+  last_property_id      String?                 @db.Uuid
+  last_unit_id          String?                 @db.Uuid
+  pending_email         String?                 @db.Citext
+  email_change_token    String?
+  email_change_expiry   DateTime?               @db.Timestamptz(6)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  conversations         conversations[]
+  guest_emails          guest_emails[]
+  guest_messages        guest_messages[]
+  guest_notes           guest_notes[]
+  guest_tag_assignments guest_tag_assignments[]
+  guest_accounts        guest_accounts?         @relation(fields: [guest_account_id], references: [id], onUpdate: NoAction)
+  properties            properties?             @relation(fields: [last_property_id], references: [id], onUpdate: NoAction)
+  units                 units?                  @relation(fields: [last_unit_id], references: [id], onUpdate: NoAction)
+  tenants               tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  refund_requests       refund_requests[]
+  reservations          reservations[]
+  unit_ratings          unit_ratings[]
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, primary_email])
+  @@index([guest_account_id])
+  @@index([tenant_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_accounts {
+  id                        String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  email                     String                 @unique @db.Citext
+  password_hash             String
+  full_name                 String
+  first_name                String?
+  last_name                 String?
+  phone                     String?
+  status                    String                 @default("pending_verification")
+  email_verified            Boolean                @default(false)
+  email_verification_token  String?
+  email_verification_expiry DateTime?              @db.Timestamptz(6)
+  password_reset_token      String?
+  password_reset_expiry     DateTime?              @db.Timestamptz(6)
+  password_changed_at       DateTime?              @db.Timestamptz(6)
+  profile_photo_key         String?
+  pending_email             String?                @db.Citext
+  email_change_token        String?
+  email_change_expiry       DateTime?              @db.Timestamptz(6)
+  created_at                DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime               @default(now()) @db.Timestamptz(6)
+  carts                     carts?
+  experience_purchases      experience_purchases[]
+  guests                    guests[]
+  payment_sessions          payment_sessions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_notes {
+  id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id  String    @db.Uuid
+  guest_id   String    @db.Uuid
+  note       String
+  type       String    @default("general")
+  status     String    @default("not_pinned")
+  created_by String    @db.Uuid
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at DateTime? @db.Timestamptz(6)
+  users      users     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  guests     guests    @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants    tenants   @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([guest_id], where: raw("(deleted_at IS NULL)"))
+}
+
+model guest_tags {
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id             String?                 @db.Uuid
+  name                  String
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  guest_tag_assignments guest_tag_assignments[]
+  tenants               tenants?                @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, name])
+}
+
+model guest_tag_assignments {
+  guest_id     String     @db.Uuid
+  guest_tag_id String     @db.Uuid
+  guests       guests     @relation(fields: [guest_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  guest_tags   guest_tags @relation(fields: [guest_tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([guest_id, guest_tag_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model guest_preference_catalog_items {
+  id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id  String   @db.Uuid
+  category   String
+  source     String
+  key        String?
+  label      String?
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  tenants    tenants  @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, category, key])
+  @@index([tenant_id])
+}

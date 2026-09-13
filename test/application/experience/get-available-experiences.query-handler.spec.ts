@@ -81,7 +81,7 @@ describe('GetAvailableExperiencesQueryHandler', () => {
 
   describe('with tenantId + propertyId filters', () => {
     it('passes both value objects to repository', async () => {
-      const propertyId = '65f1a1a2b3c4d5e6f7a8b902';
+      const propertyId = '65f1a1a2-b3c4-d5e6-f7a8-b90200000000';
       experienceRepository.findAvailableForGuestPaginated.mockResolvedValue({
         experiences: [],
         total: 0,
@@ -107,7 +107,7 @@ describe('GetAvailableExperiencesQueryHandler', () => {
 
   describe('with propertyId filter only', () => {
     it('passes only the propertyId filter to repository', async () => {
-      const propertyId = '65f1a1a2b3c4d5e6f7a8b902';
+      const propertyId = '65f1a1a2-b3c4-d5e6-f7a8-b90200000000';
       experienceRepository.findAvailableForGuestPaginated.mockResolvedValue({
         experiences: [],
         total: 0,

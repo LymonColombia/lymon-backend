@@ -13,7 +13,6 @@ export class ReservationDto {
   pricePerNight: number;
   totalPrice: number;
   notes: string | null;
-  externalReservationId: string | null;
   cancelledAt: Date | null;
   cancellationReason: string | null;
   checkInActualAt: Date | null;

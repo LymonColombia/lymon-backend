@@ -36,31 +36,31 @@ describe('RemoveSupplierFromItemHandler', () => {
   it('removes the supplier from an inventory item', async () => {
     propertyRepository.findById.mockResolvedValue(
       makeProperty({
-        id: '65f1a1a2b3c4d5e6f7a8b9c1',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.findById.mockResolvedValue(
       makeInventoryItem({
         id: 'item-123',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-        propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
-        supplierId: '65f1a1a2b3c4d5e6f7a8b9c4',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+        supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
       }),
     );
     supplierRepository.findById.mockResolvedValue(
       makeSupplier({
-        id: '65f1a1a2b3c4d5e6f7a8b9c4',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.save.mockResolvedValue('item-123');
-    supplierRepository.save.mockResolvedValue('65f1a1a2b3c4d5e6f7a8b9c4');
+    supplierRepository.save.mockResolvedValue('65f1a1a2-b3c4-d5e6-f7a8-b9c400000000');
 
     const result = await handler.execute(
       new RemoveSupplierFromItemCommand(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
-        '65f1a1a2b3c4d5e6f7a8b9c1',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
         'item-123',
         'admin-user-id',
         'admin@example.com',
@@ -81,23 +81,23 @@ describe('RemoveSupplierFromItemHandler', () => {
   it('removes the supplier without touching supplier persistence when none is linked', async () => {
     propertyRepository.findById.mockResolvedValue(
       makeProperty({
-        id: '65f1a1a2b3c4d5e6f7a8b9c1',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.findById.mockResolvedValue(
       makeInventoryItem({
         id: 'item-123',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-        propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
       }),
     );
     inventoryItemRepository.save.mockResolvedValue('item-123');
 
     await handler.execute(
       new RemoveSupplierFromItemCommand(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
-        '65f1a1a2b3c4d5e6f7a8b9c1',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
         'item-123',
         'admin-user-id',
         'admin@example.com',
@@ -111,8 +111,8 @@ describe('RemoveSupplierFromItemHandler', () => {
   it('throws NotFoundException when the item does not exist', async () => {
     propertyRepository.findById.mockResolvedValue(
       makeProperty({
-        id: '65f1a1a2b3c4d5e6f7a8b9c1',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.findById.mockResolvedValue(null);
@@ -120,8 +120,8 @@ describe('RemoveSupplierFromItemHandler', () => {
     await expect(
       handler.execute(
         new RemoveSupplierFromItemCommand(
-          '65f1a1a2b3c4d5e6f7a8b9c0',
-          '65f1a1a2b3c4d5e6f7a8b9c1',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
           'item-123',
           'admin-user-id',
           'admin@example.com',

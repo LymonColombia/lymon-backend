@@ -89,7 +89,6 @@ export class CreateReservationHandler implements ICommandHandler<CreateReservati
       guestsCount: command.guestsCount,
       pricePerNight: unit.getPricePerNight(),
       notes: command.notes,
-      externalReservationId: command.externalReservationId,
     });
 
     const reservationId = await this.reservationRepository.save(reservation);

@@ -4,9 +4,9 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { UserId } from '@/domain/user/entities/user.entity';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 
-const TENANT_ID = TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0');
-const STAFF_ID = UserId.createFromString('65f1a1a2b3c4d5e6f7a8b9c1');
-const PROPERTY_ID = PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c3');
+const TENANT_ID = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+const STAFF_ID = UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000');
+const PROPERTY_ID = PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000');
 
 function buildCreateParams(overrides?: { weekdays?: number[] }) {
   return {
@@ -29,7 +29,7 @@ function buildCreateParams(overrides?: { weekdays?: number[] }) {
 
 function reconstitute(overrides?: { weekdays?: number[] | null }) {
   return Shift.reconstitute({
-    id: ShiftId.createFromString('65f1a1a2b3c4d5e6f7a8b9d0'),
+    id: ShiftId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d000000000'),
     tenantId: TENANT_ID,
     staffMemberIds: [STAFF_ID],
     propertyId: PROPERTY_ID,

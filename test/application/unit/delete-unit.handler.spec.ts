@@ -12,9 +12,9 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import { ExternalIds } from '@/domain/unit/value-objects/external-ids.vo';
 
-const UNIT_ID = '65f1a1a2b3c4d5e6f7a8b9c8';
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
-const PROPERTY_ID = '65f1a1a2b3c4d5e6f7a8b9c1';
+const UNIT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c800000000';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+const PROPERTY_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000';
 
 function makeUnit(overrides?: Partial<{ tenantId: string; id: string }>): Unit {
   return Unit.reconstitute({
@@ -69,7 +69,7 @@ describe('DeleteUnitHandler', () => {
   describe('when unit belongs to another tenant', () => {
     it('throws NotFoundException', async () => {
       unitRepository.findById.mockResolvedValue(
-        makeUnit({ tenantId: '65f1a1a2b3c4d5e6f7a8b9c9' }),
+        makeUnit({ tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000' }),
       );
 
       await expect(

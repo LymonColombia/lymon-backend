@@ -26,27 +26,27 @@ describe('GetItemsBySupplierQueryHandler', () => {
   it('returns items for the supplier with pagination metadata', async () => {
     supplierRepository.findById.mockResolvedValue(
       makeSupplier({
-        id: '65f1a1a2b3c4d5e6f7a8b9c4',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.findBySupplierId.mockResolvedValue([
       makeInventoryItem({
         id: 'item-1',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-        supplierId: '65f1a1a2b3c4d5e6f7a8b9c4',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
       }),
       makeInventoryItem({
         id: 'item-2',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-        supplierId: '65f1a1a2b3c4d5e6f7a8b9c4',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        supplierId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
       }),
     ]);
 
     const result = await handler.execute(
       new GetItemsBySupplierQuery(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
-        '65f1a1a2b3c4d5e6f7a8b9c4',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
         1,
         10,
       ),
@@ -66,8 +66,8 @@ describe('GetItemsBySupplierQueryHandler', () => {
     await expect(
       handler.execute(
         new GetItemsBySupplierQuery(
-          '65f1a1a2b3c4d5e6f7a8b9c0',
-          '65f1a1a2b3c4d5e6f7a8b9c4',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
           1,
           10,
         ),

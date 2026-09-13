@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
-  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   IsUrl,
 } from 'class-validator';
 
@@ -26,10 +26,10 @@ export class CreateIncidentReportDto {
   description: string;
 
   @ApiProperty({
-    example: '64f1a2b3c4d5e6f7a8b9c0d2',
+    example: '64f1a2b3-c4d5-e6f7-a8b9-c0d200000000',
     description: 'ID of the property where the incident occurred',
   })
-  @IsMongoId()
+  @IsUUID()
   propertyId: string;
 
   @ApiPropertyOptional({

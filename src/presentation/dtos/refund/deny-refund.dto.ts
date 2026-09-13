@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsUUID,
+} from 'class-validator';
 
 export class DenyRefundDto {
-  @ApiProperty({ example: '64f1a2b3c4d5e6f7a8b9c0d2' })
-  @IsMongoId()
+  @ApiProperty({ example: '64f1a2b3-c4d5-e6f7-a8b9-c0d200000000' })
+  @IsUUID()
   @IsNotEmpty()
   refundRequestId: string;
 }

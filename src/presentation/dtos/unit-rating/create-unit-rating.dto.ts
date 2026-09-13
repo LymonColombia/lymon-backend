@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsInt,
-  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   MaxLength,
   Min,
@@ -12,8 +12,8 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreateUnitRatingDto {
-  @ApiProperty({ example: '64f1a2b3c4d5e6f7a8b9c0d2', description: 'Reservation ID' })
-  @IsMongoId()
+  @ApiProperty({ example: '64f1a2b3-c4d5-e6f7-a8b9-c0d200000000', description: 'Reservation ID' })
+  @IsUUID()
   @IsNotEmpty()
   reservationId: string;
 

@@ -8,8 +8,8 @@ import { ExperiencePurchaseStatusEnum } from '@/domain/experience-purchase/value
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { createExperiencePurchaseRepositoryMock } from '@test/shared/mocks/repositories/experience-purchase-repository.mock';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
-const EXPERIENCE_ID = '65f1a1a2b3c4d5e6f7a8b9c1';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+const EXPERIENCE_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000';
 
 describe('GetExperiencePurchasesByTenant', () => {
   let handler: GetExperiencePurchasesByTenantHandler;

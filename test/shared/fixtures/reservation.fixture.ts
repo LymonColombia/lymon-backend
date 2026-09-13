@@ -14,11 +14,11 @@ import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 
 export const RESERVATION_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c1',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c2',
-  propertyId: '65f1a1a2b3c4d5e6f7a8b9c3',
-  unitId: '65f1a1a2b3c4d5e6f7a8b9c4',
-  guestId: '65f1a1a2b3c4d5e6f7a8b9c5',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+  propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+  unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
+  guestId: '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
   checkIn: new Date('2030-01-01T14:00:00Z'),
   checkOut: new Date('2030-01-05T10:00:00Z'),
   source: ReservationSourceEnum.DIRECT,
@@ -63,7 +63,6 @@ export function makeReservation(
     pricePerNight: merged.pricePerNight,
     totalPrice: merged.totalPrice,
     notes: null,
-    externalReservationId: null,
     cancelledAt: null,
     cancellationReason: null,
     checkInActualAt: null,

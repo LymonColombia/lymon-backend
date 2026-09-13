@@ -5,7 +5,7 @@ import { GuestTagRepository } from '@/domain/guest-tag/repositories/guest-tag.re
 import { createGuestTagRepositoryMock } from '@test/shared/mocks/repositories/guest-tag-repository.mock';
 import { makeGuestTag } from '@test/shared/fixtures/guest-tag.fixture';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
 
 describe('GetGuestTagsHandler', () => {
   let handler: GetGuestTagsHandler;
@@ -20,7 +20,7 @@ describe('GetGuestTagsHandler', () => {
     it('returns all tags as DTOs with id and name', async () => {
       tagRepository.findAll.mockResolvedValue([
         makeGuestTag({ name: 'vip' }),
-        makeGuestTag({ name: 'family', id: '65f1a1a2b3c4d5e6f7000002' }),
+        makeGuestTag({ name: 'family', id: '65f1a1a2-b3c4-d5e6-f700-000200000000' }),
       ]);
 
       const result = await handler.execute(new GetGuestTagsQuery(TENANT_ID));

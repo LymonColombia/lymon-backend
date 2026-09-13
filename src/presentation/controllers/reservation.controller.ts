@@ -74,7 +74,6 @@ export class ReservationController {
         dto.guestsCount,
         dto.notes ?? null,
         dto.source as unknown as ReservationSourceEnum,
-        null,
         user.userId,
         user.email,
       ),

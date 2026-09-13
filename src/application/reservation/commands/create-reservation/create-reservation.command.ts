@@ -11,7 +11,6 @@ export class CreateReservationCommand {
     public readonly guestsCount: number,
     public readonly notes: string | null,
     public readonly source: ReservationSourceEnum,
-    public readonly externalReservationId: string | null,
     public readonly actorId: string,
     public readonly actorEmail: string,
   ) {}

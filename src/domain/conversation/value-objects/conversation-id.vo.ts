@@ -1,10 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
+import { uuidv7 } from '@/domain/shared/value-objects/uuid.util';
 
 export class ConversationId {
   private constructor(private readonly value: string) {}
 
   static create(): ConversationId {
-    return new ConversationId(uuidv4());
+    return new ConversationId(uuidv7());
   }
 
   static createFromString(value: string): ConversationId {

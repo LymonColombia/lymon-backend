@@ -30,7 +30,7 @@ describe('TogglePinGuestNoteHandler', () => {
           new TogglePinGuestNoteCommand(
             GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
             GUEST_NOTE_FIXTURE_DEFAULTS.id,
-            '65f1a1a2b3c4d5e6f7a8b9c2',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'actor@test.com',
           ),
         ),
@@ -51,7 +51,7 @@ describe('TogglePinGuestNoteHandler', () => {
         new TogglePinGuestNoteCommand(
           GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
           GUEST_NOTE_FIXTURE_DEFAULTS.id,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
         ),
       );
 
@@ -72,7 +72,7 @@ describe('TogglePinGuestNoteHandler', () => {
         new TogglePinGuestNoteCommand(
           GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
           GUEST_NOTE_FIXTURE_DEFAULTS.id,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
         ),
       );
 

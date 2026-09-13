@@ -6,13 +6,13 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 
 export const GUEST_NOTE_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c6',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-  guestId: '65f1a1a2b3c4d5e6f7a8b9d1',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c600000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+  guestId: '65f1a1a2-b3c4-d5e6-f7a8-b9d100000000',
   note: 'Guest always requests extra pillows',
   type: GuestNoteTypeEnum.PREFERENCE,
   status: GuestNoteStatusEnum.NOT_PINNED,
-  createdBy: '65f1a1a2b3c4d5e6f7a8b9c2',
+  createdBy: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
 };
 
 export function makeGuestNote(

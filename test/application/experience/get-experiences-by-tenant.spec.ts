@@ -23,15 +23,15 @@ import { GetExperienceByIdQuery } from '@/application/experience/queries/GetExpe
 import { GetExperienceByIdQueryHandler } from '@/application/experience/queries/GetExperienceById/get-experience-by-id.query-handler';
 import { GetExperienceByIdResult } from '@/application/experience/queries/GetExperienceById/get-experience-by-id.result';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
 const EXPERIENCE_ID = 'experience-123';
 
 function makeExperience(overrides?: Partial<{ id: string; tenantId: string }>) {
   return Experience.reconstitute({
     id: ExperienceId.create(overrides?.id ?? EXPERIENCE_ID),
     tenantId: TenantId.createFromString(overrides?.tenantId ?? TENANT_ID),
-    propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1'),
-    unitIds: [UnitId.create('65f1a1a2b3c4d5e6f7a8b9c8')],
+    propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
+    unitIds: [UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000')],
     name: 'Airport transfer',
     description: 'Private transfer service',
     city: 'Medellín',

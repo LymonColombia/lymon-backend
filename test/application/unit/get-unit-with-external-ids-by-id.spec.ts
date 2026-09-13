@@ -14,7 +14,7 @@ import { UnitController } from '@/presentation/controllers/unit.controller';
 
 const UNIT_ID = UNIT_FIXTURE_DEFAULTS.id;
 const TENANT_ID = UNIT_FIXTURE_DEFAULTS.tenantId;
-const OTHER_TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9ff';
+const OTHER_TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000';
 
 describe('GetUnitWithExternalIdsById', () => {
   let handler: GetUnitWithExternalIdsByIdQueryHandler;

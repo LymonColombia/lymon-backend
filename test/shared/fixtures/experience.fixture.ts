@@ -18,7 +18,7 @@ import { TENANT_FIXTURE_DEFAULTS } from '@test/shared/fixtures/tenant.fixture';
 import { PROPERTY_FIXTURE_DEFAULTS } from '@test/shared/fixtures/property.fixture';
 
 export const EXPERIENCE_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9e1',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9e100000000',
   tenantId: TENANT_FIXTURE_DEFAULTS.id,
   propertyId: PROPERTY_FIXTURE_DEFAULTS.id,
   name: 'Airport transfer',

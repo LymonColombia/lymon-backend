@@ -27,9 +27,9 @@ import { createExperienceRepositoryMock } from '@test/shared/mocks/repositories/
 import { createEventEmitterMock } from '@test/shared/mocks/services/event-emitter.mock';
 import { createR2StorageServiceMock } from '@test/shared/mocks/services/r2-storage.mock';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
-const OTHER_TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9ff';
-const EXPERIENCE_ID = '65f1a1a2b3c4d5e6f7a8b9c5';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+const OTHER_TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000';
+const EXPERIENCE_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000';
 const DEFAULT_ACTOR: ExperienceActor = {
   id: 'user-123',
   email: 'host@example.com',
@@ -42,8 +42,8 @@ function makeExperience(overrides?: {
   return Experience.reconstitute({
     id: ExperienceId.create(EXPERIENCE_ID),
     tenantId: TenantId.createFromString(overrides?.tenantId ?? TENANT_ID),
-    propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1'),
-    unitIds: [UnitId.create('65f1a1a2b3c4d5e6f7a8b9c8')],
+    propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
+    unitIds: [UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000')],
     name: 'Airport transfer',
     description: 'Private transfer service',
     city: 'Medellín',

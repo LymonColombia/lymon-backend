@@ -5,7 +5,7 @@ import { R2StorageService } from '@/infrastructure/storage/r2-storage.service';
 import { BadRequestException } from '@nestjs/common';
 
 const PUBLIC_BASE = 'https://cdn.example.com';
-const ACCOUNT_ID = '65f1a1a2b3c4d5e6f7a8b9c5';
+const ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000';
 
 describe('GenerateGuestProfilePhotoUrlQueryHandler', () => {
   let handler: GenerateGuestProfilePhotoUrlQueryHandler;

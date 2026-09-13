@@ -1,0 +1,29 @@
+// Schema conventions (models live in the sibling *.prisma files, one per domain).
+//   * ids            -> uuid, uuidv7() (built in since PG18; time-ordered, so inserts append to the pk index)
+//   * dates          -> timestamptz
+//   * domain enums   -> text + CHECK (col IN (...)); the enum stays in TS, the DB
+//                       just validates the value. Adding a case = ALTER the CHECK,
+//                       no type rewrite, and every driver reads it as a plain string.
+//                       CHECKs cannot be written here: they live in the migration SQL,
+//                       so add them by hand to the migration `prisma migrate dev` generates.
+//                       Exception: open-ended lists that only one service writes
+//                       (roles.permissions, audit_logs.action) carry no CHECK - the
+//                       TS enum is the only list.
+//   * COP amounts    -> bigint (whole pesos / cents, as the entity declares)
+//   * value objects  -> flattened columns when small, jsonb when a list/blob
+//   * every tenant-scoped table carries tenant_id + an index on it
+//
+// ponytail: embedded VO lists (bedrooms, recurrence, cart items, traveler info,
+// attachments, guest summary) stay jsonb. Split into child tables only when you
+// need to filter or join on their inner fields.
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../../src/infrastructure/persistence/prisma/generated"
+  previewFeatures = ["partialIndexes"]
+  moduleFormat    = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}

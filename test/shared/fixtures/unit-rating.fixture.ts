@@ -6,11 +6,11 @@ import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { ReservationId } from '@/domain/reservation/value-objects/reservation-id.vo';
 
 export const UNIT_RATING_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9d0',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-  unitId: '65f1a1a2b3c4d5e6f7a8b9c1',
-  guestId: '65f1a1a2b3c4d5e6f7a8b9c2',
-  reservationId: '65f1a1a2b3c4d5e6f7a8b9c3',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9d000000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+  unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+  guestId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+  reservationId: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
   rate: 4,
   message: 'Great unit!',
 };

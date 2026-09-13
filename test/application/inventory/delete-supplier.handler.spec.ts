@@ -40,7 +40,7 @@ describe('DeleteSupplierHandler', () => {
     await expect(
       handler.execute(
         new DeleteSupplierCommand(
-          '65f1a1a2b3c4d5e6f7a8b9c0',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           '550e8400-e29b-41d4-a716-446655440000',
           'actor-1',
           'actor@test.com',
@@ -56,7 +56,7 @@ describe('DeleteSupplierHandler', () => {
     supplierRepository.findById.mockResolvedValue(
       makeSupplier({
         id: '550e8400-e29b-41d4-a716-446655440000',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.findBySupplierId.mockResolvedValue([
@@ -69,7 +69,7 @@ describe('DeleteSupplierHandler', () => {
     await expect(
       handler.execute(
         new DeleteSupplierCommand(
-          '65f1a1a2b3c4d5e6f7a8b9c0',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           '550e8400-e29b-41d4-a716-446655440000',
           'actor-1',
           'actor@test.com',
@@ -87,7 +87,7 @@ describe('DeleteSupplierHandler', () => {
     supplierRepository.findById.mockResolvedValue(
       makeSupplier({
         id: '550e8400-e29b-41d4-a716-446655440000',
-        tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       }),
     );
     inventoryItemRepository.findBySupplierId.mockResolvedValue([]);
@@ -96,7 +96,7 @@ describe('DeleteSupplierHandler', () => {
     await expect(
       handler.execute(
         new DeleteSupplierCommand(
-          '65f1a1a2b3c4d5e6f7a8b9c0',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           '550e8400-e29b-41d4-a716-446655440000',
           'actor-1',
           'actor@test.com',
