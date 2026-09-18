@@ -24,7 +24,7 @@ import {
   USER_REPOSITORY,
   type UserRepository,
 } from '@/domain/user/repositories/user.repository';
-import { ConflictException, Inject } from '@nestjs/common';
+import { ConflictException, Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
@@ -52,6 +52,8 @@ export class RegisterTenantResult {
 
 @CommandHandler(RegisterTenantCommand)
 export class RegisterTenantHandler implements ICommandHandler<RegisterTenantCommand> {
+  private readonly logger = new Logger(RegisterTenantHandler.name);
+
   constructor(
     @Inject(TENANT_REPOSITORY)
     private readonly tenantRepository: TenantRepository,
@@ -117,10 +119,20 @@ export class RegisterTenantHandler implements ICommandHandler<RegisterTenantComm
     const verificationToken =
       this.tokenService.generateAccesToken(verificationPayload);
 
-    await this.emailService.sendVerificationEmail(
-      email.toString(),
-      verificationToken,
-    );
+    // ponytail: tenant y user ya están persistidos; si el envío falla no se
+    // revierte el registro, el usuario reenvía la verificación desde la app.
+    try {
+      await this.emailService.sendVerificationEmail(
+        email.toString(),
+        verificationToken,
+      );
+    } catch (error: unknown) {
+      this.logger.error(
+        `No se pudo enviar el email de verificación a ${email.toString()}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
+    }
 
     this.eventEmitter.emit(
       TENANT_REGISTERED_EVENT,
