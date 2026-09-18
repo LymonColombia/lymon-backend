@@ -216,12 +216,14 @@ export class UpdateShiftCommandHandler implements ICommandHandler<UpdateShiftCom
         await this.shiftRepository.findOverlappingByStaffInRange(
           tenantId,
           staffMemberId,
-          shiftData.nextStartDate,
-          shiftData.nextEndDate,
-          shiftData.nextStartMinutes,
-          shiftData.nextEndMinutes,
+          {
+            startDate: shiftData.nextStartDate,
+            endDate: shiftData.nextEndDate,
+            startMinutes: shiftData.nextStartMinutes,
+            endMinutes: shiftData.nextEndMinutes,
+            weekdays: shiftData.weekdays,
+          },
           shiftId,
-          shiftData.weekdays,
         );
 
       if (overlappingShift) {

@@ -162,16 +162,13 @@ describe('PrismaShiftRepository', () => {
     const staff = UserId.createFromString(staffA);
 
     expect(
-      await repo.findOverlappingByStaffInRange(
-        tenant,
-        staff,
-        new Date('2027-03-01'),
-        null,
-        900,
-        1200,
-        undefined,
-        [1, 3],
-      ),
+      await repo.findOverlappingByStaffInRange(tenant, staff, {
+        startDate: new Date('2027-03-01'),
+        endDate: null,
+        startMinutes: 900,
+        endMinutes: 1200,
+        weekdays: [1, 3],
+      }),
     ).not.toBeNull();
   });
 

@@ -3,6 +3,7 @@ import { Shift } from '@/domain/shift/entities/shift.entity';
 import {
   ShiftFilters,
   ShiftRepository,
+  ShiftWindow,
 } from '@/domain/shift/repositories/shift.repository';
 import { ShiftId } from '@/domain/shift/value-objects/shift-id.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
@@ -144,10 +145,7 @@ export class PrismaShiftRepository implements ShiftRepository {
     return this.findOverlappingByStaffInRange(
       tenantId,
       staffMemberId,
-      shiftDate,
-      shiftDate,
-      startMinutes,
-      endMinutes,
+      { startDate: shiftDate, endDate: shiftDate, startMinutes, endMinutes },
       excludeShiftId,
     );
   }
@@ -155,12 +153,8 @@ export class PrismaShiftRepository implements ShiftRepository {
   async findOverlappingByStaffInRange(
     tenantId: TenantId,
     staffMemberId: UserId,
-    startDate: Date,
-    endDate: Date | null,
-    startMinutes: number,
-    endMinutes: number,
+    { startDate, endDate, startMinutes, endMinutes, weekdays }: ShiftWindow,
     excludeShiftId?: ShiftId,
-    weekdays?: number[] | null,
   ): Promise<Shift | null> {
     const where: Prisma.shiftsWhereInput = {
       tenant_id: tenantId.toString(),
