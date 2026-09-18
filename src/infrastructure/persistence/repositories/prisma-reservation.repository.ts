@@ -43,6 +43,12 @@ const SPENDING_STATUSES = [
   ReservationStatusEnum.CHECKED_OUT,
 ];
 
+const GUEST_SORT_COLUMN = {
+  date: 'check_in',
+  status: 'status',
+  createdAt: 'created_at',
+} as const;
+
 /** Highest wins when a guest has several reservations. */
 const LIFECYCLE_PRIORITY: Array<[ReservationStatusEnum, GuestLifecycleStatus]> = [
   [ReservationStatusEnum.CHECKED_IN, GuestLifecycleStatus.CHECKED_IN],
@@ -232,12 +238,7 @@ export class PrismaReservationRepository
   ): Promise<Reservation[]> {
     if (guestIds.length === 0) return [];
 
-    const column =
-      options.sortBy === 'status'
-        ? 'status'
-        : options.sortBy === 'createdAt'
-          ? 'created_at'
-          : 'check_in';
+    const column = GUEST_SORT_COLUMN[options.sortBy ?? 'date'];
     const direction = options.sortOrder === 'asc' ? 'asc' : 'desc';
 
     const rows = await this.prisma.reservations.findMany({

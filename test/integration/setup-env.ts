@@ -1,20 +1,17 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { parseEnv } from 'node:util';
 import { toTestDatabaseUrl } from './test-database-url';
 
 // Runs via jest `setupFiles`, before any test module is imported: PrismaService reads
 // DATABASE_URL in its constructor.
 //
 // process.loadEnvFile() is useless here — jest swaps process.env for a plain copy, while
-// loadEnvFile writes to the real environment the copy never sees. So parse it ourselves.
+// loadEnvFile writes to the real environment the copy never sees. So parse, then copy.
 try {
-  const env = readFileSync(resolve(__dirname, '../../.env'), 'utf8');
-  for (const line of env.split('\n')) {
-    const match = /^\s*([\w.-]+)\s*=\s*(.*)$/.exec(line);
-    if (!match || line.trimStart().startsWith('#')) continue;
-    const [, key, rawValue] = match;
-    if (process.env[key] !== undefined) continue;
-    process.env[key] = rawValue.trim().replace(/^(['"])(.*)\1$/, '$2');
+  const env = parseEnv(readFileSync(resolve(__dirname, '../../.env'), 'utf8'));
+  for (const [key, value] of Object.entries(env)) {
+    process.env[key] ??= value;
   }
 } catch {
   /* no .env file; DATABASE_URL is expected from the environment */

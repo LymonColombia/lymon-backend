@@ -54,7 +54,7 @@ describe('PrismaSupplierRepository', () => {
       ),
     ).toEqual(['Alpha', 'Zeta']);
 
-    expect((await repo.findByTenantId(tenant)).length).toBe(2);
+    expect(await repo.findByTenantId(tenant)).toHaveLength(2);
   });
 
   it('soft-deletes and frees the NIT for a new supplier', async () => {

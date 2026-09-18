@@ -1,4 +1,8 @@
+import { randomBytes } from 'node:crypto';
 import { prisma } from './prisma.helper';
+
+/** Random hex suffix so fixture slugs and emails don't collide. */
+const suffix = (bytes = 3) => randomBytes(bytes).toString('hex');
 
 /**
  * Minimal valid rows, inserted straight through Prisma. Repository specs use these to
@@ -9,8 +13,8 @@ export async function seedTenant(overrides: { name?: string; slug?: string } = {
   return prisma.tenants.create({
     data: {
       name,
-      slug: overrides.slug ?? `costa-${Math.random().toString(16).slice(2, 8)}`,
-      owner_email: `owner-${Math.random().toString(16).slice(2, 8)}@costa.com`,
+      slug: overrides.slug ?? `costa-${suffix()}`,
+      owner_email: `owner-${suffix()}@costa.com`,
       plan: 'TRIAL',
     },
   });
@@ -21,7 +25,7 @@ export async function seedProperty(tenantId: string, name = 'Playa Norte') {
     data: {
       tenant_id: tenantId,
       name,
-      slug: `${name.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(16).slice(2, 6)}`,
+      slug: `${name.toLowerCase().replace(/\s+/g, '-')}-${suffix(2)}`,
       description: 'A property',
       property_type: 'HOTEL',
       address: 'Calle 1',

@@ -21,6 +21,12 @@ import {
   type experiences as ExperienceRow,
 } from '@/infrastructure/persistence/prisma/generated/client';
 
+const SCOPE_FILTER: Record<ExperienceScopeEnum, Prisma.experiencesWhereInput> =
+  {
+    [ExperienceScopeEnum.GLOBAL]: { property_id: null },
+    [ExperienceScopeEnum.PROPERTY]: { property_id: { not: null } },
+  };
+
 interface StoredRecurrence {
   daysOfWeek: number[];
   startTime: string;
@@ -136,11 +142,7 @@ export class PrismaExperienceRepository implements ExperienceRepository {
       ...(filters.propertyId
         ? { property_id: filters.propertyId.toString() }
         : {}),
-      ...(filters.scope === ExperienceScopeEnum.GLOBAL
-        ? { property_id: null }
-        : filters.scope === ExperienceScopeEnum.PROPERTY
-          ? { property_id: { not: null } }
-          : {}),
+      ...(filters.scope ? SCOPE_FILTER[filters.scope] : {}),
       // whole-string match, as the anchored regex the mongo version built
       ...(filters.city
         ? { city: { equals: filters.city, mode: 'insensitive' as const } }

@@ -90,5 +90,5 @@ repositorio quedaron intactos, y con ellos los handlers y controladores.
 
 - `prisma/schema/` — esquema; convenciones al inicio de `schema.prisma`
 - `prisma/migrations/` — historial del esquema, incluidos los `CHECK`
-- `src/infrastructure/migrations/sql/schema-smoke.sql` — pruebas de restricciones
+- `test/integration/schema-constraints.spec.ts` — pruebas de restricciones (FK entre tenants, `CHECK`, unicidad)
 - `test/integration/` — repositorios verificados contra Postgres real (`pnpm test:db`)

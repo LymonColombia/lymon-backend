@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { parseEnv } from 'node:util';
 import { Client } from 'pg';
 import { toTestDatabaseUrl } from './test-database-url';
 
@@ -22,7 +23,9 @@ export default async function globalSetup(): Promise<void> {
   await admin.end();
 
   // prisma7.config.ts loads .env, but a variable already in the environment wins.
-  execFileSync('pnpm', ['exec', 'prisma', 'migrate', 'deploy'], {
+  // Node + the CLI's absolute path, so nothing is looked up through PATH.
+  const prismaCli = require.resolve('prisma/build/index.js');
+  execFileSync(process.execPath, [prismaCli, 'migrate', 'deploy'], {
     cwd: resolve(__dirname, '../..'),
     env: { ...process.env, DATABASE_URL: testUrl },
     stdio: 'pipe',
@@ -31,8 +34,7 @@ export default async function globalSetup(): Promise<void> {
 
 function readEnvDatabaseUrl(): string {
   if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-  const env = readFileSync(resolve(__dirname, '../../.env'), 'utf8');
-  const match = /^\s*DATABASE_URL\s*=\s*(.*)$/m.exec(env);
-  if (!match) throw new Error('DATABASE_URL is not set');
-  return match[1].trim().replace(/^(['"])(.*)\1$/, '$2');
+  const env = parseEnv(readFileSync(resolve(__dirname, '../../.env'), 'utf8'));
+  if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+  return env.DATABASE_URL;
 }

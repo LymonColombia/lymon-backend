@@ -12,6 +12,15 @@ import {
   type unit_ratings as UnitRatingRow,
 } from '@/infrastructure/persistence/prisma/generated/client';
 
+const ORDER_BY: Record<
+  'best' | 'worst' | 'newest',
+  Prisma.unit_ratingsOrderByWithRelationInput[]
+> = {
+  best: [{ rate: 'desc' }, { created_at: 'desc' }],
+  worst: [{ rate: 'asc' }, { created_at: 'desc' }],
+  newest: [{ created_at: 'desc' }],
+};
+
 @Injectable()
 export class PrismaUnitRatingRepository implements UnitRatingRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -72,14 +81,7 @@ export class PrismaUnitRatingRepository implements UnitRatingRepository {
       ...(filterRate !== undefined ? { rate: filterRate } : {}),
     };
 
-    const orderBy: Prisma.unit_ratingsOrderByWithRelationInput[] =
-      sort === 'best'
-        ? [{ rate: 'desc' }, { created_at: 'desc' }]
-        : sort === 'worst'
-          ? [{ rate: 'asc' }, { created_at: 'desc' }]
-          : [{ created_at: 'desc' }];
-
-    return this.paginate(where, page, limit, orderBy);
+    return this.paginate(where, page, limit, ORDER_BY[sort ?? 'newest']);
   }
 
   async findByGuestIdPaginated(
