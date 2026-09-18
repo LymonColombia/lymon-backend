@@ -41,8 +41,8 @@ describe('GetGuestStatsHandler — stat catalog wiring', () => {
       Record<string, unknown>
     >(
       new GetGuestStatsQuery(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
-        '65f1a1a2b3c4d5e6f7a8b9c1',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
         GUEST_STAT_KEYS,
       ),
     );
@@ -61,8 +61,8 @@ describe('GetGuestStatsHandler — stat catalog wiring', () => {
       Record<string, unknown>
     >(
       new GetGuestStatsQuery(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
-        '65f1a1a2b3c4d5e6f7a8b9c1',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
         [firstKey],
       ),
     );

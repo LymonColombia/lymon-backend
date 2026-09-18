@@ -22,9 +22,9 @@ const EXPERIENCE_ID = 'experience-123';
 function makeExperience(status: 'ACTIVE' | 'ARCHIVED' = 'ACTIVE') {
   return Experience.reconstitute({
     id: ExperienceId.create(EXPERIENCE_ID),
-    tenantId: TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0'),
-    propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1'),
-    unitIds: [UnitId.create('65f1a1a2b3c4d5e6f7a8b9c8')],
+    tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+    propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
+    unitIds: [UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000')],
     name: 'Airport transfer',
     description: 'Private transfer service',
     city: 'Medellín',

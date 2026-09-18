@@ -34,8 +34,8 @@ function makeGuestRecord(params: {
 }
 
 describe('GetGuestReservationsHandler', () => {
-  const GUEST_1_ID = '65f1a1a2b3c4d5e6f7a8b9c5';
-  const GUEST_2_ID = '65f1a1a2b3c4d5e6f7a8b9c6';
+  const GUEST_1_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000';
+  const GUEST_2_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c600000000';
 
   let handler: GetGuestReservationsHandler;
   let guestReservationsReadRepository: ReturnType<
@@ -61,15 +61,15 @@ describe('GetGuestReservationsHandler', () => {
   });
 
   it('returns paginated bookings for the guest account', async () => {
-    const guestAccountId = '65f1a1a2b3c4d5e6f7a8b9c5';
+    const guestAccountId = '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000';
     const guest1 = makeGuestRecord({
       id: GUEST_1_ID,
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       guestAccountId,
     });
     const guest2 = makeGuestRecord({
       id: GUEST_2_ID,
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c9',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
       guestAccountId,
     });
 
@@ -79,27 +79,27 @@ describe('GetGuestReservationsHandler', () => {
     ] as any);
 
     const booking1 = makeReservation({
-      id: '65f1a1a2b3c4d5e6f7a8b9c3',
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+      id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       guestId: GUEST_1_ID,
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
-      unitId: '65f1a1a2b3c4d5e6f7a8b9c8',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+      unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9c800000000',
       status: ReservationStatusEnum.CONFIRMED,
     });
     const booking2 = makeReservation({
       id: 'res-2',
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c9',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
       guestId: GUEST_2_ID,
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9cd',
-      unitId: '65f1a1a2b3c4d5e6f7a8b9cf',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9cd00000000',
+      unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9cf00000000',
       status: ReservationStatusEnum.CHECKED_IN,
     });
     const booking3 = makeReservation({
       id: 'res-3',
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c9',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
       guestId: GUEST_2_ID,
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9cd',
-      unitId: '65f1a1a2b3c4d5e6f7a8b9cf',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9cd00000000',
+      unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9cf00000000',
       status: ReservationStatusEnum.CHECKED_OUT,
     });
 
@@ -110,19 +110,19 @@ describe('GetGuestReservationsHandler', () => {
     ] as any);
     guestReservationsReadRepository.countByGuestIds.mockResolvedValue(3 as any);
     propertyRepository.findByTenantId.mockImplementation((tenantId) => {
-      if (tenantId.toString() === '65f1a1a2b3c4d5e6f7a8b9c0') {
+      if (tenantId.toString() === '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000') {
         return Promise.resolve([
           makeProperty({
-            id: '65f1a1a2b3c4d5e6f7a8b9c1',
-            tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+            id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+            tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           }),
         ]);
       }
 
       return Promise.resolve([
         makeProperty({
-          id: '65f1a1a2b3c4d5e6f7a8b9cd',
-          tenantId: '65f1a1a2b3c4d5e6f7a8b9c9',
+          id: '65f1a1a2-b3c4-d5e6-f7a8-b9cd00000000',
+          tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
         }),
       ]);
     });
@@ -150,21 +150,21 @@ describe('GetGuestReservationsHandler', () => {
     expect(result.total).toBe(3);
     expect(result.items).toHaveLength(3);
     expect(result.items[0]).toMatchObject({
-      id: '65f1a1a2b3c4d5e6f7a8b9c3',
+      id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
       bookingReference: '1',
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
       status: ReservationStatusEnum.CONFIRMED,
     });
     expect(result.items[1]).toMatchObject({
       id: 'res-2',
       bookingReference: '1',
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9cd',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9cd00000000',
       status: ReservationStatusEnum.CHECKED_IN,
     });
     expect(result.items[2]).toMatchObject({
       id: 'res-3',
       bookingReference: '1',
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9cd',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9cd00000000',
       status: ReservationStatusEnum.CHECKED_OUT,
     });
   });
@@ -173,7 +173,7 @@ describe('GetGuestReservationsHandler', () => {
     guestRepository.findAllByGuestAccountId.mockResolvedValue([] as any);
 
     const result = await handler.execute(
-      new GetGuestReservationsQuery('65f1a1a2b3c4d5e6f7a8b9c5', 1, 10),
+      new GetGuestReservationsQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c500000000', 1, 10),
     );
 
     expect(result).toEqual(new GetGuestReservationsResult([], 0, 1, 10));

@@ -79,7 +79,7 @@ class ExternalIdsDto {
 
 export class CreateUnitDto {
   @ApiProperty({
-    example: '507f1f77bcf86cd799439011',
+    example: '507f1f77-bcf8-6cd7-9943-901100000000',
     description: 'Property ID to which this unit belongs',
   })
   @IsString()

@@ -3,8 +3,8 @@ import { InventoryItemCategoryId } from '@/domain/inventory/value-objects/invent
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 
 export const INVENTORY_ITEM_CATEGORY_FIXTURE_DEFAULTS = {
-  id: '6650a1b2c3d4e5f6a7b8c9d0',
-  tenantId: '5540a0b1c2d3e4f5a6b7c8d9',
+  id: '6650a1b2-c3d4-e5f6-a7b8-c9d000000000',
+  tenantId: '5540a0b1-c2d3-e4f5-a6b7-c8d900000000',
   name: 'Limpieza',
   description: 'Productos de limpieza general',
 };

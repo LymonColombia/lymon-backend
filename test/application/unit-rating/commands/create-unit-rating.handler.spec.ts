@@ -31,7 +31,7 @@ const TENANT_ID = RESERVATION_FIXTURE_DEFAULTS.tenantId;
 const UNIT_ID = RESERVATION_FIXTURE_DEFAULTS.unitId;
 const GUEST_ID = GUEST_FIXTURE_DEFAULTS.id;
 const RESERVATION_ID = RESERVATION_FIXTURE_DEFAULTS.id;
-const GUEST_ACCOUNT_ID = '65f1a1a2b3c4d5e6f7a8b901';
+const GUEST_ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b90100000000';
 
 function makeUnitFixture(
   overrides?: Partial<{ tenantId: string; id: string }>,
@@ -163,12 +163,12 @@ describe('CreateUnitRatingHandler', () => {
         status: ReservationStatusEnum.CHECKED_OUT,
       });
       const otherGuest = makeGuest({
-        id: '65f1a1a2b3c4d5e6f7a8b9ff',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000',
         tenantId: TENANT_ID,
       });
       jest
         .spyOn(otherGuest, 'getId')
-        .mockReturnValue(GuestId.createFromString('65f1a1a2b3c4d5e6f7a8b9ff'));
+        .mockReturnValue(GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000'));
       reservationRepository.findById.mockResolvedValue(reservation);
       guestRepository.findByGuestAccountId.mockResolvedValue(otherGuest);
 

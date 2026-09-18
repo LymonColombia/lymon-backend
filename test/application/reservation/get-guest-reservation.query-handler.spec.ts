@@ -32,7 +32,7 @@ function makeGuestRecord(params: {
 }
 
 describe('GetGuestReservationHandler', () => {
-  const GUEST_ID = '65f1a1a2b3c4d5e6f7a8b9c5';
+  const GUEST_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000';
 
   let handler: GetGuestReservationHandler;
   let reservationRepository: ReturnType<typeof createReservationRepositoryMock>;
@@ -61,16 +61,16 @@ describe('GetGuestReservationHandler', () => {
 
   it('returns booking detail for the authenticated guest account', async () => {
     const reservation = makeReservation({
-      id: '65f1a1a2b3c4d5e6f7a8b9c3',
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+      id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       guestId: GUEST_ID,
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
-      unitId: '65f1a1a2b3c4d5e6f7a8b9c8',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+      unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9c800000000',
     });
     const guest = makeGuestRecord({
       id: GUEST_ID,
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-      guestAccountId: '65f1a1a2b3c4d5e6f7a8b9c5',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      guestAccountId: '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
     });
 
     reservationRepository.findById.mockResolvedValue(reservation as any);
@@ -84,17 +84,17 @@ describe('GetGuestReservationHandler', () => {
 
     const result = await handler.execute(
       new GetGuestReservationQuery(
-        '65f1a1a2b3c4d5e6f7a8b9c3',
-        '65f1a1a2b3c4d5e6f7a8b9c5',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
       ),
     );
 
     expect(result).toMatchObject({
-      id: '65f1a1a2b3c4d5e6f7a8b9c3',
+      id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
       bookingReference: '1',
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
       propertyName: 'Casa del lago',
-      unitId: '65f1a1a2b3c4d5e6f7a8b9c8',
+      unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9c800000000',
       unitName: 'Ocean View Suite',
       serviceName: 'Ocean View Suite',
       notes: null,
@@ -113,8 +113,8 @@ describe('GetGuestReservationHandler', () => {
     await expect(
       handler.execute(
         new GetGuestReservationQuery(
-          '65f1a1a2b3c4d5e6f7a8b9cf',
-          '65f1a1a2b3c4d5e6f7a8b9c5',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9cf00000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
         ),
       ),
     ).rejects.toThrow(NotFoundException);
@@ -122,13 +122,13 @@ describe('GetGuestReservationHandler', () => {
 
   it('throws ForbiddenException when booking belongs to another guest account', async () => {
     const reservation = makeReservation({
-      id: '65f1a1a2b3c4d5e6f7a8b9c3',
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+      id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       guestId: GUEST_ID,
     });
     const guest = makeGuestRecord({
       id: GUEST_ID,
-      tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
+      tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
       guestAccountId: 'different-account',
     });
 
@@ -138,8 +138,8 @@ describe('GetGuestReservationHandler', () => {
     await expect(
       handler.execute(
         new GetGuestReservationQuery(
-          '65f1a1a2b3c4d5e6f7a8b9c3',
-          '65f1a1a2b3c4d5e6f7a8b9c5',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
         ),
       ),
     ).rejects.toThrow(ForbiddenException);

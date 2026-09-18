@@ -222,10 +222,12 @@ export class AssignStaffToShiftCommandHandler implements ICommandHandler<AssignS
         await this.shiftRepository.findOverlappingByStaffInRange(
           tenantId,
           staffMemberId,
-          shift.getStartDate(),
-          shift.getEndDate(),
-          shift.getStartMinutes(),
-          shift.getEndMinutes(),
+          {
+            startDate: shift.getStartDate(),
+            endDate: shift.getEndDate(),
+            startMinutes: shift.getStartMinutes(),
+            endMinutes: shift.getEndMinutes(),
+          },
           shiftId,
         );
 

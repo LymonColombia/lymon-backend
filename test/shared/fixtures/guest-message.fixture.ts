@@ -8,8 +8,8 @@ import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 
 export const GUEST_MESSAGE_FIXTURE_DEFAULTS = {
   id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-  guestId: '65f1a1a2b3c4d5e6f7a8b9c2',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+  guestId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
   channel: GuestMessageChannel.EMAIL,
   direction: GuestMessageDirection.OUTBOUND,
   status: GuestMessageStatus.PENDING,

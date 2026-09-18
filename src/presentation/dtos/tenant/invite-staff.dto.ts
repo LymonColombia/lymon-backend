@@ -65,7 +65,7 @@ export class ScopeDto {
 
 export class RoleAssignmentDto {
   @ApiProperty({
-    example: '64a1b2c3d4e5f6a7b8c9d0e1',
+    example: '64a1b2c3-d4e5-f6a7-b8c9-d0e100000000',
     description: 'ID of the role to assign',
   })
   @IsString()

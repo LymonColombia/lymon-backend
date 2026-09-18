@@ -23,9 +23,9 @@ import { GetReservationsByGuestIdQuery } from '@/application/reservation/queries
 import { GetReservationsByGuestIdResult } from '@/application/reservation/queries/get-reservations-by-guest-id/get-reservations-by-guest-id.result';
 import { createGuestRepositoryMock } from '@test/shared/mocks/repositories/guest-repository.mock';
 
-const GUEST_ACCOUNT_ID = '65f1a1a2b3c4d5e6f7a8b900';
-const GUEST_ID_1 = '65f1a1a2b3c4d5e6f7a8b9d1';
-const GUEST_ID_2 = '65f1a1a2b3c4d5e6f7a8b9d2';
+const GUEST_ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b90000000000';
+const GUEST_ID_1 = '65f1a1a2-b3c4-d5e6-f7a8-b9d100000000';
+const GUEST_ID_2 = '65f1a1a2-b3c4-d5e6-f7a8-b9d200000000';
 
 function createGuestReservationsReadRepositoryMock(): jest.Mocked<GuestReservationsReadRepository> {
   return {
@@ -74,8 +74,8 @@ function makeReservation(
 ): Reservation {
   const reservation = Reservation.createConfirmed({
     tenantId: TenantId.createFromString(tenantId),
-    propertyId: PropertyId.create('65f1a1a2b3c4d5e6f7a8b9c1'),
-    unitId: UnitId.create('65f1a1a2b3c4d5e6f7a8b9c2'),
+    propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
+    unitId: UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c200000000'),
     guestId: GuestId.createFromString(guestId),
     dateRange: DateRange.create(
       new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -123,17 +123,17 @@ describe('GetReservationsByGuestIdHandler', () => {
   });
 
   it('returns paginated reservations across all tenants for the guestAccountId', async () => {
-    const guest1 = makeGuest(GUEST_ID_1, '65f1a1a2b3c4d5e6f7a8b9c0');
-    const guest2 = makeGuest(GUEST_ID_2, '65f1a1a2b3c4d5e6f7a8b9c9');
+    const guest1 = makeGuest(GUEST_ID_1, '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+    const guest2 = makeGuest(GUEST_ID_2, '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000');
     const res1 = makeReservation(
-      '65f1a1a2b3c4d5e6f7a8b9e1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9e100000000',
       GUEST_ID_1,
-      '65f1a1a2b3c4d5e6f7a8b9c0',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
     );
     const res2 = makeReservation(
-      '65f1a1a2b3c4d5e6f7a8b9e2',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9e200000000',
       GUEST_ID_2,
-      '65f1a1a2b3c4d5e6f7a8b9c9',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
     );
 
     guestRepository.findAllByGuestAccountId.mockResolvedValue([guest1, guest2]);
@@ -159,7 +159,7 @@ describe('GetReservationsByGuestIdHandler', () => {
   });
 
   it('passes correct page and limit to the repository', async () => {
-    const guest = makeGuest(GUEST_ID_1, '65f1a1a2b3c4d5e6f7a8b9c0');
+    const guest = makeGuest(GUEST_ID_1, '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
 
     guestRepository.findAllByGuestAccountId.mockResolvedValue([guest]);
     guestReservationsReadRepository.findByGuestIds.mockResolvedValue([]);
@@ -179,11 +179,11 @@ describe('GetReservationsByGuestIdHandler', () => {
   });
 
   it('returns correct total when it exceeds the page limit', async () => {
-    const guest = makeGuest(GUEST_ID_1, '65f1a1a2b3c4d5e6f7a8b9c0');
+    const guest = makeGuest(GUEST_ID_1, '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
     const res = makeReservation(
-      '65f1a1a2b3c4d5e6f7a8b9e1',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9e100000000',
       GUEST_ID_1,
-      '65f1a1a2b3c4d5e6f7a8b9c0',
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
     );
 
     guestRepository.findAllByGuestAccountId.mockResolvedValue([guest]);

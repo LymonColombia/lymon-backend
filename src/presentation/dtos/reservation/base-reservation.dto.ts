@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsInt,
-  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -12,20 +12,20 @@ import { IsCalendarDate } from '@/presentation/common/decorators/is-calendar-dat
 
 export class BaseReservationDto {
   @ApiProperty({
-    example: '64f1a2b3c4d5e6f7a8b9c0d1',
+    example: '64f1a2b3-c4d5-e6f7-a8b9-c0d100000000',
     description: 'Tenant ID (property management company)',
   })
-  @IsMongoId()
+  @IsUUID()
   @IsNotEmpty()
   tenantId: string;
 
-  @ApiProperty({ example: '64f1a2b3c4d5e6f7a8b9c0d2' })
-  @IsMongoId()
+  @ApiProperty({ example: '64f1a2b3-c4d5-e6f7-a8b9-c0d200000000' })
+  @IsUUID()
   @IsNotEmpty()
   propertyId: string;
 
-  @ApiProperty({ example: '64f1a2b3c4d5e6f7a8b9c0d3' })
-  @IsMongoId()
+  @ApiProperty({ example: '64f1a2b3-c4d5-e6f7-a8b9-c0d300000000' })
+  @IsUUID()
   @IsNotEmpty()
   unitId: string;
 

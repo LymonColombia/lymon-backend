@@ -26,7 +26,7 @@ describe('GetSuppliersQueryHandler', () => {
     ]);
 
     const result = await handler.execute(
-      new GetSuppliersQuery('65f1a1a2b3c4d5e6f7a8b9c0', 1, 1),
+      new GetSuppliersQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 1),
     );
 
     expect(result.total).toBe(2);
@@ -40,7 +40,7 @@ describe('GetSuppliersQueryHandler', () => {
     supplierRepository.findByTenantId.mockResolvedValue([]);
 
     const result = await handler.execute(
-      new GetSuppliersQuery('65f1a1a2b3c4d5e6f7a8b9c0', 1, 10),
+      new GetSuppliersQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 10),
     );
 
     expect(result.total).toBe(0);
@@ -55,7 +55,7 @@ describe('GetSuppliersQueryHandler', () => {
     ]);
 
     const result = await handler.execute(
-      new GetSuppliersQuery('65f1a1a2b3c4d5e6f7a8b9c0', 1, 10, 'fresh'),
+      new GetSuppliersQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 10, 'fresh'),
     );
 
     expect(result.total).toBe(1);
@@ -70,7 +70,7 @@ describe('GetSuppliersQueryHandler', () => {
 
     const result = await handler.execute(
       new GetSuppliersQuery(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
         1,
         10,
         undefined,
@@ -99,7 +99,7 @@ describe('GetSuppliersQueryHandler', () => {
 
     const result = await handler.execute(
       new GetSuppliersQuery(
-        '65f1a1a2b3c4d5e6f7a8b9c0',
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
         1,
         10,
         undefined,
@@ -120,7 +120,7 @@ describe('GetSuppliersQueryHandler', () => {
     ]);
 
     const result = await handler.execute(
-      new GetSuppliersQuery('65f1a1a2b3c4d5e6f7a8b9c0'),
+      new GetSuppliersQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
     );
 
     expect(result.page).toBe(1);

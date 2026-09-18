@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsInt,
-  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
 
@@ -19,10 +19,10 @@ export class CreateInventoryItemDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ example: '6650a1b2c3d4e5f6a7b8c9d0' })
+  @ApiProperty({ example: '6650a1b2-c3d4-e5f6-a7b8-c9d000000000' })
   @IsString()
   @IsNotEmpty()
-  @IsMongoId()
+  @IsUUID()
   categoryId: string;
 
   @ApiProperty({ example: 'piece' })

@@ -3,7 +3,7 @@ import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class AssignStaffToShiftDto {
   @ApiProperty({
-    example: ['680c79f38b4f98f4f6383b12', '680c79f38b4f98f4f6383b14'],
+    example: ['680c79f3-8b4f-98f4-f638-3b1200000000', '680c79f3-8b4f-98f4-f638-3b1400000000'],
     description: 'Staff member IDs to assign to the shift (additive)',
   })
   @IsArray()

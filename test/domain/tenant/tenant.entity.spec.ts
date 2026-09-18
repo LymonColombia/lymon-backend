@@ -4,7 +4,7 @@ import { Email } from '@/domain/shared/value-objects/email.vo';
 import { PlanType } from '@/domain/tenant/value-objects/plan-type.vo';
 
 describe('Tenant Entity - COMPREHENSIVE COVERAGE', () => {
-  const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
+  const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
   const OWNER_EMAIL = 'owner@example.com';
   const TENANT_NAME = 'Acme Corporation';
 

@@ -1,0 +1,73 @@
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model properties {
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  name                  String
+  slug                  String
+  description           String
+  property_type         String
+  address               String
+  city                  String
+  state                 String
+  country               String
+  zip_code              String
+  lat                   Decimal                 @db.Decimal(9, 6)
+  lng                   Decimal                 @db.Decimal(9, 6)
+  check_in_time         DateTime                @db.Time(6)
+  check_out_time        DateTime                @db.Time(6)
+  cancellation_policy   String
+  host_phone            String
+  host_email            String                  @db.Citext
+  image_key             String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at            DateTime?               @db.Timestamptz(6)
+  experiences           experiences[]
+  guests                guests[]
+  incident_reports      incident_reports[]
+  inventory_items       inventory_items[]
+  inventory_movements   inventory_movements[]
+  tenants               tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  shifts                shifts[]
+  units                 units[]
+  user_role_assignments user_role_assignments[]
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, slug])
+  @@index([tenant_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model units {
+  id                    String                  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  property_id           String                  @db.Uuid
+  name                  String
+  description           String
+  inventory_count       Int
+  max_guests            Int
+  standard_guests       Int
+  bedrooms              Json                    @default("[]")
+  bathrooms_count       Int
+  is_shared             Boolean                 @default(false)
+  amenities             String[]                @default([])
+  media_keys            String[]                @default([])
+  price_per_night       Decimal                 @db.Decimal(14, 2)
+  rating                Decimal?                @db.Decimal(2, 1)
+  external_airbnb_id    String?
+  external_booking_id   String?
+  external_vrbo_id      String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at            DateTime?               @db.Timestamptz(6)
+  guests                guests[]
+  reservations          reservations[]
+  unit_ratings          unit_ratings[]
+  tenants               tenants                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  properties            properties              @relation(fields: [tenant_id, property_id], references: [tenant_id, id], onDelete: Cascade, onUpdate: NoAction)
+  user_role_assignments user_role_assignments[]
+
+  @@unique([tenant_id, property_id, id])
+  @@index([property_id])
+  @@index([tenant_id])
+}

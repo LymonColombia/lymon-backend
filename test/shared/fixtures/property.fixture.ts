@@ -13,7 +13,7 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { TENANT_FIXTURE_DEFAULTS } from '@test/shared/fixtures/tenant.fixture';
 
 export const PROPERTY_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c1',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
   tenantId: TENANT_FIXTURE_DEFAULTS.id,
   name: 'Casa del lago',
   description: 'Una hermosa casa',

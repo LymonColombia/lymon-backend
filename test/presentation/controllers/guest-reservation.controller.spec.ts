@@ -11,7 +11,7 @@ describe('GuestReservationController', () => {
   let queryBus: { execute: jest.Mock };
 
   const guest = {
-    guestAccountId: '65f1a1a2b3c4d5e6f7a8b9c5',
+    guestAccountId: '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
     email: 'guest@example.com',
   } as any;
 
@@ -48,7 +48,7 @@ describe('GuestReservationController', () => {
       GetGuestReservationsQuery,
     ];
     expect(query).toMatchObject({
-      guestAccountId: '65f1a1a2b3c4d5e6f7a8b9c5',
+      guestAccountId: '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
       page: 2,
       limit: 15,
       statuses: [ReservationStatusEnum.CHECKED_IN],
@@ -59,18 +59,18 @@ describe('GuestReservationController', () => {
   });
 
   it('opens booking detail for the authenticated guest account', async () => {
-    queryBus.execute.mockResolvedValue({ id: '65f1a1a2b3c4d5e6f7a8b9c3' });
+    queryBus.execute.mockResolvedValue({ id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000' });
 
-    const result = await controller.findOne(guest, '65f1a1a2b3c4d5e6f7a8b9c3');
+    const result = await controller.findOne(guest, '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000');
 
     expect(queryBus.execute).toHaveBeenCalledWith(
       expect.any(GetGuestReservationQuery),
     );
     const query = queryBus.execute.mock.calls[0][0] as GetGuestReservationQuery;
     expect(query).toMatchObject({
-      reservationId: '65f1a1a2b3c4d5e6f7a8b9c3',
-      guestAccountId: '65f1a1a2b3c4d5e6f7a8b9c5',
+      reservationId: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+      guestAccountId: '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
     });
-    expect(result).toEqual({ id: '65f1a1a2b3c4d5e6f7a8b9c3' });
+    expect(result).toEqual({ id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000' });
   });
 });

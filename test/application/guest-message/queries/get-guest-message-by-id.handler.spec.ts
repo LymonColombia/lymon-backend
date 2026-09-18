@@ -136,7 +136,7 @@ describe('GetGuestMessageByIdHandler', () => {
 
     it('throws NotFoundException when message belongs to a different tenant', async () => {
       // Arrange
-      const differentTenantId = '65f1a1a2b3c4d5e6f7a8b9ff';
+      const differentTenantId = '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000';
       const message = makeGuestMessage({ tenantId: TENANT_ID });
       guestMessageRepository.findById.mockResolvedValue(message);
 

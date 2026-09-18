@@ -2,10 +2,10 @@ import { IncidentReport } from '@/domain/incident-report/entities/incident-repor
 import { IncidentReportId } from '@/domain/incident-report/value-objects/incident-report-id.vo';
 
 export const INCIDENT_REPORT_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c7',
-  tenantId: '65f1a1a2b3c4d5e6f7a8b9c0',
-  propertyId: '65f1a1a2b3c4d5e6f7a8b9c1',
-  createdBy: '65f1a1a2b3c4d5e6f7a8b9c2',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c700000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+  propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+  createdBy: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
   title: 'Broken window',
   description: 'The window in room 3 is cracked',
   attachmentUrls: [] as string[],

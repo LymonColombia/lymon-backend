@@ -154,7 +154,7 @@ export class ExperienceController {
         summary: 'Property-scoped recurring experience',
         value: {
           scope: 'PROPERTY',
-          propertyId: '6650d0ef3f3d2d2d2d2d2d2d',
+          propertyId: '6650d0ef-3f3d-2d2d-2d2d-2d2d00000000',
           name: 'Airport transfer',
           description: 'Private transfer from airport to property',
           city: 'Bogota',

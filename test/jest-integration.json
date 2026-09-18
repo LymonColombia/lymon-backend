@@ -1,0 +1,33 @@
+{
+  "//": "Repository tests against a throwaway <db>_test database, created by globalSetup from prisma/migrations. Never touches the development database. Run: pnpm test:db",
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "..",
+  "roots": [
+    "<rootDir>/test/integration"
+  ],
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "tsconfig": "tsconfig.jest.json"
+      }
+    ]
+  },
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@test/(.*)$": "<rootDir>/test/$1"
+  },
+  "testEnvironment": "node",
+  "setupFilesAfterEnv": [
+    "<rootDir>/test/integration/setup.ts"
+  ],
+  "setupFiles": [
+    "<rootDir>/test/integration/setup-env.ts"
+  ],
+  "globalSetup": "<rootDir>/test/integration/global-setup.ts"
+}

@@ -13,7 +13,7 @@ describe('User Entity - Refactored reconstitute method', () => {
       // Arrange
       const userId = UserId.createFromString('user-123');
       const email = Email.create('test@example.com');
-      const tenantId = TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0');
+      const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
       const roleAssignments: RoleAssignment[] = [];
       const now = new Date();
       const resetToken = 'token-123';
@@ -50,15 +50,15 @@ describe('User Entity - Refactored reconstitute method', () => {
 
     it('should successfully reconstitute a user without optional parameters', () => {
       // Arrange
-      const userId = UserId.createFromString('65f1a1a2b3c4d5e6f7a8b9c2');
+      const userId = UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c200000000');
       const email = Email.create('staff@example.com');
-      const tenantId = TenantId.createFromString('65f1a1a2b3c4d5e6f7a8b9c0');
+      const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
       const roleAssignments: RoleAssignment[] = [
         {
           roleId: 'ADMIN',
           scope: {
             type: 'PROPERTY',
-            resourceIds: ['65f1a1a2b3c4d5e6f7a8b9c1'],
+            resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'],
           },
         },
       ];

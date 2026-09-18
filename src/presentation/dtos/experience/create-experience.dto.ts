@@ -56,7 +56,7 @@ export class CreateExperienceDto {
   @IsEnum(ExperienceScopeEnum)
   scope!: ExperienceScopeEnum;
 
-  @ApiPropertyOptional({ example: '6650d0ef3f3d2d2d2d2d2d2d' })
+  @ApiPropertyOptional({ example: '6650d0ef-3f3d-2d2d-2d2d-2d2d00000000' })
   @IsString()
   @IsOptional()
   propertyId?: string;

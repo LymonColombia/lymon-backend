@@ -19,10 +19,10 @@ import { ReservationStatusEnum } from '@/domain/reservation/value-objects/reserv
 import { CartReservationItem } from '@/domain/cart/value-objects/cart-reservation-item.vo';
 import { ExperiencePurchaseStatusEnum } from '@/domain/experience-purchase/value-objects/experience-purchase-status.vo';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c2';
-const GUEST_ACCOUNT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
-const CART_ID = '65f1a1a2b3c4d5e6f7a8b9d0';
-const RESERVATION_ID = '65f1a1a2b3c4d5e6f7a8b9c1';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
+const GUEST_ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+const CART_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9d000000000';
+const RESERVATION_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000';
 const PAYMENT_REFERENCE = 'checkout_65f1a1a2b3c4d5e6f7a8b9d0_test';
 const PROVIDER_REFERENCE = '1234-1610641025-49201';
 
@@ -93,8 +93,8 @@ describe('ProcessWompiWebhookHandler', () => {
     const cartItem = makeCartItem({ quantity: 2 });
     const reservationItem = CartReservationItem.create({
       tenantId: TENANT_ID,
-      propertyId: '65f1a1a2b3c4d5e6f7a8b9c3',
-      unitId: '65f1a1a2b3c4d5e6f7a8b9c4',
+      propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+      unitId: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
       checkIn: new Date('2030-06-01'),
       checkOut: new Date('2030-06-05'),
       guestsCount: 2,

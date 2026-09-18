@@ -20,10 +20,10 @@ describe('GetGuestBookingsHandler', () => {
   let propertyRepository: ReturnType<typeof createPropertyRepositoryMock>;
   let unitRepository: ReturnType<typeof createUnitRepositoryMock>;
 
-  const tenantId = '65f1a1a2b3c4d5e6f7a8b9c2';
-  const guestId = '65f1a1a2b3c4d5e6f7a8b9c0';
-  const propertyId = '65f1a1a2b3c4d5e6f7a8b9c3';
-  const unitId = '65f1a1a2b3c4d5e6f7a8b9c4';
+  const tenantId = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
+  const guestId = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+  const propertyId = '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000';
+  const unitId = '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000';
 
   beforeEach(() => {
     reservationRepository = createReservationRepositoryMock();
@@ -165,7 +165,7 @@ describe('GetGuestBookingsHandler', () => {
   describe('UT-05: Descending order by creation date', () => {
     it('should return bookings sorted by creation date descending', async () => {
       const resJan = makeReservation({
-        id: '65f1a1a2b3c4d5e6f7a8b911',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b91100000000',
         tenantId,
         guestId,
         propertyId,
@@ -173,7 +173,7 @@ describe('GetGuestBookingsHandler', () => {
         createdAt: new Date('2024-01-01T00:00:00Z'),
       });
       const resMay = makeReservation({
-        id: '65f1a1a2b3c4d5e6f7a8b922',
+        id: '65f1a1a2-b3c4-d5e6-f7a8-b92200000000',
         tenantId,
         guestId,
         propertyId,
@@ -188,14 +188,14 @@ describe('GetGuestBookingsHandler', () => {
       const result = await handler.execute(query);
 
       expect(result.items).toHaveLength(2);
-      expect(result.items[0].id).toBe('65f1a1a2b3c4d5e6f7a8b922');
-      expect(result.items[1].id).toBe('65f1a1a2b3c4d5e6f7a8b911');
+      expect(result.items[0].id).toBe('65f1a1a2-b3c4-d5e6-f7a8-b92200000000');
+      expect(result.items[1].id).toBe('65f1a1a2-b3c4-d5e6-f7a8-b91100000000');
     });
   });
 
   describe('UT-06: Fallback to the unit propertyId', () => {
     it('should resolve propertyName from unit property when reservation propertyId is stale', async () => {
-      const stalePropertyId = '65f1a1a2b3c4d5e6f7a8b9d9';
+      const stalePropertyId = '65f1a1a2-b3c4-d5e6-f7a8-b9d900000000';
       const reservation = makeReservation({
         tenantId,
         guestId,

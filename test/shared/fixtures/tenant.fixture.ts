@@ -11,7 +11,7 @@ import {
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 
 export const TENANT_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c0',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
   name: 'Acme Corp',
   ownerEmail: 'owner@example.com',
   plan: PlanTypeEnum.TRIAL,

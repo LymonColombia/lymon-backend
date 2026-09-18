@@ -2,19 +2,19 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
   IsInt,
-  IsMongoId,
   IsOptional,
   IsPositive,
   IsString,
+  IsUUID,
 } from 'class-validator';
 
 export class AddExperienceToCartDto {
   @ApiProperty()
-  @IsMongoId()
+  @IsUUID()
   tenantId: string;
 
   @ApiProperty()
-  @IsMongoId()
+  @IsUUID()
   experienceId: string;
 
   @ApiProperty({ minimum: 1 })

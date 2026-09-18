@@ -4,7 +4,7 @@ import { GeneratePresignedUrlResult } from '@/application/storage/queries/genera
 import { createR2StorageServiceMock } from '@test/shared/mocks/services/r2-storage.mock';
 import { MediaCategory } from '@/application/storage/media-category.enum';
 
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
 const FILE_SIZE = 102400;
 const PRESIGNED_URL =
   'https://bucket.account.r2.cloudflarestorage.com/key?X-Amz-Signature=abc';
