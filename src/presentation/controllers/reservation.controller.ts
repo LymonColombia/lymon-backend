@@ -23,9 +23,10 @@ import { RequirePermission } from '@/infrastructure/auth/decorators/require-perm
 import { Permission } from '@/domain/role/value-objects/permission.vo';
 import { CurrentUser } from '@/infrastructure/auth/decorators/current-user.decorator';
 import { type JwtPayload } from '@/application/auth/services/jwt.service';
-import { CreateReservationDto } from '@/presentation/dtos/create-reservation.dto';
-import { UpdateReservationDto } from '@/presentation/dtos/update-reservation.dto';
-import { CancelReservationDto } from '@/presentation/dtos/cancel-reservation.dto';
+import { CreateReservationDto } from '@/presentation/dtos/reservation/create-reservation.dto';
+import { UpdateReservationDto } from '@/presentation/dtos/reservation/update-reservation.dto';
+import { CancelReservationDto } from '@/presentation/dtos/reservation/cancel-reservation.dto';
+import { CheckInReservationDto } from '@/presentation/dtos/reservation/check-in-reservation.dto';
 import { CreateReservationCommand } from '@/application/reservation/commands/create-reservation/create-reservation.command';
 import { CreateReservationResult } from '@/application/reservation/commands/create-reservation/create-reservation.result';
 import { ConfirmReservationCommand } from '@/application/reservation/commands/confirm-reservation/confirm-reservation.command';
@@ -73,7 +74,6 @@ export class ReservationController {
         dto.guestsCount,
         dto.notes ?? null,
         dto.source as unknown as ReservationSourceEnum,
-        null,
         user.userId,
         user.email,
       ),
@@ -100,8 +100,8 @@ export class ReservationController {
     >(
       new GetReservationsByTenantQuery(
         user.tenantId,
-        parseInt(page, 10),
-        parseInt(limit, 10),
+        Number.parseInt(page, 10),
+        Number.parseInt(limit, 10),
       ),
     );
   }
@@ -156,7 +156,7 @@ export class ReservationController {
         user.tenantId,
         dto.checkIn ? new Date(dto.checkIn) : null,
         dto.checkOut ? new Date(dto.checkOut) : null,
-        dto.notes !== undefined ? dto.notes : null,
+        dto.notes ?? null,
         user.userId,
         user.email,
       ),
@@ -203,9 +203,29 @@ export class ReservationController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @RequirePermission(Permission.RESERVATION_EDIT)
   @ApiOperation({ summary: 'Mark a reservation as checked in' })
-  async checkIn(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
+  async checkIn(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() dto?: CheckInReservationDto,
+  ) {
+    const travelers = dto?.travelers?.map((t) => ({
+      fullName: t.fullName,
+      documentType: t.documentType,
+      documentNumber: t.documentNumber,
+      nationality: t.nationality,
+      dateOfBirth: t.dateOfBirth ? new Date(t.dateOfBirth) : null,
+      phone: t.phone ?? null,
+    }));
+
     await this.commandBus.execute(
-      new CheckInCommand(id, user.tenantId, null, user.userId, user.email),
+      new CheckInCommand(
+        id,
+        user.tenantId,
+        null,
+        user.userId,
+        user.email,
+        travelers,
+      ),
     );
     return { message: 'Checked in successfully' };
   }

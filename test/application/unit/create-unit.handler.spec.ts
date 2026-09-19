@@ -8,6 +8,7 @@ import { TenantRepository } from '@/domain/tenant/repositories/tenant.repository
 import { createUnitRepositoryMock } from '@test/shared/mocks/repositories/unit-repository.mock';
 import { createPropertyRepositoryMock } from '@test/shared/mocks/repositories/property-repository.mock';
 import { createTenantRepositoryMock } from '@test/shared/mocks/repositories/tenant-repository.mock';
+import { createEventEmitterMock } from '@test/shared/mocks/services/event-emitter.mock';
 import {
   makeTenant,
   TENANT_FIXTURE_DEFAULTS,
@@ -47,16 +48,19 @@ describe('CreateUnitHandler', () => {
   let unitRepository: jest.Mocked<UnitRepository>;
   let propertyRepository: jest.Mocked<PropertyRepository>;
   let tenantRepository: jest.Mocked<TenantRepository>;
+  let eventEmitter: ReturnType<typeof createEventEmitterMock>;
 
   beforeEach(() => {
     unitRepository = createUnitRepositoryMock();
     propertyRepository = createPropertyRepositoryMock();
     tenantRepository = createTenantRepositoryMock();
+    eventEmitter = createEventEmitterMock();
 
     handler = new CreateUnitHandler(
       unitRepository,
       propertyRepository,
       tenantRepository,
+      eventEmitter as any,
     );
   });
 

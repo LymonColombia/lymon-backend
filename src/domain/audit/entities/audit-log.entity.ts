@@ -2,6 +2,7 @@ import {
   AuditAction,
   AuditEntityType,
 } from '@/domain/audit/value-objects/audit-action.vo';
+import type { AuditLogData } from '../interfaces/audit-log.interface';
 
 export class AuditLogId {
   private constructor(private readonly value: string) {}
@@ -28,52 +29,43 @@ export class AuditLog {
     private readonly entityType: AuditEntityType,
     private readonly entityId: string | undefined,
     private readonly metadata: Record<string, unknown> | undefined,
+    private readonly previousValue: Record<string, unknown> | undefined,
+    private readonly newValue: Record<string, unknown> | undefined,
+    private readonly ipAddress: string | undefined,
     private readonly createdAt: Date,
   ) {}
 
-  static create(
-    tenantId: string,
-    userId: string,
-    userEmail: string,
-    action: AuditAction,
-    entityType: AuditEntityType,
-    entityId?: string,
-    metadata?: Record<string, unknown>,
-  ): AuditLog {
+  static create(data: AuditLogData): AuditLog {
     return new AuditLog(
       null,
-      tenantId,
-      userId,
-      userEmail,
-      action,
-      entityType,
-      entityId,
-      metadata,
+      data.tenantId,
+      data.userId,
+      data.userEmail,
+      data.action,
+      data.entityType,
+      data.entityId,
+      data.metadata,
+      data.previousValue,
+      data.newValue,
+      data.ipAddress,
       new Date(),
     );
   }
 
-  static reconstitute(
-    id: AuditLogId,
-    tenantId: string,
-    userId: string,
-    userEmail: string,
-    action: AuditAction,
-    entityType: AuditEntityType,
-    entityId: string | undefined,
-    metadata: Record<string, unknown> | undefined,
-    createdAt: Date,
-  ): AuditLog {
+  static reconstitute(id: AuditLogId, data: AuditLogData): AuditLog {
     return new AuditLog(
       id,
-      tenantId,
-      userId,
-      userEmail,
-      action,
-      entityType,
-      entityId,
-      metadata,
-      createdAt,
+      data.tenantId,
+      data.userId,
+      data.userEmail,
+      data.action,
+      data.entityType,
+      data.entityId,
+      data.metadata,
+      data.previousValue,
+      data.newValue,
+      data.ipAddress,
+      data.createdAt,
     );
   }
 
@@ -107,6 +99,18 @@ export class AuditLog {
 
   getMetadata(): Record<string, unknown> | undefined {
     return this.metadata;
+  }
+
+  getPreviousValue(): Record<string, unknown> | undefined {
+    return this.previousValue;
+  }
+
+  getNewValue(): Record<string, unknown> | undefined {
+    return this.newValue;
+  }
+
+  getIpAddress(): string | undefined {
+    return this.ipAddress;
   }
 
   getCreatedAt(): Date {

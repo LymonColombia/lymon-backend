@@ -8,16 +8,19 @@ import {
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { CreateGuestCommand } from '@/application/guest/commands/create-guest.command';
 import { CreateGuestResult } from '@/application/guest/commands/create-guest.result';
+import { CatalogPreferenceBuilderService } from '@/application/guest-preference/services/catalog-preference-builder.service';
 
 @CommandHandler(CreateGuestCommand)
 export class CreateGuestHandler implements ICommandHandler<CreateGuestCommand> {
   constructor(
     @Inject(GUEST_REPOSITORY)
     private readonly guestRepository: GuestRepository,
+    private readonly catalogPreferenceBuilder: CatalogPreferenceBuilderService,
   ) {}
 
   async execute(command: CreateGuestCommand): Promise<CreateGuestResult> {
     const tenantId = TenantId.createFromString(command.tenantId);
+
     const existingGuest = await this.guestRepository.findByPrimaryEmail(
       tenantId,
       command.primaryEmail,
@@ -29,6 +32,23 @@ export class CreateGuestHandler implements ICommandHandler<CreateGuestCommand> {
       );
     }
 
+    if (command.identity?.documentNumber) {
+      const existingByDoc = await this.guestRepository.findByDocumentNumber(
+        tenantId,
+        command.identity.documentNumber,
+      );
+      if (existingByDoc) {
+        throw new ConflictException(
+          'A guest with this document number already exists',
+        );
+      }
+    }
+
+    const preferences = await this.catalogPreferenceBuilder.build(
+      command.tenantId,
+      command.preferences ?? [],
+    );
+
     const guest = Guest.create({
       tenantId,
       identity: command.identity ?? {},
@@ -36,10 +56,8 @@ export class CreateGuestHandler implements ICommandHandler<CreateGuestCommand> {
       primaryEmail: command.primaryEmail,
       firstName: command.firstName,
       lastName: command.lastName,
-      emails: command.emails,
-      phones: command.phones,
-      tags: command.tags,
-      preferencesNotes: command.preferencesNotes,
+      phone: command.phone,
+      preferences,
     });
 
     const guestId = await this.guestRepository.save(guest);

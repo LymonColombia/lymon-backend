@@ -6,6 +6,9 @@ export interface AuditLogDto {
   entityType: string;
   entityId?: string;
   metadata?: Record<string, unknown>;
+  previousValue?: Record<string, unknown>;
+  newValue?: Record<string, unknown>;
+  ipAddress?: string;
   createdAt: string;
 }
 

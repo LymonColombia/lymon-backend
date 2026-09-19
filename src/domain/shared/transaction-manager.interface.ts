@@ -1,5 +1,7 @@
 export const TRANSACTION_MANAGER = 'TRANSACTION_MANAGER';
 
+export type TransactionContextData = object;
+
 export interface TransactionManager {
   executeInTransaction<T>(
     operation: (context: TransactionContext) => Promise<T>,
@@ -7,7 +9,5 @@ export interface TransactionManager {
 }
 
 export interface TransactionContext {
-  // Contexto opaco que será usado por los repositorios
-  // En MongoDB será ClientSession, en otras DB será otra cosa
-  getContext(): unknown;
+  getContext(): TransactionContextData;
 }

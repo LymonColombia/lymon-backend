@@ -12,7 +12,7 @@ import { UserId } from '@/domain/user/entities/user.entity';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private configService: ConfigService,
+    configService: ConfigService,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,
   ) {

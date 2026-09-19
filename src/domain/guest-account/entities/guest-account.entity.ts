@@ -2,6 +2,7 @@ import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-accou
 import { GuestAccountStatusEnum } from '@/domain/guest-account/value-objects/guest-account-status.vo';
 import { CreateGuestAccountParams } from '@/domain/guest-account/entities/guest-account.types';
 import { Email } from '@/domain/shared/value-objects/email.vo';
+import { IGuestAccount } from '../interfaces/guest-account.interface';
 
 export class GuestAccount {
   private constructor(
@@ -11,6 +12,7 @@ export class GuestAccount {
     private fullName: string,
     private firstName: string | null,
     private lastName: string | null,
+    private phone: string | null,
     private status: GuestAccountStatusEnum,
     private emailVerified: boolean,
     private emailVerificationToken: string | null,
@@ -20,6 +22,10 @@ export class GuestAccount {
     private passwordChangedAt: Date | null,
     private readonly createdAt: Date,
     private updatedAt: Date,
+    private profilePhotoKey: string | null,
+    private pendingEmail: Email | null,
+    private emailChangeToken: string | null,
+    private emailChangeExpiry: Date | null,
   ) {}
 
   static create(params: CreateGuestAccountParams): GuestAccount {
@@ -35,6 +41,7 @@ export class GuestAccount {
       fullName,
       params.firstName?.trim() ?? null,
       params.lastName?.trim() ?? null,
+      params.phone?.trim() ?? null,
       GuestAccountStatusEnum.PENDING_VERIFICATION,
       false,
       null,
@@ -44,42 +51,35 @@ export class GuestAccount {
       null,
       new Date(),
       new Date(),
+      null,
+      null,
+      null,
+      null,
     );
   }
 
-  static reconstitute(
-    id: GuestAccountId,
-    email: Email,
-    passwordHash: string,
-    fullName: string,
-    firstName: string | null,
-    lastName: string | null,
-    status: GuestAccountStatusEnum,
-    emailVerified: boolean,
-    emailVerificationToken: string | null,
-    emailVerificationExpiry: Date | null,
-    passwordResetToken: string | null,
-    passwordResetExpiry: Date | null,
-    passwordChangedAt: Date | null,
-    createdAt: Date,
-    updatedAt: Date,
-  ): GuestAccount {
+  static reconstitute(data: IGuestAccount): GuestAccount {
     return new GuestAccount(
-      id,
-      email,
-      passwordHash,
-      fullName,
-      firstName,
-      lastName,
-      status,
-      emailVerified,
-      emailVerificationToken,
-      emailVerificationExpiry,
-      passwordResetToken,
-      passwordResetExpiry,
-      passwordChangedAt,
-      createdAt,
-      updatedAt,
+      data.id,
+      data.email,
+      data.passwordHash,
+      data.fullName,
+      data.firstName,
+      data.lastName,
+      data.phone,
+      data.status,
+      data.emailVerified,
+      data.emailVerificationToken,
+      data.emailVerificationExpiry,
+      data.passwordResetToken,
+      data.passwordResetExpiry,
+      data.passwordChangedAt,
+      data.createdAt,
+      data.updatedAt,
+      data.profilePhotoKey,
+      data.pendingEmail,
+      data.emailChangeToken,
+      data.emailChangeExpiry,
     );
   }
 
@@ -125,6 +125,12 @@ export class GuestAccount {
     this.clearResetToken();
   }
 
+  changePassword(newHash: string): void {
+    this.passwordHash = newHash;
+    this.passwordChangedAt = new Date();
+    this.touch();
+  }
+
   updateProfile(
     fullName: string,
     firstName?: string | null,
@@ -138,9 +144,76 @@ export class GuestAccount {
     this.touch();
   }
 
+  setFirstName(firstName: string | null): void {
+    this.firstName = firstName?.trim() || null;
+    this.touch();
+  }
+
+  setLastName(lastName: string | null): void {
+    this.lastName = lastName?.trim() || null;
+    this.touch();
+  }
+
+  setPhone(phone: string | null): void {
+    this.phone = phone?.trim() || null;
+    this.touch();
+  }
+
+  initEmailChange(pendingEmail: Email, hashedToken: string, expiry: Date): void {
+    this.pendingEmail = pendingEmail;
+    this.emailChangeToken = hashedToken;
+    this.emailChangeExpiry = expiry;
+    this.touch();
+  }
+
+  getPendingEmail(): Email | null {
+    return this.pendingEmail;
+  }
+
+  getEmailChangeToken(): string | null {
+    return this.emailChangeToken;
+  }
+
+  getEmailChangeExpiry(): Date | null {
+    return this.emailChangeExpiry;
+  }
+
+  isEmailChangeTokenValid(now: Date): boolean {
+    return (
+      this.pendingEmail !== null &&
+      this.emailChangeExpiry !== null &&
+      this.emailChangeExpiry > now
+    );
+  }
+
+  confirmEmailChange(): void {
+    if (!this.pendingEmail) return;
+    this.email = this.pendingEmail;
+    this.pendingEmail = null;
+    this.emailChangeToken = null;
+    this.emailChangeExpiry = null;
+    this.touch();
+  }
+
+  clearEmailChange(): void {
+    this.pendingEmail = null;
+    this.emailChangeToken = null;
+    this.emailChangeExpiry = null;
+    this.touch();
+  }
+
   suspend(): void {
     this.status = GuestAccountStatusEnum.SUSPENDED;
     this.touch();
+  }
+
+  setProfilePhotoKey(key: string | null): void {
+    this.profilePhotoKey = key;
+    this.touch();
+  }
+
+  getProfilePhotoKey(): string | null {
+    return this.profilePhotoKey;
   }
 
   getId(): GuestAccountId | null {
@@ -161,6 +234,10 @@ export class GuestAccount {
 
   getFirstName(): string | null {
     return this.firstName;
+  }
+
+  getPhone(): string | null {
+    return this.phone;
   }
 
   getLastName(): string | null {

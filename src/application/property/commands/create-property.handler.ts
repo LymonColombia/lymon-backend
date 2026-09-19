@@ -61,23 +61,24 @@ export class CreatePropertyHandler implements ICommandHandler<CreatePropertyComm
     await this.validatePlanLimits(tenantId, tenant.getPlan().getSiteLimit());
 
     const propertyType = PropertyType.create(command.propertyType);
-    const property = Property.create(
-      tenantId,
-      command.name,
-      command.description,
-      propertyType,
-      command.address,
-      command.city,
-      command.state,
-      command.country,
-      command.zipCode,
-      Location.create(command.location.lat, command.location.lng),
-      command.checkInTime,
-      command.checkOutTime,
-      CancellationPolicy.create(command.cancellationPolicy),
-      command.hostPhone,
-      command.hostEmail,
-    );
+    const property = Property.create({
+      tenantId: tenantId,
+      name: command.name,
+      description: command.description,
+      propertyType: propertyType,
+      address: command.address,
+      city: command.city,
+      state: command.state,
+      country: command.country,
+      zipCode: command.zipCode,
+      location: Location.create(command.location.lat, command.location.lng),
+      checkInTime: command.checkInTime,
+      checkOutTime: command.checkOutTime,
+      cancellationPolicy: CancellationPolicy.create(command.cancellationPolicy),
+      hostPhone: command.hostPhone,
+      hostEmail: command.hostEmail,
+      imageKey: command.imageKey,
+    });
 
     const shouldAutoCreate =
       command.autoCreateUnit && propertyType.shouldAutoCreateUnit();
@@ -106,21 +107,31 @@ export class CreatePropertyHandler implements ICommandHandler<CreatePropertyComm
         );
         const propertyId = PropertyId.create(propertyIdString);
 
-        const unit = Unit.create(
+        const unit = Unit.create({
           tenantId,
           propertyId,
-          command.name,
-          command.description,
-          1,
-          4,
-          2,
-          [],
-          1,
-          false,
-          [],
-          0,
-          ExternalIds.create(),
-        );
+          basicInfo: {
+            name: command.name,
+            description: command.description,
+          },
+          inventoryConfig: {
+            inventoryCount: 1,
+          },
+          capacityConfig: {
+            maxGuests: 4,
+            standardGuests: 2,
+          },
+          physicalFeatures: {
+            bedrooms: [],
+            bathroomsCount: 1,
+            isShared: false,
+          },
+          pricingConfig: {
+            pricePerNight: 0,
+          },
+          amenities: [],
+          externalIds: ExternalIds.create(),
+        });
 
         const unitIdString = await this.unitRepository.save(
           unit,

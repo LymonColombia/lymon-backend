@@ -3,12 +3,69 @@ import { CancellationPolicy } from '@/domain/property/value-objects/cancellation
 import { Location } from '@/domain/property/value-objects/location.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import { PropertyType } from '@/domain/property/value-objects/property-type.vo';
+import { createSlug } from '@/domain/shared/utils/slug.util';
+
+export interface PropertyProps {
+  tenantId: TenantId;
+  name: string;
+  slug?: string;
+  description: string;
+  propertyType: PropertyType;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
+  location: Location;
+  checkInTime: string;
+  checkOutTime: string;
+  cancellationPolicy: CancellationPolicy;
+  hostPhone: string;
+  hostEmail: string;
+  imageKey?: string;
+}
+
+export interface PropertyUpdateData {
+  name?: string;
+  description?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zipCode?: string;
+  location?: Location;
+}
+
+export interface PropertyReconstituteData {
+  id: PropertyId;
+  tenantId: TenantId;
+  name: string;
+  slug?: string;
+  description: string;
+  propertyType: PropertyType;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
+  location: Location;
+  checkInTime: string;
+  checkOutTime: string;
+  cancellationPolicy: CancellationPolicy;
+  hostPhone: string;
+  hostEmail: string;
+  imageKey?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | null;
+}
 
 export class Property {
   private constructor(
     private readonly id: PropertyId | null,
     private readonly tenantId: TenantId,
     private name: string,
+    private slug: string,
     private description: string,
     private readonly propertyType: PropertyType,
     private address: string,
@@ -22,96 +79,69 @@ export class Property {
     private cancellationPolicy: CancellationPolicy,
     private hostPhone: string,
     private hostEmail: string,
+    private imageKey: string | null,
     private readonly createdAt: Date,
     private updatedAt: Date,
+    private deletedAt: Date | null,
   ) {}
 
-  static create(
-    tenantId: TenantId,
-    name: string,
-    description: string,
-    propertyType: PropertyType,
-    address: string,
-    city: string,
-    state: string,
-    country: string,
-    zipCode: string,
-    location: Location,
-    checkInTime: string,
-    checkOutTime: string,
-    cancellationPolicy: CancellationPolicy,
-    hostPhone: string,
-    hostEmail: string,
-  ): Property {
-    if (!name || name.trim() === '') {
+  static create(props: PropertyProps): Property {
+    if (!props.name || props.name.trim() === '') {
       throw new Error('Property name cannot be empty');
     }
 
-    if (!address || address.trim() === '') {
+    if (!props.address || props.address.trim() === '') {
       throw new Error('Property address cannot be empty');
     }
 
     return new Property(
       null,
-      tenantId,
-      name.trim(),
-      description.trim(),
-      propertyType,
-      address.trim(),
-      city.trim(),
-      state.trim(),
-      country.trim(),
-      zipCode.trim(),
-      location,
-      checkInTime,
-      checkOutTime,
-      cancellationPolicy,
-      hostPhone,
-      hostEmail,
+      props.tenantId,
+      props.name.trim(),
+      props.slug ?? createSlug(props.name),
+      props.description.trim(),
+      props.propertyType,
+      props.address.trim(),
+      props.city.trim(),
+      props.state.trim(),
+      props.country.trim(),
+      props.zipCode.trim(),
+      props.location,
+      props.checkInTime,
+      props.checkOutTime,
+      props.cancellationPolicy,
+      props.hostPhone,
+      props.hostEmail,
+      props.imageKey ?? null,
       new Date(),
       new Date(),
+      null,
     );
   }
 
-  static reconstitute(
-    id: PropertyId,
-    tenantId: TenantId,
-    name: string,
-    description: string,
-    propertyType: PropertyType,
-    address: string,
-    city: string,
-    state: string,
-    country: string,
-    zipCode: string,
-    location: Location,
-    checkInTime: string,
-    checkOutTime: string,
-    cancellationPolicy: CancellationPolicy,
-    hostPhone: string,
-    hostEmail: string,
-    createdAt: Date,
-    updatedAt: Date,
-  ): Property {
+  static reconstitute(data: PropertyReconstituteData): Property {
     return new Property(
-      id,
-      tenantId,
-      name,
-      description,
-      propertyType,
-      address,
-      city,
-      state,
-      country,
-      zipCode,
-      location,
-      checkInTime,
-      checkOutTime,
-      cancellationPolicy,
-      hostPhone,
-      hostEmail,
-      createdAt,
-      updatedAt,
+      data.id,
+      data.tenantId,
+      data.name,
+      data.slug ?? createSlug(data.name),
+      data.description,
+      data.propertyType,
+      data.address,
+      data.city,
+      data.state,
+      data.country,
+      data.zipCode,
+      data.location,
+      data.checkInTime,
+      data.checkOutTime,
+      data.cancellationPolicy,
+      data.hostPhone,
+      data.hostEmail,
+      data.imageKey ?? null,
+      data.createdAt,
+      data.updatedAt,
+      data.deletedAt ?? null,
     );
   }
 
@@ -125,6 +155,10 @@ export class Property {
 
   getName(): string {
     return this.name;
+  }
+
+  getSlug(): string {
+    return this.slug;
   }
 
   getDescription(): string {
@@ -179,6 +213,15 @@ export class Property {
     return this.hostEmail;
   }
 
+  getImageKey(): string | null {
+    return this.imageKey;
+  }
+
+  updateImageKey(imageKey: string | null): void {
+    this.imageKey = imageKey;
+    this.updatedAt = new Date();
+  }
+
   getCreatedAt(): Date {
     return this.createdAt;
   }
@@ -187,39 +230,35 @@ export class Property {
     return this.updatedAt;
   }
 
-  updateDetails(
-    name: string,
-    description: string,
-    address: string,
-    city: string,
-    state: string,
-    country: string,
-    zipCode: string,
-    location: Location,
-  ): void {
-    if (name && name.trim() !== '') {
-      this.name = name.trim();
+  getDeletedAt(): Date | null {
+    return this.deletedAt;
+  }
+
+  updateDetails(data: PropertyUpdateData): void {
+    if (data.name && data.name.trim() !== '') {
+      this.name = data.name.trim();
+      this.slug = createSlug(this.name);
     }
-    if (description !== undefined) {
-      this.description = description.trim();
+    if (data.description !== undefined) {
+      this.description = data.description.trim();
     }
-    if (address && address.trim() !== '') {
-      this.address = address.trim();
+    if (data.address && data.address.trim() !== '') {
+      this.address = data.address.trim();
     }
-    if (city && city.trim() !== '') {
-      this.city = city.trim();
+    if (data.city && data.city.trim() !== '') {
+      this.city = data.city.trim();
     }
-    if (state && state.trim() !== '') {
-      this.state = state.trim();
+    if (data.state && data.state.trim() !== '') {
+      this.state = data.state.trim();
     }
-    if (country && country.trim() !== '') {
-      this.country = country.trim();
+    if (data.country && data.country.trim() !== '') {
+      this.country = data.country.trim();
     }
-    if (zipCode && zipCode.trim() !== '') {
-      this.zipCode = zipCode.trim();
+    if (data.zipCode && data.zipCode.trim() !== '') {
+      this.zipCode = data.zipCode.trim();
     }
-    if (location) {
-      this.location = location;
+    if (data.location) {
+      this.location = data.location;
     }
     this.updatedAt = new Date();
   }
@@ -239,5 +278,11 @@ export class Property {
     this.hostPhone = phone;
     this.hostEmail = email;
     this.updatedAt = new Date();
+  }
+
+  softDelete(): void {
+    const now = new Date();
+    this.deletedAt = now;
+    this.updatedAt = now;
   }
 }

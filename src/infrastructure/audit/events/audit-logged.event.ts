@@ -14,5 +14,8 @@ export class AuditLoggedEvent {
     public readonly entityType: AuditEntityType,
     public readonly entityId?: string,
     public readonly metadata?: Record<string, unknown>,
+    public readonly previousValue?: Record<string, unknown>,
+    public readonly newValue?: Record<string, unknown>,
+    public readonly ipAddress?: string,
   ) {}
 }

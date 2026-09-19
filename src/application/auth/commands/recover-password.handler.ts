@@ -10,7 +10,7 @@ import {
 } from '@/domain/user/repositories/user.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, Logger } from '@nestjs/common';
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 
 export class RecoverPasswordResult {
   constructor(public readonly message: string) {}

@@ -5,5 +5,6 @@ export function createEmailServiceMock(): jest.Mocked<IEmailService> {
     sendEmail: jest.fn(),
     sendVerificationEmail: jest.fn(),
     sendRecoveryEmail: jest.fn(),
+    sendLowStockAlertEmail: jest.fn(),
   };
 }

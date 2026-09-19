@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# npm/yarn lockfiles — this repo uses pnpm
+package-lock.json
+yarn.lock
+
 # Logs
 logs
 *.log
@@ -18,6 +22,12 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+
+# Compiled Cypress tests
+cypress/**/*.js
+cypress/**/*.d.ts
+cypress/**/*.js.map
+
 
 # IDEs and editors
 /.idea
@@ -61,3 +71,18 @@ docs/add-staff-endpoint-frontend-guide.md
 docs/audit-log-frontend-guide.md
 docs/guest-auth-frontend-guide.md
 docs/user-stories.feature
+
+# Archivos de configuración de SonarQube
+.scannerwork/
+.sonarlint/
+
+.agents
+
+#Claude
+/.claude
+CLAUDE.md
+
+# Prisma client (generated; `pnpm prisma generate` runs on postinstall)
+/src/infrastructure/persistence/prisma/generated
+
+*.tsbuildinfo

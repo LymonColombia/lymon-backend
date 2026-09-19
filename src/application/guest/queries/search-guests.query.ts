@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { GUEST_REPOSITORY, type GuestRepository } from '@/domain/guest/repositories/guest.repository';
+import {
+  GUEST_REPOSITORY,
+  type GuestRepository,
+} from '@/domain/guest/repositories/guest.repository';
 import { Guest } from '@/domain/guest/entities/guest.entity';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 
@@ -10,13 +13,31 @@ export class SearchGuestsQuery {
     private readonly guestRepository: GuestRepository,
   ) {}
 
-  async execute(tenantId: TenantId, term: string): Promise<Guest[]> {
+  async execute(
+    tenantId: TenantId,
+    term: string,
+    page: number,
+    limit: number,
+    sortBy: 'createdAt' | 'fullName' | 'status',
+    sortDirection: 'asc' | 'desc',
+  ): Promise<{ guests: Guest[]; total: number }> {
     const sanitizedTerm = term?.trim().toLowerCase();
 
     if (!sanitizedTerm) {
-      return this.guestRepository.findByTenantId(tenantId);
+      return this.guestRepository.findByTenantIdPaginated(
+        tenantId,
+        page,
+        limit,
+        sortBy,
+        sortDirection,
+      );
     }
 
-    return this.guestRepository.search(tenantId, sanitizedTerm);
+    return this.guestRepository.searchPaginated(
+      tenantId,
+      sanitizedTerm,
+      page,
+      limit,
+    );
   }
 }

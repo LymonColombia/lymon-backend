@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import {
   LoginHandler,
   LoginResult,
@@ -20,6 +20,7 @@ import {
   USER_FIXTURE_DEFAULTS,
 } from '@test/shared/fixtures/user.fixture';
 import { makeTenant } from '@test/shared/fixtures/tenant.fixture';
+import { PlanTypeEnum } from '@/domain/tenant/value-objects/plan-type.vo';
 import { Role, RoleId } from '@/domain/role/entities/role.entity';
 import { Permission } from '@/domain/role/value-objects/permission.vo';
 import type { RoleAssignment } from '@/domain/user/entities/user.entity';
@@ -69,6 +70,59 @@ describe('LoginHandler', () => {
       expect(result.emailVerified).toBe(true);
       expect(result.accessToken).toBe('access-token');
       expect(result.refreshToken).toBe('refresh-token');
+      expect(result.tutorialCompleted).toBe(false);
+      expect(result.trialWarning).toBeNull();
+    });
+  });
+
+  describe('when the trial has expired', () => {
+    it('throws ForbiddenException', async () => {
+      userRepository.findByEmail.mockResolvedValue(makeUser());
+      passwordHasher.compare.mockResolvedValue(true);
+      tenantRepository.findById.mockResolvedValue(
+        makeTenant({ trialEndsAt: new Date(Date.now() - 1000) }),
+      );
+
+      await expect(
+        handler.execute(
+          new LoginCommand(USER_FIXTURE_DEFAULTS.email, 'plain-password'),
+        ),
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('when the trial ends within 2 days', () => {
+    it('returns a trialWarning in the result', async () => {
+      userRepository.findByEmail.mockResolvedValue(makeUser());
+      passwordHasher.compare.mockResolvedValue(true);
+      tenantRepository.findById.mockResolvedValue(
+        makeTenant({
+          trialEndsAt: new Date(Date.now() + 1.5 * 24 * 60 * 60 * 1000),
+        }),
+      );
+
+      const result = await handler.execute(
+        new LoginCommand(USER_FIXTURE_DEFAULTS.email, 'plain-password'),
+      );
+
+      expect(result.trialWarning).not.toBeNull();
+      expect(result.trialWarning?.daysRemaining).toBeLessThanOrEqual(2);
+    });
+  });
+
+  describe('when the tenant is not on a trial plan', () => {
+    it('never blocks and never warns', async () => {
+      userRepository.findByEmail.mockResolvedValue(makeUser());
+      passwordHasher.compare.mockResolvedValue(true);
+      tenantRepository.findById.mockResolvedValue(
+        makeTenant({ plan: PlanTypeEnum.LYMON_ONE, trialEndsAt: null }),
+      );
+
+      const result = await handler.execute(
+        new LoginCommand(USER_FIXTURE_DEFAULTS.email, 'plain-password'),
+      );
+
+      expect(result.trialWarning).toBeNull();
     });
   });
 
@@ -163,7 +217,10 @@ describe('LoginHandler', () => {
             expect.objectContaining({
               roleId: 'role-admin',
               roleName: 'ADMIN',
-              permissions: [Permission.PROPERTY_VIEW, Permission.PROPERTY_CREATE],
+              permissions: [
+                Permission.PROPERTY_VIEW,
+                Permission.PROPERTY_CREATE,
+              ],
             }),
           ],
         }),
@@ -175,7 +232,13 @@ describe('LoginHandler', () => {
     it('returns LoginResult with all resolved roles', async () => {
       const assignments: RoleAssignment[] = [
         { roleId: 'role-admin', scope: { type: 'TENANT' } },
-        { roleId: 'role-staff', scope: { type: 'PROPERTY', resourceIds: ['prop-1'] } },
+        {
+          roleId: 'role-staff',
+          scope: {
+            type: 'PROPERTY',
+            resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'],
+          },
+        },
         { roleId: 'role-deleted', scope: { type: 'TENANT' } },
       ];
       userRepository.findByEmail.mockResolvedValue(

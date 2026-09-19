@@ -22,5 +22,6 @@ export class CreateUnitCommand {
     },
     public readonly actorId?: string,
     public readonly actorEmail?: string,
+    public readonly mediaKeys?: string[],
   ) {}
 }

@@ -44,4 +44,8 @@ export class ReservationStatus {
   canTransitionTo(next: ReservationStatusEnum): boolean {
     return TRANSITIONS[this.value].includes(next);
   }
+
+  isPending(): boolean {
+    return this.value === ReservationStatusEnum.PENDING;
+  }
 }

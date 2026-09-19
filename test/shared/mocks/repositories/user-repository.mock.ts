@@ -5,6 +5,8 @@ export function createUserRepositoryMock(): jest.Mocked<UserRepository> {
     save: jest.fn(),
     findById: jest.fn(),
     findByEmail: jest.fn(),
+    findByTenantId: jest.fn(),
+    findByEmailAndTenantId: jest.fn(),
     findByResetToken: jest.fn(),
   };
 }

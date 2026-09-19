@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.github
+.env
+.env.*
+Dockerfile
+README.md
+README-API.md
+README-SETUP.md
+Lymon - User Stories (1).md

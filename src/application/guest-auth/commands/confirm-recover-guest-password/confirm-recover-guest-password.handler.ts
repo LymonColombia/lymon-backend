@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 import { ConfirmRecoverGuestPasswordCommand } from '@/application/guest-auth/commands/confirm-recover-guest-password/confirm-recover-guest-password.command';
 import {
   GUEST_ACCOUNT_REPOSITORY,

@@ -8,5 +8,7 @@ export class InviteStaffCommand {
     public readonly roleAssignments: RoleAssignment[],
     public readonly actorId: string,
     public readonly actorEmail: string,
+    public readonly fullName: string,
+    public readonly document: string,
   ) {}
 }

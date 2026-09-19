@@ -6,11 +6,11 @@ export enum ReservationSourceEnum {
   VRBO = 'VRBO',
 }
 
-const EXTERNAL_SOURCES: ReservationSourceEnum[] = [
+const EXTERNAL_SOURCES: Set<ReservationSourceEnum> = new Set([
   ReservationSourceEnum.AIRBNB,
   ReservationSourceEnum.BOOKING,
   ReservationSourceEnum.VRBO,
-];
+]);
 
 export class ReservationSource {
   private constructor(private readonly value: ReservationSourceEnum) {}
@@ -28,6 +28,6 @@ export class ReservationSource {
   }
 
   isExternal(): boolean {
-    return EXTERNAL_SOURCES.includes(this.value);
+    return EXTERNAL_SOURCES.has(this.value);
   }
 }

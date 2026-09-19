@@ -1,4 +1,6 @@
 import { GuestStatusEnum } from '@/domain/guest/entities/guest.types';
+import { GuestLifecycleStatus } from '@/domain/guest/value-objects/guest-lifecycle-status.vo';
+import { GuestPreferenceItem } from '@/domain/guest/value-objects/guest-preference-item.vo';
 
 export interface GuestDto {
   id: string;
@@ -6,15 +8,10 @@ export interface GuestDto {
   firstName: string | null;
   lastName: string | null;
   primaryEmail: string;
-  emails: string[];
-  phones: Array<{
-    number: string;
-    type?: string;
-    isPrimary?: boolean;
-  }>;
+  phone: string | null;
   status: GuestStatusEnum;
   tags: string[];
-  preferencesNotes: string | null;
+  preferences: GuestPreferenceItem[];
   summary: {
     totalBookings: number;
     totalNights: number;
@@ -25,6 +22,7 @@ export interface GuestDto {
   } | null;
   createdAt: string;
   updatedAt: string;
+  lifecycleStatus: GuestLifecycleStatus;
 }
 
 export interface GetGuestByIdResult {

@@ -15,8 +15,14 @@ import {
 } from '@/application/auth/services/jwt.service';
 import { UserId } from '@/domain/user/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuditLoggedEvent, AUDIT_LOG_EVENT } from '@/infrastructure/audit/events/audit-logged.event';
-import { AuditAction, AuditEntityType } from '@/domain/audit/value-objects/audit-action.vo';
+import {
+  AuditLoggedEvent,
+  AUDIT_LOG_EVENT,
+} from '@/infrastructure/audit/events/audit-logged.event';
+import {
+  AuditAction,
+  AuditEntityType,
+} from '@/domain/audit/value-objects/audit-action.vo';
 
 @CommandHandler(VerifyEmailCommand)
 export class VerifyEmailHandler implements ICommandHandler<VerifyEmailCommand> {

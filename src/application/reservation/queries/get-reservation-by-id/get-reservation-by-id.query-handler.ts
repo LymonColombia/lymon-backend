@@ -25,7 +25,7 @@ export class GetReservationByIdHandler implements IQueryHandler<
 
     if (
       !reservation ||
-      reservation.getTenantId().toString() !== query.tenantId
+      reservation?.getTenantId().toString() !== query.tenantId
     ) {
       throw new NotFoundException('Reservation not found');
     }

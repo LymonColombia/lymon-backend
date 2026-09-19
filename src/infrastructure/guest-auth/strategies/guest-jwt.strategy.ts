@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +12,8 @@ import { GuestAccountStatusEnum } from '@/domain/guest-account/value-objects/gue
 
 @Injectable()
 export class GuestJwtStrategy extends PassportStrategy(Strategy, 'guest-jwt') {
+  private readonly logger = new Logger(GuestJwtStrategy.name);
+
   constructor(
     configService: ConfigService,
     @Inject(GUEST_ACCOUNT_REPOSITORY)
@@ -29,8 +31,15 @@ export class GuestJwtStrategy extends PassportStrategy(Strategy, 'guest-jwt') {
   }
 
   async validate(payload: GuestJwtPayload & { iat: number }) {
+    this.logger.debug(
+      `validate() payload=${JSON.stringify(payload)}`,
+    );
+
     // Reject staff tokens on guest endpoints
     if (payload.type !== 'guest') {
+      this.logger.warn(
+        `Rejected token: type is "${payload.type}", expected "guest" (probably a staff token was used on a guest endpoint)`,
+      );
       throw new UnauthorizedException('Invalid token type');
     }
 
@@ -39,10 +48,16 @@ export class GuestJwtStrategy extends PassportStrategy(Strategy, 'guest-jwt') {
     );
 
     if (!account) {
+      this.logger.warn(
+        `Rejected token: no guest account found for guestAccountId=${payload.guestAccountId}`,
+      );
       throw new UnauthorizedException('Guest account no longer exists');
     }
 
     if (account.getStatus() === GuestAccountStatusEnum.SUSPENDED) {
+      this.logger.warn(
+        `Rejected token: guestAccountId=${payload.guestAccountId} is SUSPENDED`,
+      );
       throw new UnauthorizedException('Guest account is suspended');
     }
 
@@ -50,11 +65,18 @@ export class GuestJwtStrategy extends PassportStrategy(Strategy, 'guest-jwt') {
     if (passwordChangedAt) {
       const changedTimestamp = Math.floor(passwordChangedAt.getTime() / 1000);
       if (payload.iat < changedTimestamp) {
+        this.logger.warn(
+          `Rejected token: issued at ${payload.iat} before password change at ${changedTimestamp} (guestAccountId=${payload.guestAccountId})`,
+        );
         throw new UnauthorizedException(
           'Session invalidated due to password change',
         );
       }
     }
+
+    this.logger.debug(
+      `Token accepted for guestAccountId=${payload.guestAccountId}`,
+    );
 
     return {
       type: 'guest' as const,

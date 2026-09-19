@@ -12,7 +12,7 @@ import { RequirePermission } from '@/infrastructure/auth/decorators/require-perm
 import { Permission } from '@/domain/role/value-objects/permission.vo';
 import { CurrentUser } from '@/infrastructure/auth/decorators/current-user.decorator';
 import { type JwtPayload } from '@/application/auth/services/jwt.service';
-import { GetAuditLogsDto } from '@/presentation/dtos/get-audit-logs.dto';
+import { GetAuditLogsDto } from '@/presentation/dtos/audit/get-audit-logs.dto';
 import { GetAuditLogsQuery } from '@/application/audit/queries/get-audit-logs.query';
 import { type GetAuditLogsResult } from '@/application/audit/queries/get-audit-logs.result';
 

@@ -25,6 +25,7 @@ const VALID_PAYLOAD: JwtPayload = {
   isOwner: true,
   emailVerified: false,
   roleAssignments: [],
+  trialEndsAt: null,
 };
 
 // ─── Tests ───────────────────────────────────────────────────────────────────

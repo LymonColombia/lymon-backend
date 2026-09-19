@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alerta de Bajo Stock | Lymon</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background-color: #ff9800;
+        color: #222;
+        padding: 40px 20px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 40px 30px;
+      }
+
+      .content h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #222;
+      }
+
+      .content p {
+        margin-bottom: 16px;
+        color: #555;
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .alert-box {
+        background-color: #fff3cd;
+        border-left: 4px solid #ff9800;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #856404;
+      }
+
+      .item-details {
+        background-color: #f9f9f9;
+        padding: 16px;
+        border-radius: 4px;
+        margin: 16px 0;
+        border: 1px solid #e8e8e8;
+      }
+
+      .item-details-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 14px;
+      }
+
+      .item-details-row strong {
+        color: #222;
+      }
+
+      .item-details-value {
+        color: #666;
+      }
+
+      .stock-status {
+        padding: 12px;
+        border-radius: 4px;
+        margin: 16px 0;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .stock-low {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ef5350;
+      }
+
+      .divider {
+        text-align: center;
+        margin: 28px 0;
+        font-size: 13px;
+        color: #999;
+      }
+
+      .action-section {
+        background-color: #f0f4ff;
+        padding: 16px;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+
+      .action-section p {
+        margin-bottom: 8px;
+      }
+
+      .footer {
+        background-color: #f8f8f8;
+        padding: 30px;
+        text-align: center;
+        border-top: 1px solid #eeeeee;
+      }
+
+      .footer p {
+        font-size: 12px;
+        color: #888;
+        margin: 8px 0;
+      }
+
+      .footer-divider {
+        border-top: 1px solid #ddd;
+        margin: 20px 0;
+      }
+
+      .social-links {
+        margin-top: 15px;
+      }
+
+      .social-links a {
+        color: #ff9800;
+        text-decoration: none;
+        margin: 0 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Alerta de Bajo Stock</h1>
+        <p>Gestión de Inventario - Lymon</p>
+      </div>
+
+      <div class="content">
+        <h2>Artículo por debajo del stock mínimo</h2>
+
+        <p>Estimado {{ownerName}},</p>
+
+        <p>
+          Te notificamos que uno de los artículos en tu inventario se encuentra
+          por debajo del nivel mínimo de stock establecido.
+        </p>
+
+        <div class="alert-box">
+          <strong>Acción recomendada:</strong> Revisa tu inventario y realiza un
+          reabastecimiento si es necesario.
+        </div>
+
+        <h3
+          style="
+            margin-top: 30px;
+            margin-bottom: 16px;
+            font-size: 18px;
+            color: #222;
+          "
+        >
+          Detalles del artículo
+        </h3>
+
+        <div class="item-details">
+          <div class="item-details-row">
+            <strong>Artículo:</strong>
+            <span class="item-details-value">{{itemName}}</span>
+          </div>
+          <div class="item-details-row">
+            <strong>SKU:</strong>
+            <span class="item-details-value">{{itemSku}}</span>
+          </div>
+          <div class="item-details-row">
+            <strong>Propiedad:</strong>
+            <span class="item-details-value">{{propertyName}}</span>
+          </div>
+        </div>
+
+        <h3
+          style="
+            margin-top: 30px;
+            margin-bottom: 16px;
+            font-size: 18px;
+            color: #222;
+          "
+        >
+          Niveles de stock
+        </h3>
+
+        <div class="item-details">
+          <div class="item-details-row">
+            <strong>Stock actual:</strong>
+            <span class="item-details-value"
+              ><strong>{{currentStock}}</strong></span
+            >
+          </div>
+          <div class="item-details-row">
+            <strong>Stock mínimo:</strong>
+            <span class="item-details-value">{{minStock}}</span>
+          </div>
+          <div class="item-details-row">
+            <strong>Diferencia:</strong>
+            <span class="item-details-value" style="color: #c62828"
+              ><strong>{{difference}}</strong></span
+            >
+          </div>
+        </div>
+
+        <div class="stock-status stock-low">
+          Stock actual es {{difference}} unidades inferior al mínimo
+        </div>
+
+        <div class="action-section">
+          <p><strong>¿Qué hacer ahora?</strong></p>
+          <p style="font-size: 14px">
+            Accede a tu panel de Lymon para registrar un nuevo movimiento de
+            entrada (IN) y actualizar el stock del artículo. Puedes añadir notas
+            sobre el reabastecimiento si lo deseas.
+          </p>
+        </div>
+
+        <p>
+          ¿Necesitas ayuda?
+          <a href="{{supportUrl}}" style="color: #ff9800; text-decoration: none"
+            >Contacta a soporte</a
+          >
+        </p>
+      </div>
+
+      <div class="footer">
+        <p><strong>Lymon</strong> - Plataforma de Gestión de Alojamientos</p>
+        <p>{{tenantName}}</p>
+        <div class="footer-divider"></div>
+        <p>
+          Este es un correo automático generado para alerts de inventario. Por
+          favor no respondas directamente a este correo.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

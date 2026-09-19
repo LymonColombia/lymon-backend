@@ -13,7 +13,7 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { TENANT_FIXTURE_DEFAULTS } from '@test/shared/fixtures/tenant.fixture';
 
 export const PROPERTY_FIXTURE_DEFAULTS = {
-  id: 'property-123',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
   tenantId: TENANT_FIXTURE_DEFAULTS.id,
   name: 'Casa del lago',
   description: 'Una hermosa casa',
@@ -40,24 +40,25 @@ export function makeProperty(
   }>,
 ): Property {
   const merged = { ...PROPERTY_FIXTURE_DEFAULTS, ...overrides };
-  return Property.reconstitute(
-    PropertyId.create(merged.id),
-    TenantId.createFromString(merged.tenantId),
-    merged.name,
-    merged.description,
-    PropertyType.create(merged.propertyType),
-    merged.address,
-    merged.city,
-    merged.state,
-    merged.country,
-    merged.zipCode,
-    Location.create(merged.location.lat, merged.location.lng),
-    merged.checkInTime,
-    merged.checkOutTime,
-    CancellationPolicy.create(merged.cancellationPolicy),
-    merged.hostPhone,
-    merged.hostEmail,
-    new Date(),
-    new Date(),
-  );
+  return Property.reconstitute({
+    id: PropertyId.create(merged.id),
+    tenantId: TenantId.createFromString(merged.tenantId),
+    name: merged.name,
+    description: merged.description,
+    propertyType: PropertyType.create(merged.propertyType),
+    address: merged.address,
+    city: merged.city,
+    state: merged.state,
+    country: merged.country,
+    zipCode: merged.zipCode,
+    location: Location.create(merged.location.lat, merged.location.lng),
+    checkInTime: merged.checkInTime,
+    checkOutTime: merged.checkOutTime,
+    cancellationPolicy: CancellationPolicy.create(merged.cancellationPolicy),
+    hostPhone: merged.hostPhone,
+    hostEmail: merged.hostEmail,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: null,
+  });
 }

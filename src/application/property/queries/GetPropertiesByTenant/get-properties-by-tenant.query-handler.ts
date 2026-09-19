@@ -8,6 +8,10 @@ import {
 import { PROPERTY_REPOSITORY } from '@/domain/property/repositories/property.repository';
 import type { PropertyRepository } from '@/domain/property/repositories/property.repository';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
+import {
+  R2StorageService,
+  R2_STORAGE_SERVICE,
+} from '@/infrastructure/storage/r2-storage.service';
 
 @QueryHandler(GetPropertiesByTenantQuery)
 export class GetPropertiesByTenantQueryHandler implements IQueryHandler<
@@ -17,6 +21,8 @@ export class GetPropertiesByTenantQueryHandler implements IQueryHandler<
   constructor(
     @Inject(PROPERTY_REPOSITORY)
     private readonly propertyRepository: PropertyRepository,
+    @Inject(R2_STORAGE_SERVICE)
+    private readonly storage: R2StorageService,
   ) {}
 
   async execute(
@@ -34,12 +40,16 @@ export class GetPropertiesByTenantQueryHandler implements IQueryHandler<
       (property) =>
         new PropertyDto(
           property.getId()?.toString() ?? '',
+          property.getSlug(),
           property.getName(),
           property.getDescription(),
           property.getPropertyType().toString(),
           property.getAddress(),
           property.getCity(),
           property.getCreatedAt(),
+          property.getImageKey()
+            ? this.storage.getPublicUrl(property.getImageKey()!)
+            : null,
         ),
     );
 

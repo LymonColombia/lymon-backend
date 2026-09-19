@@ -33,11 +33,11 @@ describe('UpdateIncidentReportHandler', () => {
         handler.execute(
           new UpdateIncidentReportCommand(
             'non-existent',
-            'tenant-123',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'Updated title',
             undefined,
             undefined,
-            'user-456',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'owner@example.com',
             true,
           ),
@@ -49,18 +49,18 @@ describe('UpdateIncidentReportHandler', () => {
   describe('when the report belongs to a different tenant', () => {
     it('throws NotFoundException', async () => {
       reportRepository.findById.mockResolvedValue(
-        makeIncidentReport({ tenantId: 'other-tenant' }),
+        makeIncidentReport({ tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000' }),
       );
 
       await expect(
         handler.execute(
           new UpdateIncidentReportCommand(
             INCIDENT_REPORT_FIXTURE_DEFAULTS.id,
-            'tenant-123',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'Updated title',
             undefined,
             undefined,
-            'user-456',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'owner@example.com',
             true,
           ),
@@ -79,11 +79,11 @@ describe('UpdateIncidentReportHandler', () => {
         handler.execute(
           new UpdateIncidentReportCommand(
             INCIDENT_REPORT_FIXTURE_DEFAULTS.id,
-            'tenant-123',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
             'Updated title',
             undefined,
             undefined,
-            'user-456',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'owner@example.com',
             false, // canManageAll = false (STAFF level)
           ),
@@ -101,11 +101,11 @@ describe('UpdateIncidentReportHandler', () => {
       const result = await handler.execute(
         new UpdateIncidentReportCommand(
           INCIDENT_REPORT_FIXTURE_DEFAULTS.id,
-          'tenant-123',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           'Updated title',
           'Updated description',
           ['https://img.example.com/new.jpg'],
-          'user-456',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'owner@example.com',
           true, // canManageAll = true (OWNER/ADMIN)
         ),
@@ -124,17 +124,17 @@ describe('UpdateIncidentReportHandler', () => {
   describe('when STAFF edits their own report', () => {
     it('updates successfully', async () => {
       reportRepository.findById.mockResolvedValue(
-        makeIncidentReport({ createdBy: 'user-456' }),
+        makeIncidentReport({ createdBy: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000' }),
       );
 
       const result = await handler.execute(
         new UpdateIncidentReportCommand(
           INCIDENT_REPORT_FIXTURE_DEFAULTS.id,
-          'tenant-123',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
           'Updated title',
           undefined,
           undefined,
-          'user-456',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'owner@example.com',
           false, // canManageAll = false (STAFF)
         ),

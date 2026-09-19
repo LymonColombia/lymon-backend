@@ -19,6 +19,10 @@ export class PlanType {
     return new PlanType(value as PlanTypeEnum);
   }
 
+  static createFromString(value: string): PlanType {
+    return this.create(value);
+  }
+
   toString(): string {
     return this.value;
   }

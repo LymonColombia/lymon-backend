@@ -1,6 +1,7 @@
 import {
   IEmailService,
   SendEmailParams,
+  SendLowStockAlertEmailParams,
 } from '@/application/shared/services/email.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { BrevoClient } from '@getbrevo/brevo';
@@ -11,10 +12,15 @@ import { EmailTemplateService } from '@/infrastructure/common/email-template.ser
 export class BrevoEmailService implements IEmailService {
   private readonly logger = new Logger(BrevoEmailService.name);
   private readonly client: BrevoClient;
-  private readonly defaultSender = {
-    email: 'no-reply@lymon.com.co',
-    name: 'Lymon',
-  };
+
+  private get defaultSender() {
+    return {
+      email:
+        this.configService.get<string>('SENDER_EMAIL') ||
+        'lymonoficial@outlook.com',
+      name: 'Lymon',
+    };
+  }
 
   constructor(
     private readonly configService: ConfigService,
@@ -24,22 +30,32 @@ export class BrevoEmailService implements IEmailService {
     if (!apiKey) throw new Error('BREVO_API_KEY is not configured');
     this.client = new BrevoClient({ apiKey });
   }
-  async sendEmail(params: SendEmailParams): Promise<void> {
+
+  async sendEmail(params: SendEmailParams): Promise<{ messageId: string }> {
     try {
-      await this.client.transactionalEmails.sendTransacEmail({
+      const sender = params.sender || this.defaultSender;
+      const response = await this.client.transactionalEmails.sendTransacEmail({
         htmlContent: params.htmlContent,
-        sender: params.sender || this.defaultSender,
+        sender: sender,
         subject: params.subject,
         to: params.to,
         cc: params.cc,
         bcc: params.bcc,
+        ...(params.attachments &&
+          params.attachments.length > 0 && { attachment: params.attachments }),
       });
-      this.logger.log(`Email sent successfully to ${params.to[0].email}`);
-    } catch (error) {
-      this.logger.error(
-        `Failed to send email: ${error instanceof Error ? error.message : 'Unknown error'}`,
+
+      const messageId = response.messageId || 'SENT';
+      this.logger.log(
+        `[BREVO] Email enviado con éxito desde ${sender.email} a ${params.to[0].email} (ID: ${messageId})`,
       );
-      throw new Error('Failed to send email');
+      return { messageId };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `[BREVO_ERROR] Fallo al enviar email desde ${params.sender?.email || this.defaultSender.email}: ${message}`,
+      );
+      throw new Error(`Failed to send email: ${message}`);
     }
   }
 
@@ -67,6 +83,28 @@ export class BrevoEmailService implements IEmailService {
     await this.sendEmail({
       to: [{ email, name: email }],
       subject: 'Recuperación de contraseña - Lymon',
+      htmlContent,
+    });
+  }
+
+  async sendLowStockAlertEmail(
+    params: SendLowStockAlertEmailParams,
+  ): Promise<void> {
+    const difference = params.minStock - params.currentStock;
+    const htmlContent = this.emailTemplateService.renderLowStockAlertTemplate({
+      ownerName: params.ownerName,
+      tenantName: params.tenantName,
+      propertyName: params.propertyName,
+      itemName: params.itemName,
+      itemSku: params.itemSku,
+      currentStock: params.currentStock,
+      minStock: params.minStock,
+      difference,
+    });
+
+    await this.sendEmail({
+      to: [{ email: params.ownerEmail, name: params.ownerName }],
+      subject: `Alerta: ${params.itemName} está por debajo de stock mínimo`,
       htmlContent,
     });
   }

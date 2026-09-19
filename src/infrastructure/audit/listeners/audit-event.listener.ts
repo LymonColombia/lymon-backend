@@ -25,6 +25,9 @@ export class AuditEventListener {
           event.entityType,
           event.entityId,
           event.metadata,
+          event.previousValue,
+          event.newValue,
+          event.ipAddress,
         ),
       );
     } catch (error) {

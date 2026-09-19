@@ -1,5 +1,4 @@
 import { GetSystemRolesQueryHandler } from '@/application/role/queries/GetSystemRoles/get-system-roles.query-handler';
-import { GetSystemRolesQuery } from '@/application/role/queries/GetSystemRoles/get-system-roles.query';
 import {
   GetSystemRolesResult,
   RoleDto,
@@ -49,7 +48,7 @@ describe('GetSystemRolesQueryHandler', () => {
         makeRole('role-staff', 'STAFF', staffPermissions),
       ]);
 
-      const result = await handler.execute(new GetSystemRolesQuery());
+      const result = await handler.execute();
 
       expect(result).toBeInstanceOf(GetSystemRolesResult);
       expect(result.roles).toHaveLength(2);
@@ -70,7 +69,7 @@ describe('GetSystemRolesQueryHandler', () => {
     it('returns a GetSystemRolesResult with an empty array', async () => {
       roleRepository.findSystemRoles.mockResolvedValue([]);
 
-      const result = await handler.execute(new GetSystemRolesQuery());
+      const result = await handler.execute();
 
       expect(result).toBeInstanceOf(GetSystemRolesResult);
       expect(result.roles).toEqual([]);

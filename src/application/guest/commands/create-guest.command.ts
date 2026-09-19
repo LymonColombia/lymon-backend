@@ -10,13 +10,8 @@ export class CreateGuestCommand {
     },
     public readonly firstName?: string,
     public readonly lastName?: string,
-    public readonly emails?: string[],
-    public readonly phones?: Array<{
-      number: string;
-      type?: string;
-      isPrimary?: boolean;
-    }>,
+    public readonly phone?: string,
     public readonly tags?: string[],
-    public readonly preferencesNotes?: string,
+    public readonly preferences?: string[],
   ) {}
 }

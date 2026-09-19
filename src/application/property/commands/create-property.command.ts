@@ -18,5 +18,6 @@ export class CreatePropertyCommand {
     public readonly autoCreateUnit: boolean,
     public readonly actorId: string,
     public readonly actorEmail: string,
+    public readonly imageKey?: string,
   ) {}
 }

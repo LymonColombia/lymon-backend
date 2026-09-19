@@ -24,8 +24,8 @@ import { RequirePermission } from '@/infrastructure/auth/decorators/require-perm
 import { Permission } from '@/domain/role/value-objects/permission.vo';
 import { CurrentUser } from '@/infrastructure/auth/decorators/current-user.decorator';
 import { type JwtPayload } from '@/application/auth/services/jwt.service';
-import { CreateIncidentReportDto } from '@/presentation/dtos/create-incident-report.dto';
-import { UpdateIncidentReportDto } from '@/presentation/dtos/update-incident-report.dto';
+import { CreateIncidentReportDto } from '@/presentation/dtos/incident-report/create-incident-report.dto';
+import { UpdateIncidentReportDto } from '@/presentation/dtos/incident-report/update-incident-report.dto';
 import { CreateIncidentReportCommand } from '@/application/incident-report/commands/create-incident-report.command';
 import { CreateIncidentReportResult } from '@/application/incident-report/commands/create-incident-report.result';
 import { UpdateIncidentReportCommand } from '@/application/incident-report/commands/update-incident-report.command';

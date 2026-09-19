@@ -10,6 +10,16 @@ import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { DomainException } from '@/domain/shared/exceptions/domain.exception';
+import { IReservationData } from '../interfaces/reservation.interface';
+
+export interface TravelerInfo {
+  fullName: string;
+  documentType: string;
+  documentNumber: string;
+  nationality: string;
+  dateOfBirth: Date | null;
+  phone: string | null;
+}
 
 interface CreateReservationParams {
   tenantId: TenantId;
@@ -21,7 +31,6 @@ interface CreateReservationParams {
   guestsCount: number;
   pricePerNight: number;
   notes?: string | null;
-  externalReservationId?: string | null;
 }
 
 export class Reservation {
@@ -34,15 +43,16 @@ export class Reservation {
     private dateRange: DateRange,
     private readonly source: ReservationSource,
     private status: ReservationStatus,
-    private readonly guestsCount: number,
+    private guestsCount: number,
     private readonly pricePerNight: number,
     private totalPrice: number,
     private notes: string | null,
-    private readonly externalReservationId: string | null,
     private cancelledAt: Date | null,
     private cancellationReason: string | null,
     private checkInActualAt: Date | null,
     private checkOutActualAt: Date | null,
+    private reservationNumber: number | null,
+    private checkInInfo: TravelerInfo[],
     private readonly createdAt: Date,
     private updatedAt: Date,
   ) {}
@@ -64,11 +74,12 @@ export class Reservation {
       params.pricePerNight,
       totalPrice,
       params.notes ?? null,
-      params.externalReservationId ?? null,
       null,
       null,
       null,
       null,
+      null,
+      [],
       new Date(),
       new Date(),
     );
@@ -80,47 +91,28 @@ export class Reservation {
     return reservation;
   }
 
-  static reconstitute(
-    id: string,
-    tenantId: TenantId,
-    propertyId: PropertyId,
-    unitId: UnitId,
-    guestId: GuestId,
-    dateRange: DateRange,
-    source: ReservationSource,
-    status: ReservationStatus,
-    guestsCount: number,
-    pricePerNight: number,
-    totalPrice: number,
-    notes: string | null,
-    externalReservationId: string | null,
-    cancelledAt: Date | null,
-    cancellationReason: string | null,
-    checkInActualAt: Date | null,
-    checkOutActualAt: Date | null,
-    createdAt: Date,
-    updatedAt: Date,
-  ): Reservation {
+  static reconstitute(data: IReservationData): Reservation {
     return new Reservation(
-      ReservationId.create(id),
-      tenantId,
-      propertyId,
-      unitId,
-      guestId,
-      dateRange,
-      source,
-      status,
-      guestsCount,
-      pricePerNight,
-      totalPrice,
-      notes,
-      externalReservationId,
-      cancelledAt,
-      cancellationReason,
-      checkInActualAt,
-      checkOutActualAt,
-      createdAt,
-      updatedAt,
+      ReservationId.create(data.id),
+      data.tenantId,
+      data.propertyId,
+      data.unitId,
+      data.guestId,
+      data.dateRange,
+      data.source,
+      data.status,
+      data.guestsCount,
+      data.pricePerNight,
+      data.totalPrice,
+      data.notes,
+      data.cancelledAt,
+      data.cancellationReason,
+      data.checkInActualAt,
+      data.checkOutActualAt,
+      data.reservationNumber,
+      data.checkInInfo,
+      data.createdAt,
+      data.updatedAt,
     );
   }
 
@@ -152,6 +144,14 @@ export class Reservation {
     this.touch();
   }
 
+  pay(): void {
+    if (!this.status.isPending()) {
+      throw new DomainException('Reservation must be PENDING to pay');
+    }
+    this.status = ReservationStatus.create(ReservationStatusEnum.CONFIRMED);
+    this.touch();
+  }
+
   markNoShow(): void {
     this.assertCanTransitionTo(ReservationStatusEnum.NO_SHOW);
     this.status = ReservationStatus.create(ReservationStatusEnum.NO_SHOW);
@@ -167,6 +167,31 @@ export class Reservation {
     this.dateRange = dateRange;
     this.totalPrice = this.pricePerNight * dateRange.nights();
     this.touch();
+  }
+
+  updateGuestsCount(count: number): void {
+    this.guestsCount = count;
+    this.touch();
+  }
+
+  setCheckInInfo(info: TravelerInfo[]): void {
+    const status = this.status.toString();
+    if (status !== 'CONFIRMED' && status !== 'CHECKED_IN') {
+      throw new DomainException(
+        'Check-in info can only be submitted for confirmed or checked-in reservations',
+      );
+    }
+    if (info.length < 1 || info.length > this.guestsCount) {
+      throw new DomainException(
+        `Travelers count must be between 1 and ${this.guestsCount}`,
+      );
+    }
+    this.checkInInfo = info;
+    this.touch();
+  }
+
+  getCheckInInfo(): TravelerInfo[] {
+    return this.checkInInfo;
   }
 
   getId(): ReservationId | null {
@@ -221,10 +246,6 @@ export class Reservation {
     return this.notes;
   }
 
-  getExternalReservationId(): string | null {
-    return this.externalReservationId;
-  }
-
   getCancelledAt(): Date | null {
     return this.cancelledAt;
   }
@@ -239,6 +260,14 @@ export class Reservation {
 
   getCheckOutActualAt(): Date | null {
     return this.checkOutActualAt;
+  }
+
+  getReservationNumber(): number | null {
+    return this.reservationNumber;
+  }
+
+  setReservationNumber(reservationNumber: number): void {
+    this.reservationNumber = reservationNumber;
   }
 
   getCreatedAt(): Date {

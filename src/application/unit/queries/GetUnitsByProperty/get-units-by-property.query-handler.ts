@@ -11,6 +11,10 @@ import { PROPERTY_REPOSITORY } from '@/domain/property/repositories/property.rep
 import { UNIT_REPOSITORY } from '@/domain/unit/repositories/unit.repository';
 import type { PropertyRepository } from '@/domain/property/repositories/property.repository';
 import type { UnitRepository } from '@/domain/unit/repositories/unit.repository';
+import {
+  R2StorageService,
+  R2_STORAGE_SERVICE,
+} from '@/infrastructure/storage/r2-storage.service';
 
 @QueryHandler(GetUnitsByPropertyQuery)
 export class GetUnitsByPropertyQueryHandler implements IQueryHandler<
@@ -22,6 +26,8 @@ export class GetUnitsByPropertyQueryHandler implements IQueryHandler<
     private readonly propertyRepository: PropertyRepository,
     @Inject(UNIT_REPOSITORY)
     private readonly unitRepository: UnitRepository,
+    @Inject(R2_STORAGE_SERVICE)
+    private readonly storage: R2StorageService,
   ) {}
 
   async execute(
@@ -64,6 +70,8 @@ export class GetUnitsByPropertyQueryHandler implements IQueryHandler<
         unit.getAmenities(),
         unit.getPricePerNight(),
         unit.getCreatedAt(),
+        unit.getRating(),
+        unit.getMediaKeys().map((k) => this.storage.getPublicUrl(k)),
       );
     });
 

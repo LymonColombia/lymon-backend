@@ -21,6 +21,9 @@ export enum Permission {
   UNIT_EDIT = 'UNIT_EDIT',
   UNIT_DELETE = 'UNIT_DELETE',
 
+  // --- Experience ---
+  EXPERIENCE_DELETE = 'EXPERIENCE_DELETE',
+
   // --- Reservations ---
   RESERVATION_VIEW = 'RESERVATION_VIEW',
   RESERVATION_CREATE = 'RESERVATION_CREATE',
@@ -42,6 +45,9 @@ export enum Permission {
 
   // --- Audit ---
   AUDIT_VIEW = 'AUDIT_VIEW',
+
+  // --- Experience ---
+  EXPERIENCE_EDIT = 'EXPERIENCE_EDIT',
 
   // --- Incident Reports ---
   INCIDENT_REPORT_CREATE = 'INCIDENT_REPORT_CREATE',
@@ -72,6 +78,7 @@ export const ADMIN_PERMISSIONS: Permission[] = [
   Permission.INTEGRATION_VIEW,
   Permission.TENANT_USERS_MANAGE,
   Permission.AUDIT_VIEW,
+  Permission.EXPERIENCE_EDIT,
   Permission.INCIDENT_REPORT_CREATE,
   Permission.INCIDENT_REPORT_READ,
   Permission.INCIDENT_REPORT_EDIT,

@@ -1,4 +1,5 @@
 import { IncidentReportId } from '@/domain/incident-report/value-objects/incident-report-id.vo';
+import { IIncidentReport } from '../interfaces/incident-report.interface';
 
 export class IncidentReport {
   private constructor(
@@ -50,27 +51,17 @@ export class IncidentReport {
     );
   }
 
-  static reconstitute(
-    id: IncidentReportId,
-    tenantId: string,
-    propertyId: string,
-    createdBy: string,
-    title: string,
-    description: string,
-    attachmentUrls: string[],
-    createdAt: Date,
-    updatedAt: Date,
-  ): IncidentReport {
+  static reconstitute(data: IIncidentReport): IncidentReport {
     return new IncidentReport(
-      id,
-      tenantId,
-      propertyId,
-      createdBy,
-      title,
-      description,
-      attachmentUrls,
-      createdAt,
-      updatedAt,
+      data.id,
+      data.tenantId,
+      data.propertyId,
+      data.createdBy,
+      data.title,
+      data.description,
+      data.attachmentUrls,
+      data.createdAt,
+      data.updatedAt,
     );
   }
 

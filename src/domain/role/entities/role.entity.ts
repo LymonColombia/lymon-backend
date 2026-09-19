@@ -22,7 +22,7 @@ export class RoleId {
 export class Role {
   private constructor(
     private readonly id: RoleId | null,
-    private name: string,
+    private readonly name: string,
     private readonly permissions: Permission[],
     private readonly createdAt: Date,
     private readonly updatedAt: Date,

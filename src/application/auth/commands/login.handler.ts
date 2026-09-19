@@ -1,6 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoginCommand } from '@/application/auth/commands/login.command';
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   type UserRepository,
   USER_REPOSITORY,
@@ -44,6 +48,11 @@ export class LoginResult {
     public readonly emailVerified: boolean,
     public readonly accessToken: string,
     public readonly refreshToken: string,
+    public readonly tutorialCompleted: boolean,
+    public readonly trialWarning: {
+      daysRemaining: number;
+      message: string;
+    } | null,
   ) {}
 }
 
@@ -85,6 +94,12 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       throw new UnauthorizedException('Tenant not found');
     }
 
+    if (tenant.isTrialExpired()) {
+      throw new ForbiddenException(
+        'Your free trial ended. Upgrade your plan to continue.',
+      );
+    }
+
     // Resolve role permissions for staff users
     const resolvedAssignments: ResolvedRoleAssignment[] = [];
     for (const assignment of user.getRoleAssignments()) {
@@ -109,6 +124,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       isOwner: user.isOwner(),
       emailVerified: user.isEmailVerified(),
       roleAssignments: resolvedAssignments,
+      trialEndsAt: tenant.getTrialEndsAt()?.toISOString() ?? null,
     };
 
     const accessToken = this.tokenService.generateAccesToken(payload);
@@ -126,6 +142,15 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       ),
     );
 
+    const daysRemaining = tenant.getTrialDaysRemaining();
+    const trialWarning =
+      daysRemaining !== null && daysRemaining <= 2
+        ? {
+            daysRemaining,
+            message: `Your free trial ends in ${daysRemaining} day(s). Upgrade your plan.`,
+          }
+        : null;
+
     return new LoginResult(
       user.getId()!.toString(),
       user.getEmail().toString(),
@@ -134,6 +159,8 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       user.isEmailVerified(),
       accessToken,
       refreshToken,
+      user.getTutorialCompleted(),
+      trialWarning,
     );
   }
 }

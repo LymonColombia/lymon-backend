@@ -27,7 +27,9 @@ export class RefreshTokenHandler implements ICommandHandler<RefreshTokenCommand>
     try {
       payload = this.tokenService.verifyToken(command.refreshToken);
     } catch {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+      return Promise.reject(
+        new UnauthorizedException('Invalid or expired refresh token'),
+      );
     }
 
     const cleanPayload: JwtPayload = {
@@ -38,6 +40,7 @@ export class RefreshTokenHandler implements ICommandHandler<RefreshTokenCommand>
       isOwner: payload.isOwner,
       emailVerified: payload.emailVerified,
       roleAssignments: payload.roleAssignments,
+      trialEndsAt: payload.trialEndsAt,
     };
 
     const accessToken = this.tokenService.generateAccesToken(cleanPayload);

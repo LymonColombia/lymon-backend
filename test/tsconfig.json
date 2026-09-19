@@ -1,12 +1,10 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rootDir": "..",
     "types": ["jest", "node"]
   },
-  "include": [
-    "./**/*.ts",
-    "../src/**/*.ts"
-  ]
+  "include": ["./**/*.ts", "../src/**/*.ts"]
 }

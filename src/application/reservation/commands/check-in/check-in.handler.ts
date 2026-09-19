@@ -36,6 +36,10 @@ export class CheckInHandler implements ICommandHandler<CheckInCommand> {
       throw new NotFoundException('Reservation not found');
     }
 
+    if (command.travelers?.length) {
+      reservation.setCheckInInfo(command.travelers);
+    }
+
     try {
       reservation.checkIn(command.actualAt ?? undefined);
     } catch {

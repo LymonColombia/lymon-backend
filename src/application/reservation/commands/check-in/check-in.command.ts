@@ -1,3 +1,5 @@
+import { TravelerInfo } from '@/domain/reservation/entities/reservation.entity';
+
 export class CheckInCommand {
   constructor(
     public readonly reservationId: string,
@@ -5,5 +7,6 @@ export class CheckInCommand {
     public readonly actualAt: Date | null,
     public readonly actorId: string,
     public readonly actorEmail: string,
+    public readonly travelers?: TravelerInfo[],
   ) {}
 }

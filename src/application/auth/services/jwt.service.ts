@@ -23,6 +23,7 @@ export interface JwtPayload {
   emailVerified: boolean;
   /** Empty array for owners — full access is implied by isOwner flag */
   roleAssignments: ResolvedRoleAssignment[];
+  trialEndsAt: string | null;
 }
 
 export interface ITokenService {

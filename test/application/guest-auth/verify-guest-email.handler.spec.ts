@@ -27,9 +27,7 @@ describe('VerifyGuestEmailHandler', () => {
       await expect(
         handler.execute(new VerifyGuestEmailCommand('bad-token')),
       ).rejects.toThrow(
-        new UnauthorizedException(
-          'Invalid or expired verification token',
-        ),
+        new UnauthorizedException('Invalid or expired verification token'),
       );
     });
   });

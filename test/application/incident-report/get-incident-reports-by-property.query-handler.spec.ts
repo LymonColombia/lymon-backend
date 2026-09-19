@@ -24,7 +24,12 @@ describe('GetIncidentReportsByPropertyQueryHandler', () => {
       reportRepository.findByPropertyId.mockResolvedValue(reports);
 
       const result = await handler.execute(
-        new GetIncidentReportsByPropertyQuery('tenant-123', 'prop-001', 1, 2),
+        new GetIncidentReportsByPropertyQuery(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+          1,
+          2,
+        ),
       );
 
       expect(result).toBeInstanceOf(GetIncidentReportsByPropertyResult);
@@ -43,7 +48,12 @@ describe('GetIncidentReportsByPropertyQueryHandler', () => {
       reportRepository.findByPropertyId.mockResolvedValue(reports);
 
       const result = await handler.execute(
-        new GetIncidentReportsByPropertyQuery('tenant-123', 'prop-001', 2, 2),
+        new GetIncidentReportsByPropertyQuery(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+          2,
+          2,
+        ),
       );
 
       expect(result.reports).toHaveLength(1);
@@ -57,7 +67,10 @@ describe('GetIncidentReportsByPropertyQueryHandler', () => {
       reportRepository.findByPropertyId.mockResolvedValue([]);
 
       const result = await handler.execute(
-        new GetIncidentReportsByPropertyQuery('tenant-123', 'prop-001'),
+        new GetIncidentReportsByPropertyQuery(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+        ),
       );
 
       expect(result).toBeInstanceOf(GetIncidentReportsByPropertyResult);

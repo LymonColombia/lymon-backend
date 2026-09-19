@@ -1,6 +1,7 @@
 import {
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -11,7 +12,9 @@ export const GUEST_PUBLIC_KEY = 'isGuestPublic';
 
 @Injectable()
 export class GuestJwtAuthGuard extends AuthGuard('guest-jwt') {
-  constructor(private reflector: Reflector) {
+  private readonly logger = new Logger(GuestJwtAuthGuard.name);
+
+  constructor(private readonly reflector: Reflector) {
     super();
   }
 
@@ -30,8 +33,11 @@ export class GuestJwtAuthGuard extends AuthGuard('guest-jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest<TUser = any>(err: any, user: any): TUser {
+  handleRequest<TUser = any>(err: any, user: any, info?: any): TUser {
     if (err || !user) {
+      this.logger.warn(
+        `Guest auth failed: err=${err?.message ?? err} info=${info?.message ?? info}`,
+      );
       throw err || new UnauthorizedException('Invalid or missing guest token');
     }
     return user as TUser;

@@ -32,7 +32,7 @@ export class UpdateIncidentReportHandler implements ICommandHandler<UpdateIncide
       IncidentReportId.create(command.reportId),
     );
 
-    if (!report || report.getTenantId() !== command.tenantId) {
+    if (report?.getTenantId() !== command.tenantId) {
       throw new NotFoundException(
         `IncidentReport with id "${command.reportId}" not found`,
       );

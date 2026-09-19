@@ -12,10 +12,17 @@ import {
 describe('GetTenantProfileQueryHandler', () => {
   let handler: GetTenantProfileQueryHandler;
   let tenantRepository: jest.Mocked<TenantRepository>;
+  let storageService: { getPublicUrl: jest.Mock };
 
   beforeEach(() => {
     tenantRepository = createTenantRepositoryMock();
-    handler = new GetTenantProfileQueryHandler(tenantRepository);
+    storageService = {
+      getPublicUrl: jest.fn((key: string) => `https://cdn.test/${key}`),
+    };
+    handler = new GetTenantProfileQueryHandler(
+      tenantRepository,
+      storageService as any,
+    );
   });
 
   describe('when the tenant does not exist', () => {
@@ -45,6 +52,34 @@ describe('GetTenantProfileQueryHandler', () => {
       expect(result.profile.emailVerified).toBe(
         TENANT_FIXTURE_DEFAULTS.emailVerified,
       );
+    });
+
+    it('builds logoUrl from the stored key', async () => {
+      tenantRepository.findById.mockResolvedValue(
+        makeTenant({ logoKey: 'tenants/abc/logo/1.png' }),
+      );
+
+      const result = await handler.execute(
+        new GetTenantProfileQuery(TENANT_FIXTURE_DEFAULTS.id),
+      );
+
+      expect(storageService.getPublicUrl).toHaveBeenCalledWith(
+        'tenants/abc/logo/1.png',
+      );
+      expect(result.profile.logoUrl).toBe(
+        'https://cdn.test/tenants/abc/logo/1.png',
+      );
+    });
+
+    it('returns null logoUrl when no key is stored', async () => {
+      tenantRepository.findById.mockResolvedValue(makeTenant({ logoKey: null }));
+
+      const result = await handler.execute(
+        new GetTenantProfileQuery(TENANT_FIXTURE_DEFAULTS.id),
+      );
+
+      expect(storageService.getPublicUrl).not.toHaveBeenCalled();
+      expect(result.profile.logoUrl).toBeNull();
     });
   });
 });

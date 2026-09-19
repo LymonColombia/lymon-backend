@@ -1,13 +1,11 @@
-import {
-  Guest,
-} from '@/domain/guest/entities/guest.entity';
+import { Guest } from '@/domain/guest/entities/guest.entity';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { GuestStatusEnum } from '@/domain/guest/entities/guest.types';
 
 export const GUEST_FIXTURE_DEFAULTS = {
-  id: '65f1a1a2b3c4d5e6f7a8b9c0',
-  tenantId: 'tenant-123',
+  id: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+  tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
   fullName: 'John Doe',
   primaryEmail: 'john.doe@example.com',
   status: GuestStatusEnum.ACTIVE,
@@ -29,7 +27,7 @@ export function makeGuest(
   }>,
 ): Guest {
   const merged = { ...GUEST_FIXTURE_DEFAULTS, ...overrides };
-  
+
   const guest = Guest.create({
     tenantId: TenantId.createFromString(merged.tenantId),
     identity: merged.identity,
@@ -41,6 +39,6 @@ export function makeGuest(
   // Force the ID since Guest.create() sets it to null for New guests
   const guestId = GuestId.createFromString(merged.id);
   jest.spyOn(guest, 'getId').mockReturnValue(guestId);
-  
+
   return guest;
 }

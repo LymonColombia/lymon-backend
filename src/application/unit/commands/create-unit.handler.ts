@@ -20,8 +20,14 @@ import { BedTypeEnum } from '@/domain/unit/value-objects/bed-type.vo';
 import { ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuditLoggedEvent, AUDIT_LOG_EVENT } from '@/infrastructure/audit/events/audit-logged.event';
-import { AuditAction, AuditEntityType } from '@/domain/audit/value-objects/audit-action.vo';
+import {
+  AuditLoggedEvent,
+  AUDIT_LOG_EVENT,
+} from '@/infrastructure/audit/events/audit-logged.event';
+import {
+  AuditAction,
+  AuditEntityType,
+} from '@/domain/audit/value-objects/audit-action.vo';
 
 @CommandHandler(CreateUnitCommand)
 export class CreateUnitHandler implements ICommandHandler<CreateUnitCommand> {
@@ -62,25 +68,36 @@ export class CreateUnitHandler implements ICommandHandler<CreateUnitCommand> {
       })),
     }));
 
-    const unit = Unit.create(
+    const unit = Unit.create({
       tenantId,
       propertyId,
-      command.name,
-      command.description,
-      command.inventoryCount,
-      command.maxGuests,
-      command.standardGuests,
-      bedrooms,
-      command.bathroomsCount,
-      command.isShared,
-      command.amenities,
-      command.pricePerNight,
-      ExternalIds.create(
+      basicInfo: {
+        name: command.name,
+        description: command.description,
+      },
+      inventoryConfig: {
+        inventoryCount: command.inventoryCount,
+      },
+      capacityConfig: {
+        maxGuests: command.maxGuests,
+        standardGuests: command.standardGuests,
+      },
+      physicalFeatures: {
+        bedrooms,
+        bathroomsCount: command.bathroomsCount,
+        isShared: command.isShared,
+      },
+      pricingConfig: {
+        pricePerNight: command.pricePerNight,
+      },
+      amenities: command.amenities,
+      externalIds: ExternalIds.create(
         command.externalIds?.airbnbId,
         command.externalIds?.bookingId,
         command.externalIds?.vrboId,
       ),
-    );
+      mediaKeys: command.mediaKeys,
+    });
 
     const unitId = await this.unitRepository.save(unit);
 

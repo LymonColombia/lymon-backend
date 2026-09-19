@@ -12,4 +12,5 @@ export interface GuestAccountRepository {
     hashedToken: string,
   ): Promise<GuestAccount | null>;
   findByPasswordResetToken(hashedToken: string): Promise<GuestAccount | null>;
+  findByEmailChangeToken(hashedToken: string): Promise<GuestAccount | null>;
 }

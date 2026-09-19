@@ -3,6 +3,7 @@
 ## 🚀 Características Implementadas
 
 ### ✅ Sistema de Autenticación
+
 - **Registro de usuarios** (`POST /auth/register`)
 - **Login de usuarios** (`POST /auth/login`)
 - Autenticación mediante JWT (JSON Web Tokens)
@@ -10,6 +11,7 @@
 - Guards de protección para rutas privadas
 
 ### 🏨 Gestión de Hoteles
+
 - **Registro de hoteles** (`POST /hotels/register`) - Requiere autenticación
 - Campos del hotel:
   - Nombre del hotel
@@ -21,6 +23,7 @@
 - Relación automática con el usuario autenticado
 
 ### 🛏️ Gestión de Habitaciones
+
 - **Crear habitación** (`POST /rooms`) - Requiere autenticación
 - Campos de la habitación:
   - Número de habitación
@@ -37,8 +40,8 @@
 
 - **NestJS** - Framework backend
 - **TypeScript** - Lenguaje de programación
-- **MongoDB Atlas** - Base de datos (Cloud)
-- **Mongoose** - ODM para MongoDB
+- **PostgreSQL 18** - Base de datos
+- **Prisma 7** - ORM
 - **Passport & JWT** - Autenticación
 - **Bcrypt** - Encriptación de contraseñas
 - **Swagger** - Documentación de API
@@ -51,21 +54,25 @@
    \`\`\`
 
 2. **Configurar variables de entorno:**
-   
+
    El archivo \`.env\` ya está configurado con:
    \`\`\`env
-   MONGO_URI=yourMongoUrl
-   appName=yourClusterName
+   DATABASE_URL=postgresql://lymon:lymon@127.0.0.1:5433/lymon?schema=public
    JWT_SECRET=yourJwt-Secret
    JWT_EXPIRES_IN=yourJwtExpiration
    PORT=yourPort
    NODE_ENV=development
    \`\`\`
 
-   ⚠️ **IMPORTANTE:** Si tienes problemas de conexión a MongoDB:
-   - Verifica que tu IP esté en la lista blanca de MongoDB Atlas
-   - Ve a MongoDB Atlas → Network Access → Add IP Address
-   - Agrega tu IP actual o usa "Allow Access from Anywhere" (0.0.0.0/0) para desarrollo
+   ⚠️ **IMPORTANTE:** levanta Postgres antes de arrancar la API:
+
+   ```bash
+   pnpm db:up
+   pnpm db:deploy
+   ```
+
+   Escucha en el puerto **5433** (no 5432). La base arranca vacía y se llena aplicando
+   las migraciones de `prisma/migrations`. Para recrearla desde cero: `pnpm db:reset`.
 
 3. **Compilar el proyecto:**
    \`\`\`bash
@@ -88,83 +95,87 @@ Aquí encontrarás la documentación interactiva completa con todos los endpoint
 ## 🔐 Flujo de Uso de la Aplicación
 
 ### 1. Registrar un Usuario
+
 \`\`\`http
 POST /auth/register
 Content-Type: application/json
 
 {
-  "email": "usuario@example.com",
-  "name": "Juan Pérez",
-  "password": "password123"
+"email": "usuario@example.com",
+"name": "Juan Pérez",
+"password": "password123"
 }
 \`\`\`
 
 **Respuesta:**
 \`\`\`json
 {
-  "user": {
-    "id": "user_...",
-    "email": "usuario@example.com",
-    "name": "Juan Pérez"
-  },
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+"user": {
+"id": "user\_...",
+"email": "usuario@example.com",
+"name": "Juan Pérez"
+},
+"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 \`\`\`
 
 ### 2. Iniciar Sesión
+
 \`\`\`http
 POST /auth/login
 Content-Type: application/json
 
 {
-  "email": "usuario@example.com",
-  "password": "password123"
+"email": "usuario@example.com",
+"password": "password123"
 }
 \`\`\`
 
 **Respuesta:**
 \`\`\`json
 {
-  "user": {
-    "id": "user_...",
-    "email": "usuario@example.com",
-    "name": "Juan Pérez"
-  },
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+"user": {
+"id": "user\_...",
+"email": "usuario@example.com",
+"name": "Juan Pérez"
+},
+"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 \`\`\`
 
 ### 3. Registrar un Hotel (con token JWT)
+
 \`\`\`http
 POST /hotels/register
 Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
 {
-  "name": "Hotel Paradise",
-  "subdomain": "paradise",
-  "location": "Calle Principal 123, Ciudad",
-  "image": "https://example.com/hotel.jpg",
-  "primaryColor": "#FF5733",
-  "description": "Un hotel de lujo con vistas al mar"
+"name": "Hotel Paradise",
+"subdomain": "paradise",
+"location": "Calle Principal 123, Ciudad",
+"image": "https://example.com/hotel.jpg",
+"primaryColor": "#FF5733",
+"description": "Un hotel de lujo con vistas al mar"
 }
 \`\`\`
 
 ### 4. Crear una Habitación (con token JWT)
+
 \`\`\`http
 POST /rooms
 Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
 {
-  "roomTypeId": "room-type-id-123",
-  "hotelId": "hotel-id-456",
-  "roomNumber": "101",
-  "name": "Suite Presidencial",
-  "floor": 1,
-  "image": "https://example.com/room.jpg",
-  "amenities": ["WiFi", "TV", "Aire acondicionado", "Minibar"],
-  "description": "Amplia suite con vista al mar"
+"roomTypeId": "room-type-id-123",
+"hotelId": "hotel-id-456",
+"roomNumber": "101",
+"name": "Suite Presidencial",
+"floor": 1,
+"image": "https://example.com/room.jpg",
+"amenities": ["WiFi", "TV", "Aire acondicionado", "Minibar"],
+"description": "Amplia suite con vista al mar"
 }
 \`\`\`
 
@@ -173,42 +184,42 @@ Content-Type: application/json
 \`\`\`
 src/
 ├── application/
-│   └── use-cases/              # Casos de uso (lógica de negocio)
-│       ├── auth.service.ts     # Registro y login
-│       ├── register-hotel.use-case.ts
-│       ├── create-room.use-case.ts
-│       └── ...
+│ └── use-cases/ # Casos de uso (lógica de negocio)
+│ ├── auth.service.ts # Registro y login
+│ ├── register-hotel.use-case.ts
+│ ├── create-room.use-case.ts
+│ └── ...
 ├── domain/
-│   ├── entities/               # Entidades del dominio
-│   │   ├── user.entity.ts
-│   │   ├── hotel.entity.ts
-│   │   └── room.entity.ts
-│   └── repositories/           # Interfaces de repositorios
-│       ├── user.repository.ts
-│       ├── hotel.repository.ts
-│       └── room.repository.ts
+│ ├── entities/ # Entidades del dominio
+│ │ ├── user.entity.ts
+│ │ ├── hotel.entity.ts
+│ │ └── room.entity.ts
+│ └── repositories/ # Interfaces de repositorios
+│ ├── user.repository.ts
+│ ├── hotel.repository.ts
+│ └── room.repository.ts
 ├── infrastructure/
-│   ├── auth/                   # Estrategias y guards de autenticación
-│   │   ├── jwt.strategy.ts
-│   │   └── jwt-auth.guard.ts
-│   ├── controllers/            # Controladores HTTP
-│   │   ├── auth/
-│   │   ├── hotel/
-│   │   └── rooms/
-│   ├── dtos/                   # Data Transfer Objects
-│   │   ├── register-user.dto.ts
-│   │   ├── login.dto.ts
-│   │   ├── register-hotel.dto.ts
-│   │   └── create-room.dto.ts
-│   ├── modules/                # Módulos de NestJS
-│   │   ├── auth/
-│   │   ├── hotels/
-│   │   └── rooms/
-│   └── persistence/
-│       └── mongoose/           # Implementación de repositorios con Mongoose
-│           ├── schemas/
-│           └── repositories/
-└── main.ts                     # Punto de entrada
+│ ├── auth/ # Estrategias y guards de autenticación
+│ │ ├── jwt.strategy.ts
+│ │ └── jwt-auth.guard.ts
+│ ├── controllers/ # Controladores HTTP
+│ │ ├── auth/
+│ │ ├── hotel/
+│ │ └── rooms/
+│ ├── dtos/ # Data Transfer Objects
+│ │ ├── register-user.dto.ts
+│ │ ├── login.dto.ts
+│ │ ├── register-hotel.dto.ts
+│ │ └── create-room.dto.ts
+│ ├── modules/ # Módulos de NestJS
+│ │ ├── auth/
+│ │ ├── hotels/
+│ │ └── rooms/
+│ └── persistence/
+│ └── persistence/ # Implementación de repositorios con Prisma
+│ ├── prisma/ # PrismaService + cliente generado
+│ └── repositories/
+└── main.ts # Punto de entrada
 \`\`\`
 
 ## 🔑 Autenticación JWT
@@ -221,9 +232,9 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 El token se obtiene al hacer login o al registrarse.
 
-## 📊 Colecciones de MongoDB
+## 📊 Tablas de PostgreSQL
 
-La aplicación crea automáticamente las siguientes colecciones:
+El esquema vive en `prisma/schema/` y cada cambio se aplica con una migración en `prisma/migrations/`:
 
 - **users** - Usuarios de la plataforma
 - **hotels** - Hoteles registrados
@@ -234,11 +245,11 @@ La aplicación crea automáticamente las siguientes colecciones:
 
 1. **Seguridad:**
    - En producción, cambia el `JWT_SECRET` por uno más seguro
-   - No compartas las credenciales de MongoDB Atlas
+   - No compartas las credenciales de la base de datos
    - Configura CORS apropiadamente para tu dominio
 
-2. **MongoDB Atlas:**
-   - Si hay problemas de conexión, verifica la configuración de Network Access en MongoDB Atlas
+2. **PostgreSQL:**
+   - Si hay problemas de conexión, revisa que el contenedor `lymon-pg` esté arriba y escuchando en 5433
 
 3. **Desarrollo:**
    - La aplicación usa hot-reload en modo desarrollo
@@ -247,18 +258,21 @@ La aplicación crea automáticamente las siguientes colecciones:
 
 ## 🐛 Solución de Problemas
 
-### Error de conexión a MongoDB
-\`\`\`
-ERROR [MongooseModule] Unable to connect to the database
-\`\`\`
+### Error de conexión a PostgreSQL
+
+```
+Can't reach database server at 127.0.0.1:5433
+```
 
 **Solución:**
-1. Ve a MongoDB Atlas (https://cloud.mongodb.com)
-2. Navega a: Network Access
-3. Agrega tu IP actual o usa "0.0.0.0/0" para permitir todas las IPs
-4. Espera 1-2 minutos y reinicia la aplicación
+
+1. Verifica que el contenedor esté arriba: `docker ps | grep lymon-pg`
+2. Si no lo está: `pnpm db:up`
+3. Confirma que `DATABASE_URL` en `.env` apunta al puerto **5433**
+4. Si el esquema cambió, aplica las migraciones: `pnpm db:deploy` (o `pnpm db:reset`)
 
 ### Error de ejecución de scripts en PowerShell
+
 \`\`\`
 No se puede cargar el archivo ... porque la ejecución de scripts está deshabilitada
 \`\`\`
@@ -271,9 +285,10 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 ## 📞 Contacto y Soporte
 
 Si tienes problemas o preguntas, revisa:
+
 1. La documentación de Swagger en `/api/docs`
 2. Los logs de la aplicación en la consola
-3. El estado de MongoDB Atlas
+3. El estado del contenedor `lymon-pg`
 
 ## 🎯 Próximos Pasos Sugeridos
 

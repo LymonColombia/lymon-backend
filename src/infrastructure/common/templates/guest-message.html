@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje de tu estadía | LyHost</title>
+</head>
+<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 0;">
+    <table border="0" style="padding: 20px; width: 100%; border-collapse: collapse;">
+        <thead><tr><th scope="col" style="display:none;">Correo</th></tr></thead>
+        <tr>
+            <td style="text-align: center;">
+                <table border="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 5px solid #009A44; width: 600px; border-collapse: collapse; margin: 0 auto;">
+                    <thead><tr><th scope="col" style="display:none;">Contenido</th></tr></thead>
+                    
+                    <!-- Header with Google Drive Logo -->
+                    <tr>
+                        <td style="padding: 30px 20px; text-align: center;">
+                            <img src="https://drive.google.com/uc?export=view&id=1hC-KkR6vaPfd5BU7ugwt425s1GtkBiCj" alt="LyHost Logo" style="width: 180px; height: auto; display: block; border: 0;">
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 20px 40px; color: #333333;">
+                            <h1 style="color: #6CC24A; font-size: 22px; margin-top: 0;">Hola {{guestName}},</h1>
+                            <div style="font-size: 16px; line-height: 1.6; color: #555555;">
+                                {{body}}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Reservation Details Box -->
+                    <tr>
+                        <td style="padding: 20px 40px;">
+                            <div style="background-color: #f4f9f1; border-radius: 6px; padding: 20px; border-left: 4px solid #6CC24A;">
+                                <table border="0" style="width: 100%; border-collapse: collapse;">
+                                    <thead><tr><th scope="col" style="display:none;">Sección</th></tr></thead>
+                                    <tr>
+                                        <td style="padding-bottom: 15px;">
+                                            <table border="0" style="border-collapse: collapse;">
+                                                <thead><tr><th scope="col" style="display:none;">Icono</th><th scope="col" style="display:none;">Título</th></tr></thead>
+                                                <tr>
+                                                    <td style="vertical-align: middle; padding-right: 10px;">
+                                                        <img src="https://drive.google.com/uc?export=view&id=1rgO4gK3dNaUXIbt9o4f3Lw7WKNdo7_hK" alt="Icon" style="width: 20px; height: auto; display: block;">
+                                                    </td>
+                                                    <td style="vertical-align: middle;">
+                                                        <p style="margin: 0; font-weight: bold; color: #009A44; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Detalles de tu estadía</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table border="0" style="width: 100%; border-collapse: collapse;">
+                                                <thead><tr><th scope="col" style="display:none;">Detalles de estadía</th></tr></thead>
+                                                <tr>
+                                                    <td style="padding: 5px 0; font-size: 15px; color: #444;"><strong>Propiedad:</strong> {{propertyName}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 5px 0; font-size: 15px; color: #444;"><strong>Check-in:</strong> {{checkInDate}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 5px 0; font-size: 15px; color: #444;"><strong>Check-out:</strong> {{checkOutDate}}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 30px 40px; background-color: #fafafa; text-align: center;">
+                            <p style="margin: 0; font-size: 13px; color: #999999;">
+                                Este es un mensaje oficial enviado por el equipo de <strong>LyHost</strong>.
+                            </p>
+                            <div style="margin-top: 15px;">
+                                <span style="font-size: 12px; color: #cccccc;">&copy; 2026 LyHost - Todos los derechos reservados.</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

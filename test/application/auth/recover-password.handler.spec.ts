@@ -11,6 +11,7 @@ import {
   makeUser,
   USER_FIXTURE_DEFAULTS,
 } from '@test/shared/fixtures/user.fixture';
+import { Logger } from '@nestjs/common';
 
 describe('RecoverPasswordHandler', () => {
   let handler: RecoverPasswordHandler;
@@ -18,6 +19,8 @@ describe('RecoverPasswordHandler', () => {
   let emailService: jest.Mocked<IEmailService>;
 
   beforeEach(() => {
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+
     userRepository = createUserRepositoryMock();
     emailService = createEmailServiceMock();
 

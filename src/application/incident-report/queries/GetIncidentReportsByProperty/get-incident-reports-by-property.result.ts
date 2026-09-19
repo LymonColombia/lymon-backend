@@ -1,6 +1,4 @@
-import { IncidentReportDto } from '@/application/incident-report/queries/GetIncidentReportById/get-incident-report-by-id.result';
-
-export { IncidentReportDto };
+import { type IncidentReportDto } from '@/application/incident-report/queries/GetIncidentReportById/get-incident-report-by-id.result';
 
 export class GetIncidentReportsByPropertyResult {
   constructor(

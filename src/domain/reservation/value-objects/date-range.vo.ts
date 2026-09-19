@@ -1,5 +1,8 @@
 import { DomainException } from '@/domain/shared/exceptions/domain.exception';
 
+// ponytail: hardcoded Bogota; move to a per-property timezone if the app leaves Colombia
+const PROPERTY_TIMEZONE = 'America/Bogota';
+
 export class DateRange {
   private constructor(
     private readonly checkIn: Date,
@@ -7,16 +10,22 @@ export class DateRange {
   ) {}
 
   static create(checkIn: Date, checkOut: Date): DateRange {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const checkInDay = new Date(checkIn);
-    checkInDay.setHours(0, 0, 0, 0);
+    // "today" is the business date at the property, not the server's timezone.
+    // en-CA formats as YYYY-MM-DD, which compares lexicographically.
+    const today = new Date().toLocaleDateString('en-CA', {
+      timeZone: PROPERTY_TIMEZONE,
+    });
+    const checkInDay = checkIn.toISOString().slice(0, 10);
     if (checkInDay < today) {
       throw new DomainException('checkIn cannot be in the past');
     }
     if (checkOut <= checkIn) {
       throw new DomainException('checkOut must be after checkIn');
     }
+    return new DateRange(checkIn, checkOut);
+  }
+
+  static reconstitute(checkIn: Date, checkOut: Date): DateRange {
     return new DateRange(checkIn, checkOut);
   }
 

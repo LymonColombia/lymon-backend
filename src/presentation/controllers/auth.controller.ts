@@ -9,16 +9,27 @@ import { ConfirmRecoverPasswordCommand } from '@/application/auth/commands/confi
 import { ConfirmRecoverPasswordResult } from '@/application/auth/commands/confirm-recover-password.handler';
 import { Public } from '@/infrastructure/auth/decorators/public.decorator';
 import { JwtAuthGuard } from '@/infrastructure/auth/guards/jwt-auth.guard';
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RegisterTenantDto } from '@/presentation/dtos/register-tenant.dto';
-import { LoginDto } from '@/presentation/dtos/login.dto';
-import { RefreshTokenDto } from '@/presentation/dtos/refresh-token.dto';
+import { RegisterTenantDto } from '@/presentation/dtos/tenant/register-tenant.dto';
+import { LoginDto } from '@/presentation/dtos/auth/login.dto';
+import { RefreshTokenDto } from '@/presentation/dtos/auth/refresh-token.dto';
 import { RefreshTokenCommand } from '@/application/auth/commands/refresh-token.command';
 import { RefreshTokenResult } from '@/application/auth/commands/refresh-token.handler';
-import { RecoverPasswordDto } from '@/presentation/dtos/recover-password.dto';
-import { ConfirmRecoverPasswordDto } from '@/presentation/dtos/confirm-recover-password.dto';
+import { RecoverPasswordDto } from '@/presentation/dtos/auth/recover-password.dto';
+import { ConfirmRecoverPasswordDto } from '@/presentation/dtos/auth/confirm-recover-password.dto';
+import { LogoutResult } from '@/application/auth/commands/logout.handler';
+import { LogoutCommand } from '@/application/auth/commands/logout.command';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -57,6 +68,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   async login(@Body() dto: LoginDto) {
@@ -75,6 +87,7 @@ export class AuthController {
         emailVerified: result.emailVerified,
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
+        tutorialCompleted: result.tutorialCompleted,
       },
     };
   }
@@ -149,6 +162,20 @@ export class AuthController {
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
       },
+    };
+  }
+
+  @Public()
+  @Post('logout')
+  @ApiOperation({ summary: 'Logout and revoke current refresh token' })
+  @ApiResponse({ status: 200, description: 'Logout successful' })
+  async logout(@Body() dto: RefreshTokenDto) {
+    const result = await this.commandBus.execute<LogoutCommand, LogoutResult>(
+      new LogoutCommand(dto.refreshToken),
+    );
+
+    return {
+      message: result.message,
     };
   }
 }

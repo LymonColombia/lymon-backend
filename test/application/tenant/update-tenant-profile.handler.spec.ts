@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UpdateTenantProfileHandler } from '@/application/tenant/commands/update-tenant-profile.handler';
 import { UpdateTenantProfileCommand } from '@/application/tenant/commands/update-tenant-profile.command';
 import { UpdateTenantProfileResult } from '@/application/tenant/commands/update-tenant-profile.result';
@@ -13,14 +13,17 @@ import {
 describe('UpdateTenantProfileHandler', () => {
   let handler: UpdateTenantProfileHandler;
   let tenantRepository: jest.Mocked<TenantRepository>;
+  let storageService: { deleteObjects: jest.Mock };
   let eventEmitter: ReturnType<typeof createEventEmitterMock>;
 
   beforeEach(() => {
     tenantRepository = createTenantRepositoryMock();
+    storageService = { deleteObjects: jest.fn() };
     eventEmitter = createEventEmitterMock();
 
     handler = new UpdateTenantProfileHandler(
       tenantRepository,
+      storageService as any,
       eventEmitter as any,
     );
   });
@@ -38,9 +41,10 @@ describe('UpdateTenantProfileHandler', () => {
             null,
             null,
             null,
-            'user-456',
+            null,
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'owner@example.com',
-          ),
+          ), // (id, name, contactPhone, address, description, theme, logoKey, actorId, actorEmail)
         ),
       ).rejects.toThrow(NotFoundException);
     });
@@ -56,9 +60,10 @@ describe('UpdateTenantProfileHandler', () => {
           'Updated Corp',
           '+573009999999',
           'New Address 456',
-          'https://updated.com',
-          'https://logo.updated.com/img.png',
-          'user-456',
+          'An updated description',
+          { primary: '#1A73E8' },
+          undefined,
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'owner@example.com',
         ),
       );
@@ -70,6 +75,51 @@ describe('UpdateTenantProfileHandler', () => {
         expect.any(String),
         expect.objectContaining({ entityType: 'TENANT' }),
       );
+    });
+
+    it('rejects a logo key outside the tenant own prefix', async () => {
+      tenantRepository.findById.mockResolvedValue(makeTenant());
+
+      await expect(
+        handler.execute(
+          new UpdateTenantProfileCommand(
+            TENANT_FIXTURE_DEFAULTS.id,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            'someone-else/logos/1.png',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+            'owner@example.com',
+          ),
+        ),
+      ).rejects.toThrow(BadRequestException);
+      expect(tenantRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('deletes the previous logo when the key changes', async () => {
+      const oldKey = `${TENANT_FIXTURE_DEFAULTS.id}/logos/old.png`;
+      const newKey = `${TENANT_FIXTURE_DEFAULTS.id}/logos/new.png`;
+      tenantRepository.findById.mockResolvedValue(
+        makeTenant({ logoKey: oldKey }),
+      );
+
+      await handler.execute(
+        new UpdateTenantProfileCommand(
+          TENANT_FIXTURE_DEFAULTS.id,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          newKey,
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+          'owner@example.com',
+        ),
+      );
+
+      expect(storageService.deleteObjects).toHaveBeenCalledWith([oldKey]);
     });
   });
 });

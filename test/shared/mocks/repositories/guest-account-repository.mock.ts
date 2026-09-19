@@ -7,5 +7,6 @@ export function createGuestAccountRepositoryMock(): jest.Mocked<GuestAccountRepo
     findByEmail: jest.fn(),
     findByEmailVerificationToken: jest.fn(),
     findByPasswordResetToken: jest.fn(),
+    findByEmailChangeToken: jest.fn(),
   };
 }
