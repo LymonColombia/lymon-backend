@@ -61,7 +61,6 @@ describe('CreateReservationHandler', () => {
           },
         ],
         bathroomsCount: 1,
-        isShared: false,
       },
       pricingConfig: {
         pricePerNight: 100,

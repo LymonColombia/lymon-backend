@@ -40,19 +40,17 @@ describe('PrismaUnitRepository', () => {
       physicalFeatures: {
         bedrooms: [{ roomName: 'Main', beds: [{ type: BedTypeEnum.KING, count: 1 }] }],
         bathroomsCount: 1,
-        isShared: true,
       },
       pricingConfig: { pricePerNight: overrides.pricePerNight ?? 250000 },
       amenities: ['wifi', 'pool'],
       externalIds: ExternalIds.create('air-1', undefined, 'vrbo-1'),
     });
 
-  it('round-trips jsonb bedrooms, arrays, is_shared and the flattened external ids', async () => {
+  it('round-trips jsonb bedrooms, arrays and the flattened external ids', async () => {
     const id = await repo.save(newUnit());
 
     const found = (await repo.findById(UnitId.create(id)))!;
     expect(found.getName()).toBe('Suite 101');
-    expect(found.getIsShared()).toBe(true);
     expect(found.getAmenities()).toEqual(['wifi', 'pool']);
     expect(found.getMediaKeys()).toEqual([]);
     expect(found.getBedrooms()).toEqual([

@@ -178,7 +178,6 @@ export class TenantSeedService implements OnApplicationBootstrap {
           { roomName: 'Habitación 1', beds: [{ type: BedTypeEnum.QUEEN, count: 1 }] },
         ],
         bathroomsCount: 1,
-        isShared: false,
       },
       pricingConfig: { pricePerNight: 250000 },
       amenities: ['WIFI', 'AIR_CONDITIONING'],

@@ -86,3 +86,5 @@ CLAUDE.md
 /src/infrastructure/persistence/prisma/generated
 
 *.tsbuildinfo
+
+.pnpm-store/

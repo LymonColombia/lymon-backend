@@ -13,7 +13,6 @@ export const UNIT_FIXTURE_DEFAULTS = {
   standardGuests: 2,
   bedrooms: [],
   bathroomsCount: 1,
-  isShared: false,
   amenities: [],
   pricePerNight: 100000,
   externalIds: { bookingCom: null, airbnb: null },
@@ -43,7 +42,6 @@ export function makeUnit(
     physicalFeatures: {
       bedrooms: merged.bedrooms,
       bathroomsCount: merged.bathroomsCount,
-      isShared: merged.isShared,
     },
     pricingConfig: { pricePerNight: merged.pricePerNight },
     amenities: merged.amenities,

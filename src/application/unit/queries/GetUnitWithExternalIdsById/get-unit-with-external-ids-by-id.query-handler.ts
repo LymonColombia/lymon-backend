@@ -63,7 +63,6 @@ export class GetUnitWithExternalIdsByIdQueryHandler implements IQueryHandler<
       unit.getStandardGuests(),
       bedrooms,
       unit.getBathroomsCount(),
-      unit.getIsShared(),
       unit.getAmenities(),
       unit.getPricePerNight(),
       unit.getTenantId().toString(),

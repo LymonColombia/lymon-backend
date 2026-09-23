@@ -49,7 +49,6 @@ model units {
   standard_guests       Int
   bedrooms              Json                    @default("[]")
   bathrooms_count       Int
-  is_shared             Boolean                 @default(false)
   amenities             String[]                @default([])
   media_keys            String[]                @default([])
   price_per_night       Decimal                 @db.Decimal(14, 2)

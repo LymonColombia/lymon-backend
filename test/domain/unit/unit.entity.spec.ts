@@ -38,7 +38,6 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
           },
         ],
         bathroomsCount: 2,
-        isShared: false,
       },
       pricingConfig: {
         pricePerNight: 250,
@@ -468,10 +467,6 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
 
     it('UT-045: getBathroomsCount returns correct count', () => {
       expect(unit.getBathroomsCount()).toBe(2);
-    });
-
-    it('UT-046: getIsShared returns correct boolean', () => {
-      expect(unit.getIsShared()).toBe(false);
     });
 
     it('UT-047: getAmenities returns correct amenities array', () => {
@@ -933,54 +928,6 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
   });
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // ●  UPDATE SHARED - COMPREHENSIVE TESTS
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  describe('updateShared - COMPREHENSIVE', () => {
-    let unit: Unit;
-
-    beforeEach(() => {
-      const input = createValidInput();
-      unit = Unit.create(input);
-    });
-
-    it('UT-091: should update shared to true', () => {
-      unit.updateShared(true);
-
-      expect(unit.getIsShared()).toBe(true);
-    });
-
-    it('UT-092: should update shared to false', () => {
-      const editableUnit = createValidInput();
-      editableUnit.physicalFeatures.isShared = true;
-      const sharedUnit = Unit.create(editableUnit);
-
-      sharedUnit.updateShared(false);
-
-      expect(sharedUnit.getIsShared()).toBe(false);
-    });
-
-    it('UT-093: should toggle shared status', () => {
-      expect(unit.getIsShared()).toBe(false);
-
-      unit.updateShared(true);
-      expect(unit.getIsShared()).toBe(true);
-
-      unit.updateShared(false);
-      expect(unit.getIsShared()).toBe(false);
-    });
-
-    it('UT-094: should update updatedAt timestamp', () => {
-      const before = new Date();
-      unit.updateShared(true);
-
-      expect(unit.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
-        before.getTime(),
-      );
-    });
-  });
-
-  // ═══════════════════════════════════════════════════════════════════════════
   // ●  UPDATE PRICE - COMPREHENSIVE TESTS (NESTED IF)
   // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1146,7 +1093,6 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
       unit.updateCapacity(6, 4);
       unit.updatePrice(400);
       unit.updateAmenities(['wifi', 'pool']);
-      unit.updateShared(true);
 
       expect(unit.getName()).toBe('New Name');
       expect(unit.getDescription()).toBe('New Description');
@@ -1154,7 +1100,6 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
       expect(unit.getStandardGuests()).toBe(4);
       expect(unit.getPricePerNight()).toBe(400);
       expect(unit.getAmenities()).toEqual(['wifi', 'pool']);
-      expect(unit.getIsShared()).toBe(true);
     });
 
     it('UT-111: should maintain immutable IDs through updates', () => {
@@ -1193,17 +1138,6 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
       expect(secondUpdatedAt.getTime()).toBeGreaterThanOrEqual(
         before1.getTime(),
       );
-    });
-
-    it('UT-114: should allow reverting to default values', () => {
-      const input = createValidInput();
-      const unit = Unit.create(input);
-
-      unit.updateShared(true);
-      expect(unit.getIsShared()).toBe(true);
-
-      unit.updateShared(false);
-      expect(unit.getIsShared()).toBe(false);
     });
 
     it('UT-115: should allow extreme boundary updates', () => {
