@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsNumber,
   Min,
-  IsBoolean,
   IsArray,
   ValidateNested,
   IsEnum,
@@ -139,13 +138,6 @@ export class CreateUnitDto {
   @IsNumber()
   @Min(0)
   bathroomsCount!: number;
-
-  @ApiProperty({
-    example: false,
-    description: 'Whether the unit is a shared space',
-  })
-  @IsBoolean()
-  isShared!: boolean;
 
   @ApiProperty({
     example: ['WiFi', 'Air Conditioning', 'TV', 'Mini Bar'],

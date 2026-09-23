@@ -2,7 +2,6 @@ import {
   IsString,
   IsNumber,
   Min,
-  IsBoolean,
   IsArray,
   ValidateNested,
   IsEnum,
@@ -137,14 +136,6 @@ export class UpdateUnitDto {
   @Min(0)
   @IsOptional()
   bathroomsCount?: number;
-
-  @ApiPropertyOptional({
-    example: false,
-    description: 'Whether the unit is a shared space',
-  })
-  @IsBoolean()
-  @IsOptional()
-  isShared?: boolean;
 
   @ApiPropertyOptional({
     example: ['WiFi', 'Air Conditioning', 'TV', 'Mini Bar'],

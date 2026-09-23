@@ -23,7 +23,7 @@ function makeUnitFixture(name = 'Casa del Mar'): Unit {
     basicInfo: { name, description: 'Desc' },
     inventoryConfig: { inventoryCount: 1 },
     capacityConfig: { maxGuests: 2, standardGuests: 2 },
-    physicalFeatures: { bedrooms: [], bathroomsCount: 1, isShared: false },
+    physicalFeatures: { bedrooms: [], bathroomsCount: 1 },
     pricingConfig: { pricePerNight: 80 },
     amenities: [],
     externalIds: ExternalIds.create(),

@@ -134,7 +134,6 @@ export class UpdateUnitHandler implements ICommandHandler<UpdateUnitCommand> {
     }
 
     if (command.bathroomsCount !== undefined) unit.updateBathroomsCount(command.bathroomsCount);
-    if (command.isShared !== undefined) unit.updateShared(command.isShared);
     if (command.amenities !== undefined) unit.updateAmenities(command.amenities);
 
     const oldMediaKeys = command.mediaKeys === undefined ? [] : unit.getMediaKeys();
@@ -189,7 +188,6 @@ export class UpdateUnitHandler implements ICommandHandler<UpdateUnitCommand> {
       command.standardGuests !== undefined ||
       command.bedrooms !== undefined ||
       command.bathroomsCount !== undefined ||
-      command.isShared !== undefined ||
       command.amenities !== undefined ||
       command.mediaKeys !== undefined ||
       command.pricePerNight !== undefined ||
@@ -215,7 +213,6 @@ export class UpdateUnitHandler implements ICommandHandler<UpdateUnitCommand> {
     if (command.bedrooms !== undefined) changedFields.push('bedrooms');
     if (command.bathroomsCount !== undefined)
       changedFields.push('bathroomsCount');
-    if (command.isShared !== undefined) changedFields.push('isShared');
     if (command.amenities !== undefined) changedFields.push('amenities');
     if (command.mediaKeys !== undefined) changedFields.push('mediaKeys');
     if (command.pricePerNight !== undefined)

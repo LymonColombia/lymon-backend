@@ -37,7 +37,6 @@ export class PrismaUnitRepository implements UnitRepository {
       standard_guests: unit.getStandardGuests(),
       bedrooms: unit.getBedrooms() as unknown as Prisma.InputJsonValue,
       bathrooms_count: unit.getBathroomsCount(),
-      is_shared: unit.getIsShared(),
       amenities: unit.getAmenities(),
       media_keys: unit.getMediaKeys(),
       price_per_night: unit.getPricePerNight(),
@@ -190,7 +189,6 @@ export class PrismaUnitRepository implements UnitRepository {
       physicalFeatures: {
         bedrooms: row.bedrooms as unknown as Bedroom[],
         bathroomsCount: row.bathrooms_count,
-        isShared: row.is_shared,
       },
       pricingConfig: {
         pricePerNight: row.price_per_night.toNumber(),
