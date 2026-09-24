@@ -12,15 +12,7 @@ import { EmailTemplateService } from '@/infrastructure/common/email-template.ser
 export class BrevoEmailService implements IEmailService {
   private readonly logger = new Logger(BrevoEmailService.name);
   private readonly client: BrevoClient;
-
-  private get defaultSender() {
-    return {
-      email:
-        this.configService.get<string>('SENDER_EMAIL') ||
-        'lymonoficial@outlook.com',
-      name: 'Lymon',
-    };
-  }
+  private readonly defaultSender: { email: string; name: string };
 
   constructor(
     private readonly configService: ConfigService,
@@ -29,6 +21,10 @@ export class BrevoEmailService implements IEmailService {
     const apiKey = this.configService.get<string>('BREVO_API_KEY');
     if (!apiKey) throw new Error('BREVO_API_KEY is not configured');
     this.client = new BrevoClient({ apiKey });
+
+    const senderEmail = this.configService.get<string>('SENDER_EMAIL');
+    if (!senderEmail) throw new Error('SENDER_EMAIL is not configured');
+    this.defaultSender = { email: senderEmail, name: 'Lymon' };
   }
 
   async sendEmail(params: SendEmailParams): Promise<{ messageId: string }> {
