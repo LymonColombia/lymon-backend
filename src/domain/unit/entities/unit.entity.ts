@@ -23,7 +23,6 @@ export interface UnitCapacityConfig {
 export interface UnitPhysicalFeatures {
   bedrooms: Bedroom[];
   bathroomsCount: number;
-  isShared: boolean;
 }
 
 export interface UnitPricingConfig {
@@ -66,7 +65,6 @@ export class Unit {
     private standardGuests: number,
     private bedrooms: Bedroom[],
     private bathroomsCount: number,
-    private isShared: boolean,
     private amenities: string[],
     private mediaKeys: string[],
     private pricePerNight: number,
@@ -124,7 +122,6 @@ export class Unit {
       capacityConfig.standardGuests,
       physicalFeatures.bedrooms,
       physicalFeatures.bathroomsCount,
-      physicalFeatures.isShared,
       amenities,
       input.mediaKeys ?? [],
       pricingConfig.pricePerNight,
@@ -162,7 +159,6 @@ export class Unit {
       capacityConfig.standardGuests,
       physicalFeatures.bedrooms,
       physicalFeatures.bathroomsCount,
-      physicalFeatures.isShared,
       amenities,
       input.mediaKeys ?? [],
       pricingConfig.pricePerNight,
@@ -212,10 +208,6 @@ export class Unit {
 
   getBathroomsCount(): number {
     return this.bathroomsCount;
-  }
-
-  getIsShared(): boolean {
-    return this.isShared;
   }
 
   getAmenities(): string[] {
@@ -288,11 +280,6 @@ export class Unit {
     }
 
     this.bathroomsCount = bathroomsCount;
-    this.updatedAt = new Date();
-  }
-
-  updateShared(isShared: boolean): void {
-    this.isShared = isShared;
     this.updatedAt = new Date();
   }
 

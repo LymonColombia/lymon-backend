@@ -43,7 +43,7 @@ function makeUnitFixture(
     basicInfo: { name: 'Test Unit', description: 'A test unit' },
     inventoryConfig: { inventoryCount: 1 },
     capacityConfig: { maxGuests: 2, standardGuests: 2 },
-    physicalFeatures: { bedrooms: [], bathroomsCount: 1, isShared: false },
+    physicalFeatures: { bedrooms: [], bathroomsCount: 1 },
     pricingConfig: { pricePerNight: 100 },
     amenities: [],
     externalIds: ExternalIds.create(),

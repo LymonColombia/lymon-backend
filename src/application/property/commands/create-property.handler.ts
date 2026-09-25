@@ -124,7 +124,6 @@ export class CreatePropertyHandler implements ICommandHandler<CreatePropertyComm
           physicalFeatures: {
             bedrooms: [],
             bathroomsCount: 1,
-            isShared: false,
           },
           pricingConfig: {
             pricePerNight: 0,

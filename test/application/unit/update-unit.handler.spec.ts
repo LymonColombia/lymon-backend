@@ -51,7 +51,6 @@ function makeUnit(
         { roomName: 'Master', beds: [{ type: BedTypeEnum.QUEEN, count: 1 }] },
       ],
       bathroomsCount: 1,
-      isShared: false,
     },
     pricingConfig: {
       pricePerNight: 200,
@@ -84,7 +83,6 @@ function makeCommand(
     overrides?.inventoryCount,
     overrides?.maxGuests,
     overrides?.standardGuests,
-    undefined,
     undefined,
     undefined,
     undefined,
@@ -126,7 +124,6 @@ describe('UpdateUnitHandler', () => {
         new UpdateUnitCommand(
           TENANT_ID,
           UNIT_ID,
-          undefined,
           undefined,
           undefined,
           undefined,

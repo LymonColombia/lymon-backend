@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# pnpm local store
+/.pnpm-store
+
 # npm/yarn lockfiles — this repo uses pnpm
 package-lock.json
 yarn.lock
@@ -86,3 +89,5 @@ CLAUDE.md
 /src/infrastructure/persistence/prisma/generated
 
 *.tsbuildinfo
+
+.pnpm-store/

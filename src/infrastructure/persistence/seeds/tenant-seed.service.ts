@@ -1,5 +1,4 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { Inject } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   TENANT_REPOSITORY,
@@ -184,7 +183,6 @@ export class TenantSeedService implements OnApplicationBootstrap {
           },
         ],
         bathroomsCount: 1,
-        isShared: false,
       },
       pricingConfig: { pricePerNight: 250000 },
       amenities: ['WIFI', 'AIR_CONDITIONING'],

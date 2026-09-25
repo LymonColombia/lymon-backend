@@ -12,6 +12,7 @@ import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
 import {
   PublicBedDto,
   PublicBedroomDto,
+  PublicUnitDto,
 } from '@/application/unit/queries/GetPublicUnitsByTenant/get-public-units-by-tenant.result';
 import {
   R2StorageService,
@@ -36,7 +37,7 @@ export class GetUnitWithExternalIdsByIdQueryHandler implements IQueryHandler<
     const unitId = UnitId.create(query.unitId);
     const unit = await this.unitRepository.findById(unitId);
 
-    if (!unit || unit.getTenantId().toString() !== query.tenantId) {
+    if (unit?.getTenantId().toString() !== query.tenantId) {
       throw new NotFoundException('Unit not found');
     }
 
@@ -55,7 +56,7 @@ export class GetUnitWithExternalIdsByIdQueryHandler implements IQueryHandler<
       externalIds?.getVrboId(),
     );
 
-    const dto = new UnitWithExternalIdsDto(
+    const publicUnitDto = new PublicUnitDto(
       unit.getId()?.toString() ?? '',
       unit.getName(),
       unit.getDescription(),
@@ -63,15 +64,18 @@ export class GetUnitWithExternalIdsByIdQueryHandler implements IQueryHandler<
       unit.getStandardGuests(),
       bedrooms,
       unit.getBathroomsCount(),
-      unit.getIsShared(),
       unit.getAmenities(),
       unit.getPricePerNight(),
       unit.getTenantId().toString(),
       unit.getPropertyId().toString(),
       unit.getRating(),
       unit.getMediaKeys().map((k) => this.storage.getPublicUrl(k)),
-      externalIdsDto,
     );
+
+    const dto = new UnitWithExternalIdsDto({
+      unit: publicUnitDto,
+      externalIds: externalIdsDto,
+    });
 
     return new GetUnitWithExternalIdsByIdResult(dto);
   }

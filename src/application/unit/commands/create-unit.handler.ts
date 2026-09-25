@@ -85,7 +85,6 @@ export class CreateUnitHandler implements ICommandHandler<CreateUnitCommand> {
       physicalFeatures: {
         bedrooms,
         bathroomsCount: command.bathroomsCount,
-        isShared: command.isShared,
       },
       pricingConfig: {
         pricePerNight: command.pricePerNight,
