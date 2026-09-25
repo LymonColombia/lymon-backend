@@ -9,10 +9,12 @@ on:
 permissions:
   contents: read
 
-# A new push to the same PR cancels the run still in progress.
+# One group per PR (refs/pull/<n>/merge), so PRs never cancel each other; a new push to
+# the same PR cancels its own stale run. Pushes to main are never cancelled: each merge
+# gets its own full run.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
