@@ -11,38 +11,31 @@ export class ExternalIdsDto {
   ) {}
 }
 
+export interface UnitWithExternalIdsDtoProps {
+  unit: PublicUnitDto;
+  externalIds: ExternalIdsDto;
+}
+
 export class UnitWithExternalIdsDto extends PublicUnitDto {
-  constructor(
-    id: string,
-    name: string,
-    description: string,
-    maxGuests: number,
-    standardGuests: number,
-    bedrooms: PublicBedroomDto[],
-    bathroomsCount: number,
-    amenities: string[],
-    pricePerNight: number,
-    tenantId: string,
-    propertyId: string,
-    rating: number | null,
-    mediaUrls: string[],
-    public readonly externalIds: ExternalIdsDto,
-  ) {
+  public readonly externalIds: ExternalIdsDto;
+
+  constructor({ unit, externalIds }: UnitWithExternalIdsDtoProps) {
     super(
-      id,
-      name,
-      description,
-      maxGuests,
-      standardGuests,
-      bedrooms,
-      bathroomsCount,
-      amenities,
-      pricePerNight,
-      tenantId,
-      propertyId,
-      rating,
-      mediaUrls,
+      unit.id,
+      unit.name,
+      unit.description,
+      unit.maxGuests,
+      unit.standardGuests,
+      unit.bedrooms,
+      unit.bathroomsCount,
+      unit.amenities,
+      unit.pricePerNight,
+      unit.tenantId,
+      unit.propertyId,
+      unit.rating,
+      unit.mediaUrls,
     );
+    this.externalIds = externalIds;
   }
 }
 
