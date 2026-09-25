@@ -404,7 +404,7 @@ export class Experience {
       throw new Error('Property-scoped experiences require propertyId');
     }
 
-    if (scope.toString() === ExperienceScopeEnum.GLOBAL && propertyId) {
+    if (scope.isGlobalScope() && propertyId) {
       throw new Error('Global experiences must not include propertyId');
     }
   }

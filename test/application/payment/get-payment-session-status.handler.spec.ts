@@ -2,7 +2,6 @@ import { NotFoundException } from '@nestjs/common';
 import { GetPaymentSessionStatusHandler } from '@/application/payment/queries/get-payment-session-status/get-payment-session-status.handler';
 import { GetPaymentSessionStatusQuery } from '@/application/payment/queries/get-payment-session-status/get-payment-session-status.query';
 import { PaymentSession } from '@/domain/payment/entities/payment-session.entity';
-import { PAYMENT_SESSION_REPOSITORY } from '@/domain/payment/repositories/payment-session.repository';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-account-id.vo';
 import { CartId } from '@/domain/cart/value-objects/cart-id.vo';

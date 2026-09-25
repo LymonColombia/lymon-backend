@@ -5,10 +5,10 @@ import { IMessageBodyProvider } from '@/application/shared/services/message-body
 export class BrevoMessageBodyProvider implements IMessageBodyProvider {
   private readonly logger = new Logger(BrevoMessageBodyProvider.name);
 
-  async getBody(providerMessageId: string): Promise<string | null> {
+  getBody(providerMessageId: string): Promise<string | null> {
     this.logger.warn(
       `BrevoMessageBodyProvider.getBody called for ${providerMessageId} — body retrieval requires a paid Brevo plan (not yet implemented)`,
     );
-    return null;
+    return Promise.resolve(null);
   }
 }

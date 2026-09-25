@@ -71,6 +71,8 @@ import { UpdateCatalogItemDto } from '@/presentation/dtos/catalog/update-catalog
 import { ToggleCatalogItemDto } from '@/presentation/dtos/catalog/toggle-catalog-item.dto';
 import { GetConversationsByTenantQuery } from '@/application/conversation/queries/get-conversations-by-tenant/get-conversations-by-tenant.query';
 import { GetConversationThreadQuery } from '@/application/conversation/queries/get-conversation-thread/get-conversation-thread.query';
+import { GetConversationsByTenantResult } from '@/application/conversation/queries/get-conversations-by-tenant/get-conversations-by-tenant.result';
+import { ConversationThreadResult } from '@/application/conversation/queries/get-conversation-thread/get-conversation-thread.result';
 import { MarkConversationReadCommand } from '@/application/conversation/commands/mark-conversation-read/mark-conversation-read.command';
 import { ArchiveConversationCommand } from '@/application/conversation/commands/archive-conversation/archive-conversation.command';
 import { GetGuestRatingsQuery } from '@/application/unit-rating/queries/get-guest-ratings/get-guest-ratings.query';
@@ -866,7 +868,10 @@ export class CrmController {
     @Query('unreadOnly', new DefaultValuePipe(false), ParseBoolPipe)
     unreadOnly?: boolean,
   ) {
-    const result = await this.queryBus.execute(
+    const result = await this.queryBus.execute<
+      GetConversationsByTenantQuery,
+      GetConversationsByTenantResult
+    >(
       new GetConversationsByTenantQuery(
         user.tenantId,
         page,
@@ -900,9 +905,10 @@ export class CrmController {
     @Param('conversationId') conversationId: string,
     @CurrentUser() user: JwtPayload,
   ) {
-    const result = await this.queryBus.execute(
-      new GetConversationThreadQuery(user.tenantId, conversationId),
-    );
+    const result = await this.queryBus.execute<
+      GetConversationThreadQuery,
+      ConversationThreadResult
+    >(new GetConversationThreadQuery(user.tenantId, conversationId));
     return {
       message: 'Conversation thread retrieved successfully',
       data: result,

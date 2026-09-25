@@ -28,7 +28,6 @@ import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-accou
 import { CancellationRefundService } from '@/domain/reservation/services/cancellation-refund.service';
 import { RefundRequest } from '@/domain/refund/entities/refund-request.entity';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
-import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { ReservationSourceEnum } from '@/domain/reservation/value-objects/reservation-source.vo';
 import {
   AuditAction,
@@ -92,7 +91,7 @@ export class CancelGuestReservationHandler implements ICommandHandler<
       );
     }
 
-    if (reservation.getSource().toString() !== ReservationSourceEnum.DIRECT) {
+    if (reservation.getSource().getValue() !== ReservationSourceEnum.DIRECT) {
       throw new BadRequestException(
         'Only direct bookings can be cancelled from the portal.',
       );

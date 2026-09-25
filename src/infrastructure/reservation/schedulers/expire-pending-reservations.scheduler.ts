@@ -13,7 +13,6 @@ import {
   type PaymentSessionRepository,
 } from '@/domain/payment/repositories/payment-session.repository';
 import { ReservationId } from '@/domain/reservation/value-objects/reservation-id.vo';
-import { CartId } from '@/domain/cart/value-objects/cart-id.vo';
 
 @Injectable()
 export class ExpirePendingReservationsScheduler {
@@ -53,7 +52,7 @@ export class ExpirePendingReservationsScheduler {
         const reservation = await this.reservationRepository.findById(
           ReservationId.create(reservationItem.reservationId),
         );
-        if (reservation && reservation.getStatus().getValue() === 'PENDING') {
+        if (reservation && reservation.getStatus().isPending()) {
           reservation.cancel('Expired: no payment initiated');
           await this.reservationRepository.save(reservation);
           cancelled++;

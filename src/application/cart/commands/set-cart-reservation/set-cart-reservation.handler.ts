@@ -72,7 +72,7 @@ export class SetCartReservationHandler implements ICommandHandler<SetCartReserva
 
     cart.setReservationItem(
       CartReservationItem.create({
-        tenantId: command.tenantId,
+        tenantId: tenantId.toString(),
         propertyId: command.propertyId,
         unitId: command.unitId,
         checkIn: command.checkIn,

@@ -4,7 +4,6 @@ import { GuestRepository } from '@/domain/guest/repositories/guest.repository';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { GuestPreferenceItem } from '@/domain/guest/value-objects/guest-preference-item.vo';
 import { GuestStatusEnum } from '@/domain/guest/entities/guest.types';
-import { GuestPreferenceCategoryEnum } from '@/domain/guest-preference/value-objects/guest-preference-category.vo';
 import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-account-id.vo';
 import {
   GuestTag,

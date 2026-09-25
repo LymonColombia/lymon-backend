@@ -41,7 +41,7 @@ export class GuestJwtStrategy extends PassportStrategy(Strategy, 'guest-jwt') {
     // Reject staff tokens on guest endpoints
     if (payload.type !== 'guest') {
       this.logger.warn(
-        `Rejected token: type is "${payload.type}", expected "guest" (probably a staff token was used on a guest endpoint)`,
+        `Rejected token: type is "${String(payload.type)}", expected "guest" (probably a staff token was used on a guest endpoint)`,
       );
       throw new UnauthorizedException('Invalid token type');
     }
