@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to the same PR cancels the run still in progress.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, build, unit tests, Sonar
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Sonar needs full history for blame / new-code detection
+
+      - uses: pnpm/action-setup@v6 # version from package.json "packageManager"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint:check
+      - run: pnpm build
+      - run: pnpm test:cov
+
+      # Fork PRs don't get secrets, so they skip Sonar instead of failing on a missing token.
+      - name: SonarCloud scan + quality gate
+        if: github.event.pull_request.head.repo.fork != true
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: -Dsonar.qualitygate.wait=true
+
+  integration:
+    name: Integration tests + migration drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: lymon
+          POSTGRES_PASSWORD: lymon
+          POSTGRES_DB: lymon
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lymon -d lymon -h 127.0.0.1"
+          --health-interval 3s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://lymon:lymon@localhost:5432/lymon?schema=public
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Creates lymon_test, applies every migration in prisma/migrations, runs the specs.
+      - run: pnpm test:db
+
+      # lymon_test now holds exactly what the migrations produce. Any diff against
+      # prisma/schema means a schema change was committed without its migration.
+      - name: Check schema matches migrations
+        env:
+          DATABASE_URL: postgresql://lymon:lymon@localhost:5432/lymon_test?schema=public
+        run: pnpm exec prisma migrate diff --from-config-datasource --to-schema prisma/schema --exit-code
