@@ -103,23 +103,13 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
   // ═══════════════════════════════════════════════════════════════════════════
 
   describe('Unit.create - VALIDATION: NAME', () => {
-    it('UT-005: should throw error when name is empty string', () => {
+    it.each([
+      ['UT-005', 'empty string', ''],
+      ['UT-006', 'only whitespace', '   '],
+      ['UT-007', 'null-like (after trim)', '\t\n'],
+    ])('%s: should throw error when name is %s', (_id, _desc, name) => {
       const input = createValidInput();
-      input.basicInfo.name = '';
-
-      expect(() => Unit.create(input)).toThrow('Unit name cannot be empty');
-    });
-
-    it('UT-006: should throw error when name is only whitespace', () => {
-      const input = createValidInput();
-      input.basicInfo.name = '   ';
-
-      expect(() => Unit.create(input)).toThrow('Unit name cannot be empty');
-    });
-
-    it('UT-007: should throw error when name is null-like (after trim)', () => {
-      const input = createValidInput();
-      input.basicInfo.name = '\t\n';
+      input.basicInfo.name = name;
 
       expect(() => Unit.create(input)).toThrow('Unit name cannot be empty');
     });
@@ -486,13 +476,13 @@ describe('Unit Entity - COMPREHENSIVE COVERAGE', () => {
 
     it('UT-050: getCreatedAt returns valid date', () => {
       const createdAt = unit.getCreatedAt();
-      expect(createdAt instanceof Date).toBe(true);
+      expect(createdAt).toBeInstanceOf(Date);
       expect(createdAt.getTime()).toBeGreaterThan(0);
     });
 
     it('UT-051: getUpdatedAt returns valid date', () => {
       const updatedAt = unit.getUpdatedAt();
-      expect(updatedAt instanceof Date).toBe(true);
+      expect(updatedAt).toBeInstanceOf(Date);
       expect(updatedAt.getTime()).toBeGreaterThan(0);
     });
 
