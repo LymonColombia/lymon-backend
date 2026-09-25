@@ -1,4 +1,3 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetUnitWithExternalIdsByIdQueryHandler } from '@/application/unit/queries/GetUnitWithExternalIdsById/get-unit-with-external-ids-by-id.query-handler';
@@ -6,6 +5,7 @@ import { GetUnitWithExternalIdsByIdQuery } from '@/application/unit/queries/GetU
 import { GetUnitWithExternalIdsByIdResult } from '@/application/unit/queries/GetUnitWithExternalIdsById/get-unit-with-external-ids-by-id.result';
 import type { UnitRepository } from '@/domain/unit/repositories/unit.repository';
 import { createUnitRepositoryMock } from '@test/shared/mocks/repositories/unit-repository.mock';
+import { createR2StorageServiceMock } from '@test/shared/mocks/services/r2-storage.mock';
 import {
   makeUnit,
   UNIT_FIXTURE_DEFAULTS,
@@ -20,30 +20,20 @@ describe('GetUnitWithExternalIdsById', () => {
   let handler: GetUnitWithExternalIdsByIdQueryHandler;
   let unitRepository: jest.Mocked<UnitRepository>;
   let controller: UnitController;
-  let queryBus: QueryBus;
+  let queryBus: { execute: jest.Mock };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     unitRepository = createUnitRepositoryMock();
-    handler = new GetUnitWithExternalIdsByIdQueryHandler(unitRepository, {
-      getPublicUrl: (k: string) => k,
-    } as any);
+    handler = new GetUnitWithExternalIdsByIdQueryHandler(
+      unitRepository,
+      createR2StorageServiceMock(),
+    );
 
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [UnitController],
-      providers: [
-        {
-          provide: QueryBus,
-          useValue: { execute: jest.fn() },
-        },
-        {
-          provide: CommandBus,
-          useValue: { execute: jest.fn() },
-        },
-      ],
-    }).compile();
-
-    controller = module.get<UnitController>(UnitController);
-    queryBus = module.get<QueryBus>(QueryBus);
+    queryBus = { execute: jest.fn() };
+    controller = new UnitController(
+      { execute: jest.fn() } as unknown as CommandBus,
+      queryBus as unknown as QueryBus,
+    );
   });
 
   describe('TC-01: Consultar una Unit válida del tenant autenticado', () => {
@@ -89,9 +79,8 @@ describe('GetUnitWithExternalIdsById', () => {
       const mockResult = new GetUnitWithExternalIdsByIdResult({
         id: UNIT_ID,
         name: 'Unit Name',
-        externalIds: { airbnbId: 'ext-airbnb' },
       } as any);
-      (queryBus.execute as jest.Mock).mockResolvedValue(mockResult);
+      queryBus.execute.mockResolvedValue(mockResult);
 
       const fakeUser = {
         tenantId: TENANT_ID,
