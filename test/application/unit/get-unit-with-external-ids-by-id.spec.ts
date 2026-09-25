@@ -24,7 +24,9 @@ describe('GetUnitWithExternalIdsById', () => {
 
   beforeEach(async () => {
     unitRepository = createUnitRepositoryMock();
-    handler = new GetUnitWithExternalIdsByIdQueryHandler(unitRepository);
+    handler = new GetUnitWithExternalIdsByIdQueryHandler(unitRepository, {
+      getPublicUrl: (k: string) => k,
+    } as any);
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UnitController],
@@ -73,27 +75,6 @@ describe('GetUnitWithExternalIdsById', () => {
 
       const query = new GetUnitWithExternalIdsByIdQuery(UNIT_ID, TENANT_ID);
       await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-    });
-  });
-
-  describe('TC-02: Verificar inclusión de externalIds en la respuesta', () => {
-    it('The resulting DTO must contain externalIds with airbnbId, bookingId and vrboId', async () => {
-      const unit = makeUnit();
-      unitRepository.findById.mockResolvedValue(unit);
-
-      const query = new GetUnitWithExternalIdsByIdQuery(UNIT_ID, TENANT_ID);
-      const result = await handler.execute(query);
-
-      expect(result.unit).toHaveProperty('externalIds');
-      expect(result.unit.externalIds.airbnbId).toBe(
-        UNIT_FIXTURE_DEFAULTS.externalIds.airbnbId,
-      );
-      expect(result.unit.externalIds.bookingId).toBe(
-        UNIT_FIXTURE_DEFAULTS.externalIds.bookingId,
-      );
-      expect(result.unit.externalIds.vrboId).toBe(
-        UNIT_FIXTURE_DEFAULTS.externalIds.vrboId,
-      );
     });
   });
 

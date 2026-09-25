@@ -22,7 +22,9 @@ describe('GetPublicUnitById', () => {
 
   beforeEach(async () => {
     unitRepository = createUnitRepositoryMock();
-    handler = new GetPublicUnitByIdQueryHandler(unitRepository);
+    handler = new GetPublicUnitByIdQueryHandler(unitRepository, {
+      getPublicUrl: (k: string) => k,
+    } as any);
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UnitController],
