@@ -1,6 +1,4 @@
-import {
-  PublicUnitDto,
-} from '@/application/unit/queries/GetPublicUnitsByTenant/get-public-units-by-tenant.result';
+import { PublicUnitDto } from '@/application/unit/queries/GetPublicUnitsByTenant/get-public-units-by-tenant.result';
 
 export class ExternalIdsDto {
   constructor(

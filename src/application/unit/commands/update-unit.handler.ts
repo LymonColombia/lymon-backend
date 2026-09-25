@@ -136,8 +136,10 @@ export class UpdateUnitHandler implements ICommandHandler<UpdateUnitCommand> {
       );
     }
 
-    if (command.bathroomsCount !== undefined) unit.updateBathroomsCount(command.bathroomsCount);
-    if (command.amenities !== undefined) unit.updateAmenities(command.amenities);
+    if (command.bathroomsCount !== undefined)
+      unit.updateBathroomsCount(command.bathroomsCount);
+    if (command.amenities !== undefined)
+      unit.updateAmenities(command.amenities);
 
     const oldMediaKeys =
       command.mediaKeys === undefined ? [] : unit.getMediaKeys();

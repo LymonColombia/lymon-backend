@@ -234,7 +234,6 @@ describe('UpdateUnitHandler', () => {
         undefined,
         undefined,
         undefined,
-        undefined,
         newKeys,
         undefined,
         undefined,
@@ -268,7 +267,6 @@ describe('UpdateUnitHandler', () => {
       new UpdateUnitCommand(
         TENANT_ID,
         UNIT_ID,
-        undefined,
         undefined,
         undefined,
         undefined,
