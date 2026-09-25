@@ -13,7 +13,10 @@ const CommandHandlers = [
   RecordInboundMessageHandler,
   UpdateMessageDeliveryStatusHandler,
 ];
-const QueryHandlers = [GetGuestMessagesByGuestIdHandler, GetGuestMessageByIdHandler];
+const QueryHandlers = [
+  GetGuestMessagesByGuestIdHandler,
+  GetGuestMessageByIdHandler,
+];
 
 @Module({
   imports: [CqrsModule, PersistenceModule, EmailModule],

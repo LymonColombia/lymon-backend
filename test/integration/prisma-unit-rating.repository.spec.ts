@@ -16,7 +16,12 @@ import {
 describe('PrismaUnitRatingRepository', () => {
   const repo = new PrismaUnitRatingRepository(prisma);
 
-  let ids: { tenantId: string; propertyId: string; unitId: string; guestId: string };
+  let ids: {
+    tenantId: string;
+    propertyId: string;
+    unitId: string;
+    guestId: string;
+  };
 
   beforeEach(async () => {
     await resetDatabase();
@@ -46,9 +51,13 @@ describe('PrismaUnitRatingRepository', () => {
   };
 
   it('returns null rather than NaN when nothing has been rated', async () => {
-    expect(await repo.calculateAverageForUnit(UnitId.create(ids.unitId))).toBeNull();
     expect(
-      await repo.calculateAverageForGuest(GuestId.createFromString(ids.guestId)),
+      await repo.calculateAverageForUnit(UnitId.create(ids.unitId)),
+    ).toBeNull();
+    expect(
+      await repo.calculateAverageForGuest(
+        GuestId.createFromString(ids.guestId),
+      ),
     ).toBeNull();
   });
 
@@ -57,16 +66,22 @@ describe('PrismaUnitRatingRepository', () => {
     await rate(4);
     const deleted = await rate(1);
 
-    expect(await repo.calculateAverageForUnit(UnitId.create(ids.unitId))).toBeCloseTo(3.3, 5);
+    expect(
+      await repo.calculateAverageForUnit(UnitId.create(ids.unitId)),
+    ).toBeCloseTo(3.3, 5);
 
     await prisma.unit_ratings.update({
       where: { id: deleted },
       data: { deleted_at: new Date() },
     });
 
-    expect(await repo.calculateAverageForUnit(UnitId.create(ids.unitId))).toBe(4.5);
+    expect(await repo.calculateAverageForUnit(UnitId.create(ids.unitId))).toBe(
+      4.5,
+    );
     expect(
-      await repo.calculateAverageForGuest(GuestId.createFromString(ids.guestId)),
+      await repo.calculateAverageForGuest(
+        GuestId.createFromString(ids.guestId),
+      ),
     ).toBe(4.5);
   });
 
@@ -82,7 +97,13 @@ describe('PrismaUnitRatingRepository', () => {
     const worst = await repo.findByUnitIdPaginated(unitId, 1, 10, 'worst');
     expect(worst.ratings.map((r) => r.getRate())).toEqual([1, 3, 5]);
 
-    const filtered = await repo.findByUnitIdPaginated(unitId, 1, 10, undefined, 3);
+    const filtered = await repo.findByUnitIdPaginated(
+      unitId,
+      1,
+      10,
+      undefined,
+      3,
+    );
     expect(filtered.total).toBe(1);
     expect(filtered.ratings[0].getMessage()).toBe('ok');
   });
@@ -92,7 +113,9 @@ describe('PrismaUnitRatingRepository', () => {
     const created = (await prisma.unit_ratings.findUnique({ where: { id } }))!;
 
     expect(
-      await repo.findByReservationId(ReservationId.create(created.reservation_id)),
+      await repo.findByReservationId(
+        ReservationId.create(created.reservation_id),
+      ),
     ).not.toBeNull();
 
     await prisma.unit_ratings.update({
@@ -101,11 +124,18 @@ describe('PrismaUnitRatingRepository', () => {
     });
 
     expect(
-      await repo.findByReservationId(ReservationId.create(created.reservation_id)),
+      await repo.findByReservationId(
+        ReservationId.create(created.reservation_id),
+      ),
     ).toBeNull();
     expect(
-      (await repo.findByGuestIdPaginated(GuestId.createFromString(ids.guestId), 1, 10))
-        .total,
+      (
+        await repo.findByGuestIdPaginated(
+          GuestId.createFromString(ids.guestId),
+          1,
+          10,
+        )
+      ).total,
     ).toBe(0);
   });
 });

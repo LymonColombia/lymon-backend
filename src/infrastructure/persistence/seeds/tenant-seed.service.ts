@@ -22,7 +22,10 @@ import { User } from '@/domain/user/entities/user.entity';
 import { Property } from '@/domain/property/entities/property.entity';
 import { Unit } from '@/domain/unit/entities/unit.entity';
 import { Email } from '@/domain/shared/value-objects/email.vo';
-import { PlanType, PlanTypeEnum } from '@/domain/tenant/value-objects/plan-type.vo';
+import {
+  PlanType,
+  PlanTypeEnum,
+} from '@/domain/tenant/value-objects/plan-type.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import {
@@ -123,9 +126,9 @@ export class TenantSeedService implements OnApplicationBootstrap {
     // Matched on name, not slug: the repository derives the stored slug from the
     // row id (`dev-property-41e8`), so a slug we pass in here is overwritten and
     // could never be looked up again.
-    const existing = (await this.propertyRepository.findByTenantId(tenantId)).find(
-      (candidate) => candidate.getName() === DEV_PROPERTY_NAME,
-    );
+    const existing = (
+      await this.propertyRepository.findByTenantId(tenantId)
+    ).find((candidate) => candidate.getName() === DEV_PROPERTY_NAME);
     if (existing) {
       return existing.getId()!;
     }
@@ -175,7 +178,10 @@ export class TenantSeedService implements OnApplicationBootstrap {
       capacityConfig: { maxGuests: 4, standardGuests: 2 },
       physicalFeatures: {
         bedrooms: [
-          { roomName: 'Habitación 1', beds: [{ type: BedTypeEnum.QUEEN, count: 1 }] },
+          {
+            roomName: 'Habitación 1',
+            beds: [{ type: BedTypeEnum.QUEEN, count: 1 }],
+          },
         ],
         bathroomsCount: 1,
         isShared: false,

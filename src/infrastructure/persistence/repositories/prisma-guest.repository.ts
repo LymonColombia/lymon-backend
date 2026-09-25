@@ -203,7 +203,10 @@ export class PrismaGuestRepository implements GuestRepository {
    * Literal substring match across the searchable columns. The mongo version built a
    * RegExp and had to escape the term first; `contains` needs no escaping.
    */
-  private searchWhere(tenantId: TenantId, term: string): Prisma.guestsWhereInput {
+  private searchWhere(
+    tenantId: TenantId,
+    term: string,
+  ): Prisma.guestsWhereInput {
     const contains = { contains: term, mode: 'insensitive' as const };
     return {
       tenant_id: tenantId.toString(),
@@ -286,7 +289,7 @@ export class PrismaGuestRepository implements GuestRepository {
         (preference): GuestPreferenceItem => ({
           catalogItemId: preference.catalogItemId,
           labelSnapshot: preference.labelSnapshot,
-          category: preference.category as GuestPreferenceCategoryEnum,
+          category: preference.category,
         }),
       ),
       summary: {

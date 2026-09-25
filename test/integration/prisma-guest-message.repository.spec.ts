@@ -30,7 +30,11 @@ describe('PrismaGuestMessageRepository', () => {
   });
 
   const outbound = (
-    overrides: Partial<{ preview: string; providerMessageId: string; conversationId: string }> = {},
+    overrides: Partial<{
+      preview: string;
+      providerMessageId: string;
+      conversationId: string;
+    }> = {},
   ) =>
     GuestMessage.create({
       tenantId: TenantId.createFromString(tenantId),
@@ -41,7 +45,13 @@ describe('PrismaGuestMessageRepository', () => {
       from: 'staff@costa.com',
       to: ['ana@example.com'],
       sentBy: { actorId: userId, actorEmail: 'staff@costa.com' },
-      attachments: [{ url: 'https://x/y.pdf', name: 'invoice.pdf', type: 'application/pdf' }],
+      attachments: [
+        {
+          url: 'https://x/y.pdf',
+          name: 'invoice.pdf',
+          type: 'application/pdf',
+        },
+      ],
       preview: overrides.preview ?? 'Hello Ana',
       body: 'Hello Ana, your booking is confirmed.',
       providerMessageId: overrides.providerMessageId,
@@ -99,7 +109,11 @@ describe('PrismaGuestMessageRepository', () => {
   });
 
   it('lists a conversation oldest first and a guest newest first', async () => {
-    const conversation = Conversation.create({ tenantId, guestId, subject: 'Thread' });
+    const conversation = Conversation.create({
+      tenantId,
+      guestId,
+      subject: 'Thread',
+    });
     await conversations.save(conversation);
     const conversationId = conversation.getId().toString();
 
@@ -123,7 +137,9 @@ describe('PrismaGuestMessageRepository', () => {
     });
 
     expect(
-      (await repo.findByConversationId(tenantId, conversationId)).map((m) => m.getPreview()),
+      (await repo.findByConversationId(tenantId, conversationId)).map((m) =>
+        m.getPreview(),
+      ),
     ).toEqual(['first', 'second']);
 
     expect(

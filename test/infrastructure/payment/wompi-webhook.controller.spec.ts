@@ -1,11 +1,16 @@
 import { createHash } from 'node:crypto';
 import { WompiWebhookController } from '@/infrastructure/payment/controllers/wompi-webhook.controller';
 
-function buildChecksum(payload: {
-  data: { transaction: { id: string; status: string; amount_in_cents: number } };
-  timestamp: number;
-  signature: { properties: string[] };
-}, secret: string): string {
+function buildChecksum(
+  payload: {
+    data: {
+      transaction: { id: string; status: string; amount_in_cents: number };
+    };
+    timestamp: number;
+    signature: { properties: string[] };
+  },
+  secret: string,
+): string {
   const concatenated = payload.signature.properties
     .map((property) => {
       const path = property.split('.');
@@ -49,9 +54,12 @@ describe('WompiWebhookController', () => {
 
   it('accepts and processes a valid event checksum', async () => {
     const commandBus = { execute: jest.fn().mockResolvedValue(undefined) };
-    const controller = new WompiWebhookController(commandBus as never, {
-      get: jest.fn().mockReturnValue(secret),
-    } as never);
+    const controller = new WompiWebhookController(
+      commandBus as never,
+      {
+        get: jest.fn().mockReturnValue(secret),
+      } as never,
+    );
 
     const checksum = buildChecksum(payload, secret);
     const response = await controller.receiveEvent(
@@ -68,9 +76,12 @@ describe('WompiWebhookController', () => {
 
   it('ignores events with invalid checksum', async () => {
     const commandBus = { execute: jest.fn().mockResolvedValue(undefined) };
-    const controller = new WompiWebhookController(commandBus as never, {
-      get: jest.fn().mockReturnValue(secret),
-    } as never);
+    const controller = new WompiWebhookController(
+      commandBus as never,
+      {
+        get: jest.fn().mockReturnValue(secret),
+      } as never,
+    );
 
     const response = await controller.receiveEvent(
       {

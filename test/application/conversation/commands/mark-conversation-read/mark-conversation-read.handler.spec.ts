@@ -5,7 +5,10 @@ import { MarkConversationReadHandler } from '@/application/conversation/commands
 import { MarkConversationReadCommand } from '@/application/conversation/commands/mark-conversation-read/mark-conversation-read.command';
 import { ConversationRepository } from '@/domain/conversation/repositories/conversation.repository';
 import { createConversationRepositoryMock } from '@test/shared/mocks/repositories/conversation-repository.mock';
-import { makeConversation, CONVERSATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/conversation.fixture';
+import {
+  makeConversation,
+  CONVERSATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/conversation.fixture';
 
 const TENANT_ID = CONVERSATION_FIXTURE_DEFAULTS.tenantId;
 const CONVERSATION_ID = CONVERSATION_FIXTURE_DEFAULTS.id;
@@ -31,7 +34,10 @@ describe('MarkConversationReadHandler', () => {
       });
       conversationRepository.findById.mockResolvedValue(conversation);
       conversationRepository.save.mockResolvedValue(undefined);
-      const command = new MarkConversationReadCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new MarkConversationReadCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act
       await handler.execute(command);
@@ -47,7 +53,10 @@ describe('MarkConversationReadHandler', () => {
       const conversation = makeConversation({ tenantId: TENANT_ID });
       conversationRepository.findById.mockResolvedValue(conversation);
       conversationRepository.save.mockResolvedValue(undefined);
-      const command = new MarkConversationReadCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new MarkConversationReadCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act
       await handler.execute(command);
@@ -62,23 +71,35 @@ describe('MarkConversationReadHandler', () => {
     it('throws NotFoundException when the conversation does not exist', async () => {
       // Arrange
       conversationRepository.findById.mockResolvedValue(null);
-      const command = new MarkConversationReadCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new MarkConversationReadCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act / Assert
       await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(command)).rejects.toThrow('Conversation not found');
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Conversation not found',
+      );
       expect(conversationRepository.save).not.toHaveBeenCalled();
     });
 
     it('throws NotFoundException when the conversation belongs to a different tenant', async () => {
       // Arrange
-      const conversation = makeConversation({ tenantId: 'different-tenant-id' });
+      const conversation = makeConversation({
+        tenantId: 'different-tenant-id',
+      });
       conversationRepository.findById.mockResolvedValue(conversation);
-      const command = new MarkConversationReadCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new MarkConversationReadCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act / Assert
       await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(command)).rejects.toThrow('Conversation not found');
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Conversation not found',
+      );
       expect(conversationRepository.save).not.toHaveBeenCalled();
     });
   });

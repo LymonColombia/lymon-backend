@@ -12,7 +12,9 @@ import { Location } from '@/domain/property/value-objects/location.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 
 describe('Property Entity', () => {
-  const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+  const tenantId = TenantId.createFromString(
+    '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+  );
   const propertyType = PropertyType.create(PropertyTypeEnum.CASA);
   const location = Location.create(4.6097, -74.0817);
   const cancellationPolicy = CancellationPolicy.create(

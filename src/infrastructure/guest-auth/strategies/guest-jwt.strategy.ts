@@ -1,4 +1,9 @@
-import { Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
@@ -31,9 +36,7 @@ export class GuestJwtStrategy extends PassportStrategy(Strategy, 'guest-jwt') {
   }
 
   async validate(payload: GuestJwtPayload & { iat: number }) {
-    this.logger.debug(
-      `validate() payload=${JSON.stringify(payload)}`,
-    );
+    this.logger.debug(`validate() payload=${JSON.stringify(payload)}`);
 
     // Reject staff tokens on guest endpoints
     if (payload.type !== 'guest') {

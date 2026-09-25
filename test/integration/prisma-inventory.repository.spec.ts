@@ -70,7 +70,9 @@ describe('Prisma inventory repositories', () => {
     });
 
   it('round-trips numeric stock as numbers, not Decimal objects', async () => {
-    const id = await items.save(newItem('SKU-1', { minStock: 2.5, initialStock: 7.25 }));
+    const id = await items.save(
+      newItem('SKU-1', { minStock: 2.5, initialStock: 7.25 }),
+    );
 
     const found = (await items.findById(InventoryItemId.create(id)))!;
     expect(found.getMinStock()).toBe(2.5);
@@ -98,7 +100,9 @@ describe('Prisma inventory repositories', () => {
     const tenant = TenantId.createFromString(tenantId);
     const property = PropertyId.create(propertyId);
 
-    expect(await items.findByPropertyIdAndSku(tenant, property, ' SKU-1 ')).not.toBeNull();
+    expect(
+      await items.findByPropertyIdAndSku(tenant, property, ' SKU-1 '),
+    ).not.toBeNull();
     expect(
       await items.findBySupplierId(tenant, SupplierId.create(supplierId)),
     ).toHaveLength(1);
@@ -107,9 +111,7 @@ describe('Prisma inventory repositories', () => {
 
     expect(await items.findById(InventoryItemId.create(id))).toBeNull();
     expect(await items.findByPropertyId(tenant, property)).toEqual([]);
-    expect(
-      await items.findLowStockByPropertyId(tenant, property),
-    ).toEqual([]);
+    expect(await items.findLowStockByPropertyId(tenant, property)).toEqual([]);
     await expect(items.save(newItem('SKU-1'))).resolves.toBeDefined();
   });
 
@@ -142,10 +144,20 @@ describe('Prisma inventory repositories', () => {
     expect(byItem[0].getQuantity()).toBe(1.5);
 
     expect(
-      await movements.findByPropertyId(tenant, PropertyId.create(propertyId), 1, 10),
+      await movements.findByPropertyId(
+        tenant,
+        PropertyId.create(propertyId),
+        1,
+        10,
+      ),
     ).toHaveLength(3);
     expect(
-      await movements.findByPropertyId(tenant, PropertyId.create(propertyId), 2, 2),
+      await movements.findByPropertyId(
+        tenant,
+        PropertyId.create(propertyId),
+        2,
+        2,
+      ),
     ).toHaveLength(1);
   });
 });

@@ -63,9 +63,12 @@ describe('PrismaShiftRepository', () => {
     const found = (await repo.findById(ShiftId.createFromString(id)))!;
     expect(found.getStartHour()).toBe('08:00');
     expect(found.getEndHour()).toBe('16:00');
-    expect(found.getStaffMemberIds().map((s) => s.toString()).sort()).toEqual(
-      [staffA, staffB].sort(),
-    );
+    expect(
+      found
+        .getStaffMemberIds()
+        .map((s) => s.toString())
+        .sort(),
+    ).toEqual([staffA, staffB].sort());
     // no weekday restriction is null in the domain, empty array in the column
     expect(found.getWeekdays()).toBeNull();
   });
@@ -89,7 +92,9 @@ describe('PrismaShiftRepository', () => {
   });
 
   it('filters by window, treating a null end date as open-ended', async () => {
-    await repo.save(newShift({ startDate: '2027-03-01', endDate: '2027-03-10' }));
+    await repo.save(
+      newShift({ startDate: '2027-03-01', endDate: '2027-03-10' }),
+    );
     await repo.save(newShift({ startDate: '2027-01-01', endDate: null }));
 
     const tenant = TenantId.createFromString(tenantId);
@@ -119,17 +124,31 @@ describe('PrismaShiftRepository', () => {
   });
 
   it('detects an overlapping shift for the same staff member', async () => {
-    const existing = await repo.save(newShift({ startMinutes: 480, endMinutes: 960 }));
+    const existing = await repo.save(
+      newShift({ startMinutes: 480, endMinutes: 960 }),
+    );
     const tenant = TenantId.createFromString(tenantId);
     const staff = UserId.createFromString(staffA);
 
     expect(
-      await repo.findOverlappingByStaff(tenant, staff, new Date('2027-03-01'), 900, 1200),
+      await repo.findOverlappingByStaff(
+        tenant,
+        staff,
+        new Date('2027-03-01'),
+        900,
+        1200,
+      ),
     ).not.toBeNull();
 
     // touching but not overlapping: [960,1200) starts exactly when the other ends
     expect(
-      await repo.findOverlappingByStaff(tenant, staff, new Date('2027-03-01'), 960, 1200),
+      await repo.findOverlappingByStaff(
+        tenant,
+        staff,
+        new Date('2027-03-01'),
+        960,
+        1200,
+      ),
     ).toBeNull();
 
     // the shift being edited is excluded from its own clash check

@@ -47,7 +47,10 @@ export class SetCartReservationHandler implements ICommandHandler<SetCartReserva
     const dateRange = DateRange.create(command.checkIn, command.checkOut);
 
     const existingReservations =
-      await this.reservationRepository.findByUnitAndDateRange(unitId, dateRange);
+      await this.reservationRepository.findByUnitAndDateRange(
+        unitId,
+        dateRange,
+      );
 
     if (
       !AvailabilityChecker.isAvailable(

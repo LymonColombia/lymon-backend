@@ -51,7 +51,10 @@ describe('PrismaUserRepository', () => {
         [
           {
             roleId,
-            scope: { type: 'PROPERTY', resourceIds: [propertyA.id, propertyB.id] },
+            scope: {
+              type: 'PROPERTY',
+              resourceIds: [propertyA.id, propertyB.id],
+            },
           },
         ],
       ),
@@ -130,7 +133,9 @@ describe('PrismaUserRepository', () => {
 
     await expect(repo.save(owner())).resolves.toBeUndefined();
     expect(await repo.findById(UserId.createFromString(created.id))).toBeNull();
-    expect(await repo.findByTenantId(TenantId.createFromString(tenantId))).toHaveLength(1);
+    expect(
+      await repo.findByTenantId(TenantId.createFromString(tenantId)),
+    ).toHaveLength(1);
   });
 
   it('finds by reset token and by email + tenant', async () => {

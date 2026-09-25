@@ -24,10 +24,7 @@ type ShiftRowWithStaff = ShiftRow & {
 const WITH_STAFF = { shift_staff_members: true } as const;
 
 /** An open-ended shift (end_date NULL) never stops, so it overlaps any later window. */
-const overlapsWindow = (
-  from: Date,
-  to: Date,
-): Prisma.shiftsWhereInput => ({
+const overlapsWindow = (from: Date, to: Date): Prisma.shiftsWhereInput => ({
   start_date: { lte: to },
   OR: [{ end_date: null }, { end_date: { gte: from } }],
 });
@@ -168,7 +165,12 @@ export class PrismaShiftRepository implements ShiftRepository {
         ? {
             // a shift with no weekday restriction runs every day, so it always clashes
             AND: [
-              { OR: [{ weekdays: { isEmpty: true } }, { weekdays: { hasSome: weekdays } }] },
+              {
+                OR: [
+                  { weekdays: { isEmpty: true } },
+                  { weekdays: { hasSome: weekdays } },
+                ],
+              },
             ],
           }
         : {}),

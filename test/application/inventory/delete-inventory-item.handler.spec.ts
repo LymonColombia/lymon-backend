@@ -110,7 +110,9 @@ describe('DeleteInventoryItemHandler', () => {
     it('throws NotFoundException', async () => {
       propertyRepository.findById.mockResolvedValue(makeProperty());
       inventoryItemRepository.findById.mockResolvedValue(
-        makeInventoryItem({ propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9ca00000000' }),
+        makeInventoryItem({
+          propertyId: '65f1a1a2-b3c4-d5e6-f7a8-b9ca00000000',
+        }),
       );
 
       await expect(

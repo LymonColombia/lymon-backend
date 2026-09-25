@@ -13,7 +13,9 @@ import {
 
 const MESSAGE_ID = GUEST_MESSAGE_FIXTURE_DEFAULTS.id;
 
-function makeEvent(overrides?: Partial<GuestMessageCreatedEvent>): GuestMessageCreatedEvent {
+function makeEvent(
+  overrides?: Partial<GuestMessageCreatedEvent>,
+): GuestMessageCreatedEvent {
   return new GuestMessageCreatedEvent(
     overrides?.guestMessageId ?? MESSAGE_ID,
     overrides?.subject ?? 'Test Subject',
@@ -152,7 +154,9 @@ describe('GuestMessageCreatedListener', () => {
       // Arrange
       const message = makeGuestMessage({ status: GuestMessageStatus.PENDING });
       guestMessageRepository.findById.mockResolvedValueOnce(message);
-      emailService.sendEmail.mockRejectedValue(new Error('SMTP connection refused'));
+      emailService.sendEmail.mockRejectedValue(
+        new Error('SMTP connection refused'),
+      );
       // Second findById is called in the catch block
       guestMessageRepository.findById.mockResolvedValueOnce(message);
       guestMessageRepository.save.mockResolvedValue(undefined);
@@ -196,7 +200,9 @@ describe('GuestMessageCreatedListener', () => {
       const event = makeEvent();
 
       // Act & Assert — should not throw
-      await expect(listener.handleGuestMessageCreated(event)).resolves.toBeUndefined();
+      await expect(
+        listener.handleGuestMessageCreated(event),
+      ).resolves.toBeUndefined();
       expect(guestMessageRepository.save).not.toHaveBeenCalled();
     });
   });

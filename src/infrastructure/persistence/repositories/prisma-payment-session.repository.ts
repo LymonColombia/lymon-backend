@@ -13,9 +13,7 @@ import {
 } from '@/infrastructure/persistence/prisma/generated/client';
 
 @Injectable()
-export class PrismaPaymentSessionRepository
-  implements PaymentSessionRepository
-{
+export class PrismaPaymentSessionRepository implements PaymentSessionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   private client(context?: TransactionContextData) {

@@ -193,7 +193,9 @@ export class CheckoutCartHandler implements ICommandHandler<CheckoutCartCommand>
     // Update reservation item from frontend
     if (command.reservationItem) {
       const item = command.reservationItem;
-      const unit = await this.unitRepository.findById(UnitId.create(item.unitId));
+      const unit = await this.unitRepository.findById(
+        UnitId.create(item.unitId),
+      );
       if (!unit) {
         throw new NotFoundException('Unit not found');
       }

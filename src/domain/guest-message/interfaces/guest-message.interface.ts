@@ -1,6 +1,9 @@
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
-import { GuestMessageAttachment, GuestMessageSentBy } from '../entities/guest-message.types';
+import {
+  GuestMessageAttachment,
+  GuestMessageSentBy,
+} from '../entities/guest-message.types';
 import { GuestMessageChannel } from '../value-objects/guest-message-channel.vo';
 import { GuestMessageDirection } from '../value-objects/guest-message-direction.vo';
 import { GuestMessageId } from '../value-objects/guest-message-id.vo';

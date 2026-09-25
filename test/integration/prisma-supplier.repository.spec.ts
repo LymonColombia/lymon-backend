@@ -49,9 +49,9 @@ describe('PrismaSupplierRepository', () => {
 
     const tenant = TenantId.createFromString(tenantId);
     expect(
-      (await repo.findByTenantId(tenant, { sortBy: 'name', sortOrder: 'asc' })).map(
-        (supplier) => supplier.getName(),
-      ),
+      (
+        await repo.findByTenantId(tenant, { sortBy: 'name', sortOrder: 'asc' })
+      ).map((supplier) => supplier.getName()),
     ).toEqual(['Alpha', 'Zeta']);
 
     expect(await repo.findByTenantId(tenant)).toHaveLength(2);

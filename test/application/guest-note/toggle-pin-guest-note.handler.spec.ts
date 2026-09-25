@@ -18,7 +18,10 @@ describe('TogglePinGuestNoteHandler', () => {
   beforeEach(() => {
     guestNoteRepository = createGuestNoteRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new TogglePinGuestNoteHandler(guestNoteRepository, mockEventEmitter as any);
+    handler = new TogglePinGuestNoteHandler(
+      guestNoteRepository,
+      mockEventEmitter as any,
+    );
   });
 
   describe('when the note does not exist', () => {

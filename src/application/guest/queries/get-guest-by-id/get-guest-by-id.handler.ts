@@ -39,8 +39,8 @@ export class GetGuestByIdHandler implements IQueryHandler<
     }
 
     const lifecycleStatuses = await this.queryBus.execute<
-    GetGuestLifecycleStatusQuery, 
-    Map<string, GuestLifecycleStatus>
+      GetGuestLifecycleStatusQuery,
+      Map<string, GuestLifecycleStatus>
     >(new GetGuestLifecycleStatusQuery(query.tenantId, [query.guestId]));
 
     return {
@@ -67,7 +67,9 @@ export class GetGuestByIdHandler implements IQueryHandler<
           : null,
         createdAt: guest.getCreatedAt().toISOString(),
         updatedAt: guest.getUpdatedAt().toISOString(),
-        lifecycleStatus: lifecycleStatuses.get(query.guestId) || GuestLifecycleStatus.NO_RESERVATION,
+        lifecycleStatus:
+          lifecycleStatuses.get(query.guestId) ||
+          GuestLifecycleStatus.NO_RESERVATION,
       },
     };
   }

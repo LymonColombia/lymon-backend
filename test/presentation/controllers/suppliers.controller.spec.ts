@@ -126,7 +126,10 @@ describe('SuppliersController', () => {
   it('dispatches DeleteSupplierCommand for supplier delete', async () => {
     commandBus.execute.mockResolvedValue(undefined);
 
-    await controller.deleteSupplier(user, '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000');
+    await controller.deleteSupplier(
+      user,
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
+    );
 
     expect(commandBus.execute).toHaveBeenCalledTimes(1);
     expect(commandBus.execute).toHaveBeenCalledWith(

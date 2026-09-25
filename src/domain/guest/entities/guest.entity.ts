@@ -157,7 +157,11 @@ export class Guest {
     this.touch();
   }
 
-  initEmailChange(pendingEmail: string, hashedToken: string, expiry: Date): void {
+  initEmailChange(
+    pendingEmail: string,
+    hashedToken: string,
+    expiry: Date,
+  ): void {
     this.pendingEmail = Guest.normalizeEmail(pendingEmail);
     this.emailChangeToken = hashedToken;
     this.emailChangeExpiry = expiry;

@@ -11,7 +11,9 @@ export const GUEST_STAT_QUERIES = {
 } as const;
 
 export type GuestStatKey = keyof typeof GUEST_STAT_QUERIES;
-export const GUEST_STAT_KEYS = Object.keys(GUEST_STAT_QUERIES) as GuestStatKey[];
+export const GUEST_STAT_KEYS = Object.keys(
+  GUEST_STAT_QUERIES,
+) as GuestStatKey[];
 
 export class GetGuestStatsQuery {
   constructor(

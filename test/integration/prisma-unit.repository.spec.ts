@@ -38,7 +38,9 @@ describe('PrismaUnitRepository', () => {
         standardGuests: 2,
       },
       physicalFeatures: {
-        bedrooms: [{ roomName: 'Main', beds: [{ type: BedTypeEnum.KING, count: 1 }] }],
+        bedrooms: [
+          { roomName: 'Main', beds: [{ type: BedTypeEnum.KING, count: 1 }] },
+        ],
         bathroomsCount: 1,
         isShared: true,
       },
@@ -71,9 +73,12 @@ describe('PrismaUnitRepository', () => {
 
     const tenant = TenantId.createFromString(tenantId);
     expect((await repo.findByTenantIdPaginated(tenant, 1, 10)).total).toBe(2);
-    expect((await repo.findByTenantIdPaginated(tenant, 1, 10, 5)).total).toBe(1);
+    expect((await repo.findByTenantIdPaginated(tenant, 1, 10, 5)).total).toBe(
+      1,
+    );
     expect(
-      (await repo.findByTenantIdPaginated(tenant, 1, 10, undefined, propertyId)).total,
+      (await repo.findByTenantIdPaginated(tenant, 1, 10, undefined, propertyId))
+        .total,
     ).toBe(2);
 
     const firstPage = await repo.findByTenantIdPaginated(tenant, 1, 1);
@@ -91,14 +96,34 @@ describe('PrismaUnitRepository', () => {
       'Pricey Room',
     ]);
 
-    const desc = await repo.findAllPaginated(1, 10, undefined, undefined, 'desc');
+    const desc = await repo.findAllPaginated(
+      1,
+      10,
+      undefined,
+      undefined,
+      'desc',
+    );
     expect(desc.units[0].getName()).toBe('Pricey Room');
 
-    const byName = await repo.findAllPaginated(1, 10, undefined, undefined, undefined, 'cheap');
+    const byName = await repo.findAllPaginated(
+      1,
+      10,
+      undefined,
+      undefined,
+      undefined,
+      'cheap',
+    );
     expect(byName.total).toBe(1);
 
     // a regex metacharacter must not be interpreted
-    const literal = await repo.findAllPaginated(1, 10, undefined, undefined, undefined, 'Cheap.Room');
+    const literal = await repo.findAllPaginated(
+      1,
+      10,
+      undefined,
+      undefined,
+      undefined,
+      'Cheap.Room',
+    );
     expect(literal.total).toBe(0);
   });
 
@@ -108,7 +133,9 @@ describe('PrismaUnitRepository', () => {
 
     const tenant = TenantId.createFromString(tenantId);
     expect(await repo.findById(UnitId.create(id))).toBeNull();
-    expect(await repo.findByPropertyId(PropertyId.create(propertyId))).toEqual([]);
+    expect(await repo.findByPropertyId(PropertyId.create(propertyId))).toEqual(
+      [],
+    );
     expect(await repo.findByTenantId(tenant)).toEqual([]);
     expect(await repo.countByTenantId(tenant)).toBe(0);
     expect(await repo.findByIds([UnitId.create(id)])).toEqual([]);

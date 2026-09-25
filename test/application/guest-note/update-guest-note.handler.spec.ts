@@ -18,7 +18,10 @@ describe('UpdateGuestNoteHandler', () => {
   beforeEach(() => {
     guestNoteRepository = createGuestNoteRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new UpdateGuestNoteHandler(guestNoteRepository, mockEventEmitter as any);
+    handler = new UpdateGuestNoteHandler(
+      guestNoteRepository,
+      mockEventEmitter as any,
+    );
   });
 
   describe('when no fields are provided', () => {

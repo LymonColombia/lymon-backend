@@ -44,7 +44,11 @@ describe('PrismaAuditLogRepository', () => {
   it('writes the json columns and reads them back, leaving absent ones undefined', async () => {
     await repo.save(log());
 
-    const { items } = await repo.findByTenant(tenantId, {}, { page: 1, limit: 10 });
+    const { items } = await repo.findByTenant(
+      tenantId,
+      {},
+      { page: 1, limit: 10 },
+    );
     expect(items).toHaveLength(1);
     expect(items[0].getMetadata()).toEqual({ ip: 'x' });
     expect(items[0].getNewValue()).toEqual({ after: 1 });
@@ -56,22 +60,41 @@ describe('PrismaAuditLogRepository', () => {
   it('filters by user, action, entity type and date window', async () => {
     await repo.save(log());
     await repo.save(
-      log({ action: AuditAction.TENANT_PROFILE_UPDATED, entityType: AuditEntityType.TENANT }),
+      log({
+        action: AuditAction.TENANT_PROFILE_UPDATED,
+        entityType: AuditEntityType.TENANT,
+      }),
     );
 
     const page = { page: 1, limit: 10 };
     expect((await repo.findByTenant(tenantId, {}, page)).total).toBe(2);
     expect(
-      (await repo.findByTenant(tenantId, { action: AuditAction.AUTH_LOGIN }, page)).total,
+      (
+        await repo.findByTenant(
+          tenantId,
+          { action: AuditAction.AUTH_LOGIN },
+          page,
+        )
+      ).total,
     ).toBe(1);
     expect(
-      (await repo.findByTenant(tenantId, { entityType: AuditEntityType.TENANT }, page))
-        .total,
+      (
+        await repo.findByTenant(
+          tenantId,
+          { entityType: AuditEntityType.TENANT },
+          page,
+        )
+      ).total,
     ).toBe(1);
     expect((await repo.findByTenant(tenantId, { userId }, page)).total).toBe(2);
     expect(
-      (await repo.findByTenant(tenantId, { dateFrom: new Date('2100-01-01') }, page))
-        .total,
+      (
+        await repo.findByTenant(
+          tenantId,
+          { dateFrom: new Date('2100-01-01') },
+          page,
+        )
+      ).total,
     ).toBe(0);
   });
 

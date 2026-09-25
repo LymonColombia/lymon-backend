@@ -227,16 +227,28 @@ describe('UpdateUnitHandler', () => {
 
     await handler.execute(
       new UpdateUnitCommand(
-        TENANT_ID, UNIT_ID,
-        undefined, undefined, undefined, undefined, undefined,
-        undefined, undefined, undefined, undefined,
+        TENANT_ID,
+        UNIT_ID,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
         newKeys,
-        undefined, undefined,
-        'user-1', 'owner@example.com',
+        undefined,
+        undefined,
+        'user-1',
+        'owner@example.com',
       ),
     );
 
-    expect(r2StorageService.deleteObjects).toHaveBeenCalledWith(['tenant/photo-1.jpg']);
+    expect(r2StorageService.deleteObjects).toHaveBeenCalledWith([
+      'tenant/photo-1.jpg',
+    ]);
   });
 
   it('does not call deleteObjects when mediaKeys is not in the command', async () => {
@@ -257,12 +269,22 @@ describe('UpdateUnitHandler', () => {
 
     await handler.execute(
       new UpdateUnitCommand(
-        TENANT_ID, UNIT_ID,
-        undefined, undefined, undefined, undefined, undefined,
-        undefined, undefined, undefined, undefined,
+        TENANT_ID,
+        UNIT_ID,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
         keys,
-        undefined, undefined,
-        'user-1', 'owner@example.com',
+        undefined,
+        undefined,
+        'user-1',
+        'owner@example.com',
       ),
     );
 

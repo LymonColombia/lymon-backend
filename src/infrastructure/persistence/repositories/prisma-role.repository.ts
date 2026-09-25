@@ -22,11 +22,15 @@ export class PrismaRoleRepository implements RoleRepository {
       return;
     }
 
-    await this.prisma.roles.create({ data: { ...data, created_at: new Date() } });
+    await this.prisma.roles.create({
+      data: { ...data, created_at: new Date() },
+    });
   }
 
   async findById(id: RoleId): Promise<Role | null> {
-    const row = await this.prisma.roles.findUnique({ where: { id: id.toString() } });
+    const row = await this.prisma.roles.findUnique({
+      where: { id: id.toString() },
+    });
     return row ? this.toDomainEntity(row) : null;
   }
 

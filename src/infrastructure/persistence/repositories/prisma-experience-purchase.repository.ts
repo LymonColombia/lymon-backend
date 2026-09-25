@@ -26,9 +26,7 @@ type PurchaseRowWithNames = PurchaseRow & {
 };
 
 @Injectable()
-export class PrismaExperiencePurchaseRepository
-  implements ExperiencePurchaseRepository
-{
+export class PrismaExperiencePurchaseRepository implements ExperiencePurchaseRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   private client(context?: TransactionContextData) {
@@ -192,9 +190,7 @@ export class PrismaExperiencePurchaseRepository
   ): Prisma.experience_purchasesWhereInput {
     return {
       tenant_id: tenantId.toString(),
-      ...(filters?.experienceId
-        ? { experience_id: filters.experienceId }
-        : {}),
+      ...(filters?.experienceId ? { experience_id: filters.experienceId } : {}),
       ...(filters?.status ? { status: filters.status } : {}),
       ...(filters?.dateFrom || filters?.dateTo
         ? {

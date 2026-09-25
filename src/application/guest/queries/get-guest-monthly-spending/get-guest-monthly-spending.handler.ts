@@ -26,7 +26,10 @@ const MONTH_NAMES = [
   'Dec',
 ];
 
-function buildZeroSkeleton(fromDate: Date, toDate: Date): MonthlySpendingItem[] {
+function buildZeroSkeleton(
+  fromDate: Date,
+  toDate: Date,
+): MonthlySpendingItem[] {
   const skeleton: MonthlySpendingItem[] = [];
   const cursor = new Date(
     Date.UTC(fromDate.getUTCFullYear(), fromDate.getUTCMonth(), 1),
@@ -51,10 +54,10 @@ function buildZeroSkeleton(fromDate: Date, toDate: Date): MonthlySpendingItem[] 
 }
 
 @QueryHandler(GetGuestMonthlySpendingQuery)
-export class GetGuestMonthlySpendingHandler
-  implements
-    IQueryHandler<GetGuestMonthlySpendingQuery, GetGuestMonthlySpendingResult>
-{
+export class GetGuestMonthlySpendingHandler implements IQueryHandler<
+  GetGuestMonthlySpendingQuery,
+  GetGuestMonthlySpendingResult
+> {
   constructor(
     @Inject(RESERVATION_REPOSITORY)
     private readonly reservationRepository: ReservationRepository,

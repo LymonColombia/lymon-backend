@@ -4,7 +4,10 @@ import { UnitRatingRepository } from '@/domain/unit-rating/repositories/unit-rat
 import { UnitRepository } from '@/domain/unit/repositories/unit.repository';
 import { createUnitRatingRepositoryMock } from '@test/shared/mocks/repositories/unit-rating-repository.mock';
 import { createUnitRepositoryMock } from '@test/shared/mocks/repositories/unit-repository.mock';
-import { makeUnitRating, UNIT_RATING_FIXTURE_DEFAULTS } from '@test/shared/fixtures/unit-rating.fixture';
+import {
+  makeUnitRating,
+  UNIT_RATING_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/unit-rating.fixture';
 import { Unit } from '@/domain/unit/entities/unit.entity';
 import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';

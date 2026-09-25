@@ -168,7 +168,9 @@ describe('CreateUnitRatingHandler', () => {
       });
       jest
         .spyOn(otherGuest, 'getId')
-        .mockReturnValue(GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000'));
+        .mockReturnValue(
+          GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000'),
+        );
       reservationRepository.findById.mockResolvedValue(reservation);
       guestRepository.findByGuestAccountId.mockResolvedValue(otherGuest);
 

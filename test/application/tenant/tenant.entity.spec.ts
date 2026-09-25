@@ -48,7 +48,9 @@ describe('Tenant Entity', () => {
 
   describe('reconstitute', () => {
     it('should reconstitute a tenant from props', () => {
-      const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+      const tenantId = TenantId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      );
       const createdAt = new Date('2024-01-01');
       const updatedAt = new Date('2024-01-02');
 
@@ -85,7 +87,9 @@ describe('Tenant Entity', () => {
     });
 
     it('should handle null optional fields during reconstitution', () => {
-      const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+      const tenantId = TenantId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      );
       const props: TenantReconstitutionProps = {
         id: tenantId,
         name: validName,
@@ -161,9 +165,15 @@ describe('Tenant Entity', () => {
     it('should update all profile fields', () => {
       const tenant = Tenant.create(validName, validEmail, validPlan);
 
-      tenant.updateProfile('New Name', '+9876543210', '456 Oak Ave', 'A description', {
-        primary: '#1A73E8',
-      });
+      tenant.updateProfile(
+        'New Name',
+        '+9876543210',
+        '456 Oak Ave',
+        'A description',
+        {
+          primary: '#1A73E8',
+        },
+      );
 
       expect(tenant.getName()).toBe('New Name');
       expect(tenant.getContactPhone()).toBe('+9876543210');

@@ -11,7 +11,12 @@ import {
 describe('PrismaMetricsReadRepository', () => {
   const repo = new PrismaMetricsReadRepository(prisma);
 
-  let ids: { tenantId: string; propertyId: string; unitId: string; guestId: string };
+  let ids: {
+    tenantId: string;
+    propertyId: string;
+    unitId: string;
+    guestId: string;
+  };
   const window = { from: new Date('2026-01-01'), to: new Date('2026-12-31') };
 
   beforeEach(async () => {

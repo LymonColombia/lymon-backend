@@ -55,7 +55,12 @@ describe('GetSuppliersQueryHandler', () => {
     ]);
 
     const result = await handler.execute(
-      new GetSuppliersQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 10, 'fresh'),
+      new GetSuppliersQuery(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        1,
+        10,
+        'fresh',
+      ),
     );
 
     expect(result.total).toBe(1);

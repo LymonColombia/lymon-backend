@@ -114,7 +114,10 @@ export class UpdateUnitHandler implements ICommandHandler<UpdateUnitCommand> {
       );
     }
 
-    if (command.maxGuests !== undefined || command.standardGuests !== undefined) {
+    if (
+      command.maxGuests !== undefined ||
+      command.standardGuests !== undefined
+    ) {
       unit.updateCapacity(
         command.maxGuests ?? unit.getMaxGuests(),
         command.standardGuests ?? unit.getStandardGuests(),
@@ -133,14 +136,19 @@ export class UpdateUnitHandler implements ICommandHandler<UpdateUnitCommand> {
       );
     }
 
-    if (command.bathroomsCount !== undefined) unit.updateBathroomsCount(command.bathroomsCount);
+    if (command.bathroomsCount !== undefined)
+      unit.updateBathroomsCount(command.bathroomsCount);
     if (command.isShared !== undefined) unit.updateShared(command.isShared);
-    if (command.amenities !== undefined) unit.updateAmenities(command.amenities);
+    if (command.amenities !== undefined)
+      unit.updateAmenities(command.amenities);
 
-    const oldMediaKeys = command.mediaKeys === undefined ? [] : unit.getMediaKeys();
-    if (command.mediaKeys !== undefined) unit.updateMediaKeys(command.mediaKeys);
+    const oldMediaKeys =
+      command.mediaKeys === undefined ? [] : unit.getMediaKeys();
+    if (command.mediaKeys !== undefined)
+      unit.updateMediaKeys(command.mediaKeys);
 
-    if (command.pricePerNight !== undefined) unit.updatePrice(command.pricePerNight);
+    if (command.pricePerNight !== undefined)
+      unit.updatePrice(command.pricePerNight);
 
     if (command.externalIds !== undefined) {
       unit.updateExternalIds(

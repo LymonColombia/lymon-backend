@@ -11,7 +11,10 @@ import { GuestMessageDirection } from '@/domain/guest-message/value-objects/gues
 import { GuestMessageChannel } from '@/domain/guest-message/value-objects/guest-message-channel.vo';
 import { createConversationRepositoryMock } from '@test/shared/mocks/repositories/conversation-repository.mock';
 import { createGuestMessageRepositoryMock } from '@test/shared/mocks/repositories/guest-message-repository.mock';
-import { makeConversation, CONVERSATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/conversation.fixture';
+import {
+  makeConversation,
+  CONVERSATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/conversation.fixture';
 import { makeGuestMessage } from '@test/shared/fixtures/guest-message.fixture';
 
 const TENANT_ID = CONVERSATION_FIXTURE_DEFAULTS.tenantId;
@@ -70,7 +73,9 @@ describe('GetConversationThreadHandler', () => {
     it('resolves body from the provider when the message has a providerMessageId', async () => {
       // Arrange
       const conversation = makeConversation({ tenantId: TENANT_ID });
-      const message = makeGuestMessage({ providerMessageId: 'provider-msg-001' });
+      const message = makeGuestMessage({
+        providerMessageId: 'provider-msg-001',
+      });
       conversationRepository.findById.mockResolvedValue(conversation);
       guestMessageRepository.findByConversationId.mockResolvedValue([message]);
       messageBodyProvider.getBody.mockResolvedValue('<p>Full email body</p>');
@@ -80,7 +85,9 @@ describe('GetConversationThreadHandler', () => {
       const result = await handler.execute(query);
 
       // Assert
-      expect(messageBodyProvider.getBody).toHaveBeenCalledWith('provider-msg-001');
+      expect(messageBodyProvider.getBody).toHaveBeenCalledWith(
+        'provider-msg-001',
+      );
       expect(result.messages[0].body).toBe('<p>Full email body</p>');
       expect(result.messages[0].bodyResolved).toBe(true);
     });
@@ -88,7 +95,10 @@ describe('GetConversationThreadHandler', () => {
     it('falls back to preview as body when the provider returns null', async () => {
       // Arrange
       const conversation = makeConversation({ tenantId: TENANT_ID });
-      const message = makeGuestMessage({ providerMessageId: 'provider-msg-002', preview: 'Preview text' });
+      const message = makeGuestMessage({
+        providerMessageId: 'provider-msg-002',
+        preview: 'Preview text',
+      });
       conversationRepository.findById.mockResolvedValue(conversation);
       guestMessageRepository.findByConversationId.mockResolvedValue([message]);
       messageBodyProvider.getBody.mockResolvedValue(null);
@@ -105,10 +115,15 @@ describe('GetConversationThreadHandler', () => {
     it('falls back to preview as body when the provider throws', async () => {
       // Arrange
       const conversation = makeConversation({ tenantId: TENANT_ID });
-      const message = makeGuestMessage({ providerMessageId: 'provider-msg-003', preview: 'Fallback preview' });
+      const message = makeGuestMessage({
+        providerMessageId: 'provider-msg-003',
+        preview: 'Fallback preview',
+      });
       conversationRepository.findById.mockResolvedValue(conversation);
       guestMessageRepository.findByConversationId.mockResolvedValue([message]);
-      messageBodyProvider.getBody.mockRejectedValue(new Error('Provider unavailable'));
+      messageBodyProvider.getBody.mockRejectedValue(
+        new Error('Provider unavailable'),
+      );
       const query = new GetConversationThreadQuery(TENANT_ID, CONVERSATION_ID);
 
       // Act
@@ -122,7 +137,10 @@ describe('GetConversationThreadHandler', () => {
     it('skips provider call and uses preview when message has no providerMessageId', async () => {
       // Arrange
       const conversation = makeConversation({ tenantId: TENANT_ID });
-      const message = makeGuestMessage({ providerMessageId: null, preview: 'No provider' });
+      const message = makeGuestMessage({
+        providerMessageId: null,
+        preview: 'No provider',
+      });
       conversationRepository.findById.mockResolvedValue(conversation);
       guestMessageRepository.findByConversationId.mockResolvedValue([message]);
       const query = new GetConversationThreadQuery(TENANT_ID, CONVERSATION_ID);
@@ -160,8 +178,12 @@ describe('GetConversationThreadHandler', () => {
 
       // Act / Assert
       await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(query)).rejects.toThrow('Conversation not found');
-      expect(guestMessageRepository.findByConversationId).not.toHaveBeenCalled();
+      await expect(handler.execute(query)).rejects.toThrow(
+        'Conversation not found',
+      );
+      expect(
+        guestMessageRepository.findByConversationId,
+      ).not.toHaveBeenCalled();
     });
 
     it('throws NotFoundException when the conversation belongs to a different tenant', async () => {
@@ -172,8 +194,12 @@ describe('GetConversationThreadHandler', () => {
 
       // Act / Assert
       await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(query)).rejects.toThrow('Conversation not found');
-      expect(guestMessageRepository.findByConversationId).not.toHaveBeenCalled();
+      await expect(handler.execute(query)).rejects.toThrow(
+        'Conversation not found',
+      );
+      expect(
+        guestMessageRepository.findByConversationId,
+      ).not.toHaveBeenCalled();
     });
   });
 });

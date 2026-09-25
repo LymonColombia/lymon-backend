@@ -30,7 +30,10 @@ import { RefundRequest } from '@/domain/refund/entities/refund-request.entity';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { ReservationSourceEnum } from '@/domain/reservation/value-objects/reservation-source.vo';
-import { AuditAction, AuditEntityType } from '@/domain/audit/value-objects/audit-action.vo';
+import {
+  AuditAction,
+  AuditEntityType,
+} from '@/domain/audit/value-objects/audit-action.vo';
 import {
   AuditLoggedEvent,
   AUDIT_LOG_EVENT,
@@ -43,9 +46,10 @@ export interface CancelGuestReservationResult {
 }
 
 @CommandHandler(CancelGuestReservationCommand)
-export class CancelGuestReservationHandler
-  implements ICommandHandler<CancelGuestReservationCommand, CancelGuestReservationResult>
-{
+export class CancelGuestReservationHandler implements ICommandHandler<
+  CancelGuestReservationCommand,
+  CancelGuestReservationResult
+> {
   constructor(
     @Inject(RESERVATION_REPOSITORY)
     private readonly reservationRepository: ReservationRepository,
@@ -66,7 +70,8 @@ export class CancelGuestReservationHandler
       command.guestAccountId,
     );
 
-    const reservation = await this.reservationRepository.findById(reservationId);
+    const reservation =
+      await this.reservationRepository.findById(reservationId);
     if (!reservation) {
       throw new NotFoundException('Reservation not found');
     }
@@ -128,9 +133,7 @@ export class CancelGuestReservationHandler
         reservationId: reservation.getId()!,
         guestId: reservation.getGuestId(),
         amount: refundAmount,
-        reason:
-          property?.getName()
-          ?? 'Guest cancellation',
+        reason: property?.getName() ?? 'Guest cancellation',
       });
 
       refundRequestId = await this.refundRequestRepository.save(refundRequest);
@@ -141,7 +144,13 @@ export class CancelGuestReservationHandler
   }
 
   private emitEvents(
-    reservation: { getId: () => { toString: () => string } | null; getUnitId: () => { toString: () => string }; getDateRange: () => { getCheckIn: () => Date; getCheckOut: () => Date }; getTenantId: () => { toString: () => string }; getGuestId: () => { toString: () => string } },
+    reservation: {
+      getId: () => { toString: () => string } | null;
+      getUnitId: () => { toString: () => string };
+      getDateRange: () => { getCheckIn: () => Date; getCheckOut: () => Date };
+      getTenantId: () => { toString: () => string };
+      getGuestId: () => { toString: () => string };
+    },
     refundAmount: number,
     refundRequestId: string | null,
   ): void {

@@ -17,9 +17,7 @@ import { CartId } from '@/domain/cart/value-objects/cart-id.vo';
 
 @Injectable()
 export class ExpirePendingReservationsScheduler {
-  private readonly logger = new Logger(
-    ExpirePendingReservationsScheduler.name,
-  );
+  private readonly logger = new Logger(ExpirePendingReservationsScheduler.name);
 
   constructor(
     @Inject(CART_REPOSITORY)
@@ -45,9 +43,7 @@ export class ExpirePendingReservationsScheduler {
 
     for (const cart of carts) {
       const pendingSession =
-        await this.paymentSessionRepository.findPendingByCartId(
-          cart.getId()!,
-        );
+        await this.paymentSessionRepository.findPendingByCartId(cart.getId()!);
       if (pendingSession) {
         continue; // still has an active payment session
       }
@@ -57,10 +53,7 @@ export class ExpirePendingReservationsScheduler {
         const reservation = await this.reservationRepository.findById(
           ReservationId.create(reservationItem.reservationId),
         );
-        if (
-          reservation &&
-          reservation.getStatus().getValue() === 'PENDING'
-        ) {
+        if (reservation && reservation.getStatus().getValue() === 'PENDING') {
           reservation.cancel('Expired: no payment initiated');
           await this.reservationRepository.save(reservation);
           cancelled++;

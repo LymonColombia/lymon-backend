@@ -30,7 +30,13 @@ describe('PrismaGuestEmailRepository', () => {
       guestId: GuestId.createFromString(guestId),
       subject,
       status: GuestEmailStatusEnum.PENDING,
-      attachments: [{ url: 'https://x/y.pdf', name: 'invoice.pdf', type: 'application/pdf' }],
+      attachments: [
+        {
+          url: 'https://x/y.pdf',
+          name: 'invoice.pdf',
+          type: 'application/pdf',
+        },
+      ],
       sentById: userId,
     });
 
@@ -78,7 +84,9 @@ describe('PrismaGuestEmailRepository', () => {
     expect(page.total).toBe(2);
     expect(page.emails).toHaveLength(1);
 
-    const other = TenantId.createFromString((await seedTenant({ name: 'Andina' })).id);
+    const other = TenantId.createFromString(
+      (await seedTenant({ name: 'Andina' })).id,
+    );
     expect(await repo.findByGuestId(other, guest)).toEqual([]);
   });
 });
