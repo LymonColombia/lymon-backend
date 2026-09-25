@@ -1,5 +1,4 @@
 import {
-  PublicBedroomDto,
   PublicUnitDto,
 } from '@/application/unit/queries/GetPublicUnitsByTenant/get-public-units-by-tenant.result';
 
