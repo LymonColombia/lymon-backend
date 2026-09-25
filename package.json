@@ -35,6 +35,7 @@
     "sonar": "pnpm run test:cov && sonar-scanner",
     "postinstall": "prisma generate",
     "test:db": "jest --config ./test/jest-integration.json --runInBand",
+    "test:db:cov": "jest --config ./test/jest-integration.json --runInBand --coverage",
     "dev": "pnpm db:up && pnpm db:deploy && pnpm start:dev",
     "dev:fresh": "pnpm db:down && pnpm dev",
     "db:up": "docker compose up -d --wait",

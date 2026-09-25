@@ -18,14 +18,11 @@ concurrency:
 
 jobs:
   check:
-    name: Lint, build, unit tests, Sonar
+    name: Lint, build, unit tests
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0 # Sonar needs full history for blame / new-code detection
-
       - uses: pnpm/action-setup@v6 # version from package.json "packageManager"
       - uses: actions/setup-node@v7
         with:
@@ -36,15 +33,11 @@ jobs:
       - run: pnpm lint:check
       - run: pnpm build
       - run: pnpm test:cov
-
-      # Fork PRs don't get secrets, so they skip Sonar instead of failing on a missing token.
-      - name: SonarCloud scan + quality gate
-        if: github.event.pull_request.head.repo.fork != true
-        uses: SonarSource/sonarqube-scan-action@v8
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - uses: actions/upload-artifact@v7
         with:
-          args: -Dsonar.qualitygate.wait=true
+          name: coverage-unit
+          path: coverage/lcov.info
+          retention-days: 1
 
   integration:
     name: Integration tests + migration drift
@@ -75,7 +68,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       # Creates lymon_test, applies every migration in prisma/migrations, runs the specs.
-      - run: pnpm test:db
+      - run: pnpm test:db:cov
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage-integration
+          path: coverage/integration/lcov.info
+          retention-days: 1
 
       # lymon_test now holds exactly what the migrations produce. Any diff against
       # prisma/schema means a schema change was committed without its migration.
@@ -83,3 +81,39 @@ jobs:
         env:
           DATABASE_URL: postgresql://lymon:lymon@localhost:5432/lymon_test?schema=public
         run: pnpm exec prisma migrate diff --from-config-datasource --to-schema prisma/schema --exit-code
+
+  # Runs after both test jobs so Sonar sees unit + integration coverage together
+  # (repositories are only exercised by the integration specs).
+  sonar:
+    name: SonarCloud scan + quality gate
+    needs: [check, integration]
+    # Fork PRs don't get secrets, so they skip Sonar instead of failing on a missing token.
+    if: github.event.pull_request.head.repo.fork != true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Sonar needs full history for blame / new-code detection
+      # node_modules lets Sonar's TypeScript analysis resolve types, same as the other jobs.
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: coverage-unit
+          path: coverage
+      - uses: actions/download-artifact@v8
+        with:
+          name: coverage-integration
+          path: coverage/integration
+
+      - uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: -Dsonar.qualitygate.wait=true

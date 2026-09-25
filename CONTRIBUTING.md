@@ -181,8 +181,8 @@ Open the PR on GitHub:
 Then move the Jira ticket from **In Progress** to **PR**.
 
 **GitHub Actions** runs CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) on
-every PR, and it has to pass before the PR can be merged. Each run has two jobs, running
-in parallel on clean machines:
+every PR, and it has to pass before the PR can be merged. Each run has three jobs on
+clean machines: `check` and `integration` in parallel, then `sonar`.
 
 **`check`**
 
@@ -191,19 +191,23 @@ in parallel on clean machines:
 2. Lints (`pnpm lint:check`). Any lint error fails the run; warnings don't.
 3. Builds the project (`pnpm build`).
 4. Runs every unit test with coverage (`pnpm test:cov`).
-5. Sends the code and coverage to **SonarCloud** and waits for its quality gate. A red
-   gate (new bugs, vulnerabilities, low coverage on new code, …) fails the run. The
-   details are on the SonarCloud page linked from the check.
 
 **`integration`**
 
 1. Starts an **empty Postgres container** that exists only for that run. It never touches
    your local, staging or production databases.
-2. Runs the integration tests (`pnpm test:db`). This creates the test database, applies
+2. Runs the integration tests with coverage (`pnpm test:db:cov`). This creates the test database, applies
    every migration in `prisma/migrations`, and runs the specs. A migration that doesn't
    apply cleanly fails here.
 3. Checks that `prisma/schema` matches what the migrations produce. If you changed the
    schema but forgot `pnpm db:migrate` (or didn't commit the migration), it fails here.
+
+**`sonar`**
+
+Sends the code and the coverage from both test jobs to **SonarCloud** and waits for its
+quality gate. Code covered by either unit or integration tests counts as covered. A red
+gate (new bugs, vulnerabilities, under 80% coverage on the lines your PR changes, …)
+fails the run. The details are on the SonarCloud page linked from the check.
 
 When the run ends, the machine and its database are destroyed.
 
