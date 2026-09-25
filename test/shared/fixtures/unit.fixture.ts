@@ -1,6 +1,8 @@
 import { Unit } from '@/domain/unit/entities/unit.entity';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
+import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
+import { ExternalIds } from '@/domain/unit/value-objects/external-ids.vo';
 
 export const UNIT_FIXTURE_DEFAULTS = {
   id: '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
@@ -16,7 +18,6 @@ export const UNIT_FIXTURE_DEFAULTS = {
   isShared: false,
   amenities: [],
   pricePerNight: 100000,
-  externalIds: { bookingCom: null, airbnb: null },
   createdAt: new Date('2030-01-01T10:00:00Z'),
   updatedAt: new Date('2030-01-01T10:00:00Z'),
 };
@@ -31,7 +32,8 @@ export function makeUnit(
   }>,
 ): Unit {
   const merged = { ...UNIT_FIXTURE_DEFAULTS, ...overrides };
-  return Unit.create({
+  return Unit.reconstitute({
+    id: UnitId.create(merged.id),
     tenantId: TenantId.createFromString(merged.tenantId),
     propertyId: PropertyId.create(merged.propertyId),
     basicInfo: { name: merged.name, description: merged.description },
@@ -47,6 +49,7 @@ export function makeUnit(
     },
     pricingConfig: { pricePerNight: merged.pricePerNight },
     amenities: merged.amenities,
-    externalIds: merged.externalIds,
+    externalIds: ExternalIds.create(),
+    timestamps: { createdAt: merged.createdAt, updatedAt: merged.updatedAt },
   });
 }
