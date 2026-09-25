@@ -4,6 +4,7 @@ import { PersistenceModule } from '@/infrastructure/persistence/persistence.modu
 import { GuestPreferenceApplicationModule } from '@/application/guest-preference/guest-preference-application.module';
 import { EmailModule } from '@/infrastructure/email/email.module';
 import { SearchGuestsQuery } from './queries/search-guests.query';
+import { FindGuestByDocumentNumberQuery } from './queries/find-guest-by-document-number.query';
 import { GetGuestByIdHandler } from './queries/get-guest-by-id/get-guest-by-id.handler';
 import { GetGuestBookingsHandler } from './queries/get-guest-bookings/get-guest-bookings.handler';
 import { GetGuestMonthlySpendingHandler } from './queries/get-guest-monthly-spending/get-guest-monthly-spending.handler';
@@ -26,6 +27,7 @@ const CommandHandlers = [
 ];
 const QueryHandlers = [
   SearchGuestsQuery,
+  FindGuestByDocumentNumberQuery,
   GetGuestByIdHandler,
   GetGuestBookingsHandler,
   GetGuestMonthlySpendingHandler,
