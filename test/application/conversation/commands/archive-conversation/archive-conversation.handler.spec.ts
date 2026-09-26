@@ -6,7 +6,10 @@ import { ArchiveConversationCommand } from '@/application/conversation/commands/
 import { ConversationRepository } from '@/domain/conversation/repositories/conversation.repository';
 import { ConversationStatus } from '@/domain/conversation/value-objects/conversation-status.vo';
 import { createConversationRepositoryMock } from '@test/shared/mocks/repositories/conversation-repository.mock';
-import { makeConversation, CONVERSATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/conversation.fixture';
+import {
+  makeConversation,
+  CONVERSATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/conversation.fixture';
 
 const TENANT_ID = CONVERSATION_FIXTURE_DEFAULTS.tenantId;
 const CONVERSATION_ID = CONVERSATION_FIXTURE_DEFAULTS.id;
@@ -32,7 +35,10 @@ describe('ArchiveConversationHandler', () => {
       });
       conversationRepository.findById.mockResolvedValue(conversation);
       conversationRepository.save.mockResolvedValue(undefined);
-      const command = new ArchiveConversationCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new ArchiveConversationCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act
       await handler.execute(command);
@@ -48,7 +54,10 @@ describe('ArchiveConversationHandler', () => {
       const conversation = makeConversation({ tenantId: TENANT_ID });
       conversationRepository.findById.mockResolvedValue(conversation);
       conversationRepository.save.mockResolvedValue(undefined);
-      const command = new ArchiveConversationCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new ArchiveConversationCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act
       await handler.execute(command);
@@ -66,7 +75,10 @@ describe('ArchiveConversationHandler', () => {
       });
       conversationRepository.findById.mockResolvedValue(conversation);
       conversationRepository.save.mockResolvedValue(undefined);
-      const command = new ArchiveConversationCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new ArchiveConversationCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act
       await handler.execute(command);
@@ -81,11 +93,16 @@ describe('ArchiveConversationHandler', () => {
     it('throws NotFoundException when the conversation does not exist', async () => {
       // Arrange
       conversationRepository.findById.mockResolvedValue(null);
-      const command = new ArchiveConversationCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new ArchiveConversationCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act / Assert
       await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(command)).rejects.toThrow('Conversation not found');
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Conversation not found',
+      );
       expect(conversationRepository.save).not.toHaveBeenCalled();
     });
 
@@ -93,11 +110,16 @@ describe('ArchiveConversationHandler', () => {
       // Arrange
       const conversation = makeConversation({ tenantId: 'other-tenant-id' });
       conversationRepository.findById.mockResolvedValue(conversation);
-      const command = new ArchiveConversationCommand(TENANT_ID, CONVERSATION_ID);
+      const command = new ArchiveConversationCommand(
+        TENANT_ID,
+        CONVERSATION_ID,
+      );
 
       // Act / Assert
       await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(command)).rejects.toThrow('Conversation not found');
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Conversation not found',
+      );
       expect(conversationRepository.save).not.toHaveBeenCalled();
     });
   });

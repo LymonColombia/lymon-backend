@@ -1,5 +1,8 @@
 import { RefundRequestId } from '@/domain/refund/value-objects/refund-request-id.vo';
-import { RefundRequestStatus, RefundRequestStatusEnum } from '@/domain/refund/value-objects/refund-request-status.vo';
+import {
+  RefundRequestStatus,
+  RefundRequestStatusEnum,
+} from '@/domain/refund/value-objects/refund-request-status.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { ReservationId } from '@/domain/reservation/value-objects/reservation-id.vo';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
@@ -78,7 +81,9 @@ export class RefundRequest {
 
   approve(actorId: string): void {
     if (!this.status.canTransitionTo(RefundRequestStatusEnum.APPROVED)) {
-      throw new DomainException('Refund request cannot be approved in its current state');
+      throw new DomainException(
+        'Refund request cannot be approved in its current state',
+      );
     }
     this.status = RefundRequestStatus.create(RefundRequestStatusEnum.APPROVED);
     this.reviewedBy = actorId;
@@ -88,7 +93,9 @@ export class RefundRequest {
 
   deny(actorId: string): void {
     if (!this.status.canTransitionTo(RefundRequestStatusEnum.DENIED)) {
-      throw new DomainException('Refund request cannot be denied in its current state');
+      throw new DomainException(
+        'Refund request cannot be denied in its current state',
+      );
     }
     this.status = RefundRequestStatus.create(RefundRequestStatusEnum.DENIED);
     this.reviewedBy = actorId;

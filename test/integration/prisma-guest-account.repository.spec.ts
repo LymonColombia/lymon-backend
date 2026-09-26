@@ -36,7 +36,9 @@ describe('PrismaGuestAccountRepository', () => {
   it('matches the email case-insensitively (citext)', async () => {
     await repo.save(newAccount('Ana@Example.com'));
 
-    expect(await repo.findByEmail(Email.create('ana@example.com'))).not.toBeNull();
+    expect(
+      await repo.findByEmail(Email.create('ana@example.com')),
+    ).not.toBeNull();
   });
 
   it('updates in place and finds by each token', async () => {
@@ -49,7 +51,9 @@ describe('PrismaGuestAccountRepository', () => {
     expect(await repo.save(loaded)).toBe(id);
     expect(await prisma.guest_accounts.count()).toBe(1);
 
-    expect(await repo.findByEmailVerificationToken('verify-token')).not.toBeNull();
+    expect(
+      await repo.findByEmailVerificationToken('verify-token'),
+    ).not.toBeNull();
     expect(await repo.findByPasswordResetToken('reset-token')).not.toBeNull();
     expect(await repo.findByPasswordResetToken('nope')).toBeNull();
   });

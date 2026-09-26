@@ -173,7 +173,11 @@ describe('GetGuestReservationsHandler', () => {
     guestRepository.findAllByGuestAccountId.mockResolvedValue([] as any);
 
     const result = await handler.execute(
-      new GetGuestReservationsQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c500000000', 1, 10),
+      new GetGuestReservationsQuery(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c500000000',
+        1,
+        10,
+      ),
     );
 
     expect(result).toEqual(new GetGuestReservationsResult([], 0, 1, 10));

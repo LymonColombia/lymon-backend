@@ -8,9 +8,7 @@ import {
 import { UserId } from '@/domain/user/entities/user.entity';
 
 @CommandHandler(CompleteTutorialCommand)
-export class CompleteTutorialHandler
-  implements ICommandHandler<CompleteTutorialCommand>
-{
+export class CompleteTutorialHandler implements ICommandHandler<CompleteTutorialCommand> {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,

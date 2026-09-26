@@ -1,4 +1,4 @@
-import { Inject, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { randomUUID } from 'node:crypto';
@@ -41,7 +41,6 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo';
 import { ReservationId } from '@/domain/reservation/value-objects/reservation-id.vo';
 import { ReservationStatusEnum } from '@/domain/reservation/value-objects/reservation-status.vo';
-import { ExperienceStatusEnum } from '@/domain/experience/value-objects/experience-status.vo';
 import {
   ReservationSource,
   ReservationSourceEnum,
@@ -193,7 +192,9 @@ export class CheckoutCartHandler implements ICommandHandler<CheckoutCartCommand>
     // Update reservation item from frontend
     if (command.reservationItem) {
       const item = command.reservationItem;
-      const unit = await this.unitRepository.findById(UnitId.create(item.unitId));
+      const unit = await this.unitRepository.findById(
+        UnitId.create(item.unitId),
+      );
       if (!unit) {
         throw new NotFoundException('Unit not found');
       }
@@ -249,7 +250,7 @@ export class CheckoutCartHandler implements ICommandHandler<CheckoutCartCommand>
             `Experience ${exp.experienceId} not found`,
           );
         }
-        if (experience.getStatus().toString() !== ExperienceStatusEnum.ACTIVE) {
+        if (!experience.getStatus().isActive()) {
           throw new DomainException(
             `Experience '${experience.getName()}' is not available for purchase`,
           );
@@ -414,7 +415,7 @@ export class CheckoutCartHandler implements ICommandHandler<CheckoutCartCommand>
         `Experience ${item.experienceId.toString()} not found`,
       );
     }
-    if (experience.getStatus().toString() !== ExperienceStatusEnum.ACTIVE) {
+    if (!experience.getStatus().isActive()) {
       throw new DomainException(
         `Experience '${experience.getName()}' is no longer active`,
       );

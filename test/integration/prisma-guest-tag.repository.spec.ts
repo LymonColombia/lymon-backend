@@ -59,14 +59,19 @@ describe('PrismaGuestTagRepository', () => {
     await repo.save(tenantTag('regular'));
 
     const found = await repo.findByNames(['  VIP ', 'Regular'], tenantId);
-    expect(found.map((tag) => tag.getName()).sort()).toEqual(['regular', 'vip']);
+    expect(found.map((tag) => tag.getName()).sort()).toEqual([
+      'regular',
+      'vip',
+    ]);
   });
 
   it('checks existence against the right tenant, sentinel included', async () => {
     await repo.save(GuestTag.createPlatform('vip'));
     await repo.save(tenantTag('regular'));
 
-    expect(await repo.existsByTenantIdAndName(PLATFORM_TENANT_ID, 'vip')).toBe(true);
+    expect(await repo.existsByTenantIdAndName(PLATFORM_TENANT_ID, 'vip')).toBe(
+      true,
+    );
     expect(await repo.existsByTenantIdAndName(tenantId, 'vip')).toBe(false);
     expect(await repo.existsByTenantIdAndName(tenantId, 'regular')).toBe(true);
   });

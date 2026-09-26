@@ -874,9 +874,15 @@ describe('Tenant Entity - COMPREHENSIVE COVERAGE', () => {
     });
 
     it('TT-064: should update all fields at once', () => {
-      tenant.updateProfile('New Company', '+1111111111', '456 Oak Ave', 'A new company', {
-        primary: '#123456',
-      });
+      tenant.updateProfile(
+        'New Company',
+        '+1111111111',
+        '456 Oak Ave',
+        'A new company',
+        {
+          primary: '#123456',
+        },
+      );
 
       expect(tenant.getName()).toBe('New Company');
       expect(tenant.getContactPhone()).toBe('+1111111111');
@@ -903,9 +909,15 @@ describe('Tenant Entity - COMPREHENSIVE COVERAGE', () => {
     });
 
     it('TT-066: should clear optional fields', () => {
-      tenant.updateProfile(undefined, '+1234567890', '123 Main', 'A description', {
-        primary: '#123456',
-      });
+      tenant.updateProfile(
+        undefined,
+        '+1234567890',
+        '123 Main',
+        'A description',
+        {
+          primary: '#123456',
+        },
+      );
 
       tenant.updateProfile(undefined, null, null, null, null);
 

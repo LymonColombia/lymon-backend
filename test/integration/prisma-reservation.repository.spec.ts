@@ -18,7 +18,12 @@ import { seedGuest, seedProperty, seedTenant, seedUnit } from './fixtures';
 describe('PrismaReservationRepository', () => {
   const repo = new PrismaReservationRepository(prisma);
 
-  let ids: { tenantId: string; propertyId: string; unitId: string; guestId: string };
+  let ids: {
+    tenantId: string;
+    propertyId: string;
+    unitId: string;
+    guestId: string;
+  };
 
   beforeEach(async () => {
     await resetDatabase();
@@ -51,7 +56,9 @@ describe('PrismaReservationRepository', () => {
         new Date(overrides.checkIn ?? '2027-03-01'),
         new Date(overrides.checkOut ?? '2027-03-04'),
       ),
-      source: ReservationSource.create(overrides.source ?? ReservationSourceEnum.DIRECT),
+      source: ReservationSource.create(
+        overrides.source ?? ReservationSourceEnum.DIRECT,
+      ),
       guestsCount: 2,
       pricePerNight: overrides.price ?? 250000,
     });
@@ -82,7 +89,10 @@ describe('PrismaReservationRepository', () => {
       propertyId: PropertyId.create(otherProperty),
       unitId: UnitId.create(otherUnit),
       guestId: GuestId.createFromString(otherGuest),
-      dateRange: DateRange.create(new Date('2027-03-01'), new Date('2027-03-04')),
+      dateRange: DateRange.create(
+        new Date('2027-03-01'),
+        new Date('2027-03-04'),
+      ),
       source: ReservationSource.create(ReservationSourceEnum.DIRECT),
       guestsCount: 1,
       pricePerNight: 100,
@@ -99,10 +109,14 @@ describe('PrismaReservationRepository', () => {
       }),
     );
 
-    await Promise.all(reservations.map((reservation) => repo.save(reservation)));
+    await Promise.all(
+      reservations.map((reservation) => repo.save(reservation)),
+    );
 
     const numbers = (
-      await prisma.reservations.findMany({ select: { reservation_number: true } })
+      await prisma.reservations.findMany({
+        select: { reservation_number: true },
+      })
     ).map((row) => Number(row.reservation_number));
 
     expect(numbers).toHaveLength(8);
@@ -137,7 +151,9 @@ describe('PrismaReservationRepository', () => {
         phone: null,
       },
     ]);
-    expect(found.getDateRange().getCheckIn().toISOString()).toContain('2027-03-01');
+    expect(found.getDateRange().getCheckIn().toISOString()).toContain(
+      '2027-03-01',
+    );
   });
 
   it('finds overlapping reservations for a unit and only active ones from a date', async () => {
@@ -158,16 +174,26 @@ describe('PrismaReservationRepository', () => {
       new Date('2027-03-01'),
     );
     expect(active).toHaveLength(1);
-    expect(active[0].getStatus().toString()).toBe(ReservationStatusEnum.CONFIRMED);
+    expect(active[0].getStatus().toString()).toBe(
+      ReservationStatusEnum.CONFIRMED,
+    );
   });
 
   it('groups a guests bookings by source, most frequent first', async () => {
     await repo.save(build({ source: ReservationSourceEnum.DIRECT }));
     await repo.save(
-      build({ source: ReservationSourceEnum.DIRECT, checkIn: '2027-06-01', checkOut: '2027-06-03' }),
+      build({
+        source: ReservationSourceEnum.DIRECT,
+        checkIn: '2027-06-01',
+        checkOut: '2027-06-03',
+      }),
     );
     await repo.save(
-      build({ source: ReservationSourceEnum.MANUAL, checkIn: '2027-07-01', checkOut: '2027-07-03' }),
+      build({
+        source: ReservationSourceEnum.MANUAL,
+        checkIn: '2027-07-01',
+        checkOut: '2027-07-03',
+      }),
     );
 
     expect(
@@ -228,14 +254,24 @@ describe('PrismaReservationRepository', () => {
   it('reports active reservations per property and unit', async () => {
     await withStatus(ReservationStatusEnum.CONFIRMED);
 
-    expect(await repo.existsActiveByPropertyId(ids.tenantId, ids.propertyId)).toBe(true);
-    expect(await repo.existsActiveByUnitId(ids.tenantId, ids.unitId)).toBe(true);
+    expect(
+      await repo.existsActiveByPropertyId(ids.tenantId, ids.propertyId),
+    ).toBe(true);
+    expect(await repo.existsActiveByUnitId(ids.tenantId, ids.unitId)).toBe(
+      true,
+    );
     expect(await repo.countByTenantId(ids.tenantId)).toBe(1);
   });
 
   it('filters guest reservations by status and date window', async () => {
-    await withStatus(ReservationStatusEnum.CONFIRMED, { checkIn: '2027-03-01', checkOut: '2027-03-03' });
-    await withStatus(ReservationStatusEnum.CANCELLED, { checkIn: '2027-06-01', checkOut: '2027-06-03' });
+    await withStatus(ReservationStatusEnum.CONFIRMED, {
+      checkIn: '2027-03-01',
+      checkOut: '2027-03-03',
+    });
+    await withStatus(ReservationStatusEnum.CANCELLED, {
+      checkIn: '2027-06-01',
+      checkOut: '2027-06-03',
+    });
 
     expect(await repo.countByGuestIds([ids.guestId])).toBe(2);
     expect(

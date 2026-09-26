@@ -74,7 +74,10 @@ describe('schema constraints', () => {
 
     const tenantB = (await seedTenant()).id;
     const propertyB = (await seedProperty(tenantB)).id;
-    b = { propertyId: propertyB, unitId: (await seedUnit(tenantB, propertyB)).id };
+    b = {
+      propertyId: propertyB,
+      unitId: (await seedUnit(tenantB, propertyB)).id,
+    };
   });
 
   describe('tenant containment', () => {
@@ -84,14 +87,32 @@ describe('schema constraints', () => {
     it("rejects a reservation on another tenant's unit", () =>
       rejects(
         insertReservation,
-        [a.tenantId, a.propertyId, b.unitId, a.guestId, '2026-01-01', '2026-01-02', 'MANUAL', 1],
+        [
+          a.tenantId,
+          a.propertyId,
+          b.unitId,
+          a.guestId,
+          '2026-01-01',
+          '2026-01-02',
+          'MANUAL',
+          1,
+        ],
         FK_VIOLATION,
       ));
 
     it('rejects a reservation whose unit is not on the claimed property', () =>
       rejects(
         insertReservation,
-        [a.tenantId, b.propertyId, a.unitId, a.guestId, '2026-01-01', '2026-01-02', 'MANUAL', 1],
+        [
+          a.tenantId,
+          b.propertyId,
+          a.unitId,
+          a.guestId,
+          '2026-01-01',
+          '2026-01-02',
+          'MANUAL',
+          1,
+        ],
         FK_VIOLATION,
       ));
   });
@@ -128,7 +149,13 @@ describe('schema constraints', () => {
   describe('reservations', () => {
     it('rejects a reservation_number reused within the tenant', async () => {
       const row = [a.tenantId, a.propertyId, a.unitId, a.guestId];
-      await pg.query(insertReservation, [...row, '2026-01-01', '2026-01-02', 'MANUAL', 1]);
+      await pg.query(insertReservation, [
+        ...row,
+        '2026-01-01',
+        '2026-01-02',
+        'MANUAL',
+        1,
+      ]);
       await rejects(
         insertReservation,
         [...row, '2026-06-01', '2026-06-02', 'MANUAL', 1],
@@ -139,14 +166,32 @@ describe('schema constraints', () => {
     it('rejects check_out before check_in', () =>
       rejects(
         insertReservation,
-        [a.tenantId, a.propertyId, a.unitId, a.guestId, '2026-06-02', '2026-06-01', 'MANUAL', 1],
+        [
+          a.tenantId,
+          a.propertyId,
+          a.unitId,
+          a.guestId,
+          '2026-06-02',
+          '2026-06-01',
+          'MANUAL',
+          1,
+        ],
         CHECK_VIOLATION,
       ));
 
     it('rejects a source outside MANUAL|DIRECT', () =>
       rejects(
         insertReservation,
-        [a.tenantId, a.propertyId, a.unitId, a.guestId, '2026-07-01', '2026-07-02', 'AIRBNB', 1],
+        [
+          a.tenantId,
+          a.propertyId,
+          a.unitId,
+          a.guestId,
+          '2026-07-01',
+          '2026-07-02',
+          'AIRBNB',
+          1,
+        ],
         CHECK_VIOLATION,
       ));
   });

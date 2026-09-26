@@ -31,7 +31,11 @@ describe('Prisma experience repositories', () => {
     propertyId = (await seedProperty(tenantId)).id;
     accountId = (
       await prisma.guest_accounts.create({
-        data: { email: 'ana@example.com', password_hash: 'h', full_name: 'Ana Gomez' },
+        data: {
+          email: 'ana@example.com',
+          password_hash: 'h',
+          full_name: 'Ana Gomez',
+        },
       })
     ).id;
   });
@@ -52,7 +56,9 @@ describe('Prisma experience repositories', () => {
     Experience.create({
       tenantId: TenantId.createFromString(tenantId),
       scope: ExperienceScope.create(
-        overrides.global ? ExperienceScopeEnum.GLOBAL : ExperienceScopeEnum.PROPERTY,
+        overrides.global
+          ? ExperienceScopeEnum.GLOBAL
+          : ExperienceScopeEnum.PROPERTY,
       ),
       propertyId: overrides.global ? undefined : PropertyId.create(propertyId),
       name: overrides.name ?? 'Sunset tour',
@@ -62,7 +68,11 @@ describe('Prisma experience repositories', () => {
       priceCop: overrides.price ?? 120000,
       capacity: overrides.capacity ?? 10,
       availabilityType: ExperienceAvailabilityType.create('RECURRING'),
-      recurrence: { daysOfWeek: [1, 3, 5], startTime: '16:00', endTime: '19:00' },
+      recurrence: {
+        daysOfWeek: [1, 3, 5],
+        startTime: '16:00',
+        endTime: '19:00',
+      },
       allowStandalonePurchase: true,
       allowReservationPurchase: true,
       mediaKeys: ['experiences/a.jpg'],
@@ -86,13 +96,19 @@ describe('Prisma experience repositories', () => {
     await experiences.save(newExperience({ name: 'Sunset tour' }));
     const property = PropertyId.create(propertyId);
 
-    expect(await experiences.existsByPropertyIdAndName(property, ' sunset TOUR ')).toBe(true);
-    expect(await experiences.existsByPropertyIdAndName(property, 'Sunset')).toBe(false);
+    expect(
+      await experiences.existsByPropertyIdAndName(property, ' sunset TOUR '),
+    ).toBe(true);
+    expect(
+      await experiences.existsByPropertyIdAndName(property, 'Sunset'),
+    ).toBe(false);
   });
 
   it('separates global from property-scoped experiences and matches the city exactly', async () => {
     await experiences.save(newExperience({ name: 'Property one' }));
-    await experiences.save(newExperience({ name: 'Global one', global: true, city: 'Bogota' }));
+    await experiences.save(
+      newExperience({ name: 'Global one', global: true, city: 'Bogota' }),
+    );
 
     expect(
       (await experiences.findAvailableForGuestPaginated({}, 1, 10)).total,
@@ -116,10 +132,22 @@ describe('Prisma experience repositories', () => {
       ).total,
     ).toBe(1);
     expect(
-      (await experiences.findAvailableForGuestPaginated({ city: 'bogota' }, 1, 10)).total,
+      (
+        await experiences.findAvailableForGuestPaginated(
+          { city: 'bogota' },
+          1,
+          10,
+        )
+      ).total,
     ).toBe(1);
     expect(
-      (await experiences.findAvailableForGuestPaginated({ city: 'Bogo' }, 1, 10)).total,
+      (
+        await experiences.findAvailableForGuestPaginated(
+          { city: 'Bogo' },
+          1,
+          10,
+        )
+      ).total,
     ).toBe(0);
   });
 
@@ -127,21 +155,30 @@ describe('Prisma experience repositories', () => {
     const cheap = await experiences.save(
       newExperience({ name: 'Cheap', price: 1000, capacity: 2 }),
     );
-    await experiences.save(newExperience({ name: 'Pricey', price: 900000, capacity: 30 }));
+    await experiences.save(
+      newExperience({ name: 'Pricey', price: 900000, capacity: 30 }),
+    );
 
     const tenant = TenantId.createFromString(tenantId);
     expect(
       (
-        await experiences.findAvailableForGuestPaginated({ sortByPrice: 'asc' }, 1, 10)
+        await experiences.findAvailableForGuestPaginated(
+          { sortByPrice: 'asc' },
+          1,
+          10,
+        )
       ).experiences.map((experience) => experience.getName()),
     ).toEqual(['Cheap', 'Pricey']);
     expect(
-      (await experiences.findByTenantIdPaginated(tenant, 1, 10, undefined, 20)).total,
+      (await experiences.findByTenantIdPaginated(tenant, 1, 10, undefined, 20))
+        .total,
     ).toBe(1);
 
     await experiences.delete(ExperienceId.create(cheap));
     expect(await experiences.findById(ExperienceId.create(cheap))).toBeNull();
-    expect((await experiences.findByTenantIdPaginated(tenant, 1, 10)).total).toBe(1);
+    expect(
+      (await experiences.findByTenantIdPaginated(tenant, 1, 10)).total,
+    ).toBe(1);
   });
 
   it('joins experience and guest names into the tenant read model', async () => {
@@ -170,7 +207,9 @@ describe('Prisma experience repositories', () => {
     ))!;
     expect(found.getUnitPriceCop()).toBe(120000);
     expect(found.getTotalPriceCop()).toBe(360000);
-    expect(found.getStatus().toString()).toBe(ExperiencePurchaseStatusEnum.PENDING);
+    expect(found.getStatus().toString()).toBe(
+      ExperiencePurchaseStatusEnum.PENDING,
+    );
   });
 
   it('counts confirmed purchases per date and lists the reserved dates', async () => {
@@ -188,7 +227,10 @@ describe('Prisma experience repositories', () => {
           unitPriceCop: 120000,
         }),
       );
-      await prisma.experience_purchases.update({ where: { id }, data: { status } });
+      await prisma.experience_purchases.update({
+        where: { id },
+        data: { status },
+      });
     };
 
     await buy('2027-05-01', 'CONFIRMED');
@@ -210,10 +252,9 @@ describe('Prisma experience repositories', () => {
     const reserved = await purchases.findReservedDatesByExperienceId(
       ExperienceId.create(experienceId),
     );
-    expect(reserved.map((date) => date.toISOString().slice(0, 10)).sort()).toEqual([
-      '2027-05-01',
-      '2027-05-02',
-    ]);
+    expect(
+      reserved.map((date) => date.toISOString().slice(0, 10)).sort(),
+    ).toEqual(['2027-05-01', '2027-05-02']);
 
     const windowed = await purchases.findReservedDatesByExperienceId(
       ExperienceId.create(experienceId),
@@ -240,8 +281,12 @@ describe('Prisma experience repositories', () => {
     }
 
     expect(await purchases.countByGuestAccountId(account, tenant)).toBe(3);
-    expect(await purchases.findByGuestAccountId(account, tenant, 1, 2)).toHaveLength(2);
-    expect(await purchases.findByGuestAccountId(account, tenant, 2, 2)).toHaveLength(1);
+    expect(
+      await purchases.findByGuestAccountId(account, tenant, 1, 2),
+    ).toHaveLength(2);
+    expect(
+      await purchases.findByGuestAccountId(account, tenant, 2, 2),
+    ).toHaveLength(1);
     expect(
       await purchases.countByTenantId(tenant, {
         status: ExperiencePurchaseStatusEnum.PENDING,

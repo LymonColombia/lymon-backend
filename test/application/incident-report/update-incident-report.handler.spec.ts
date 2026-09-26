@@ -49,7 +49,9 @@ describe('UpdateIncidentReportHandler', () => {
   describe('when the report belongs to a different tenant', () => {
     it('throws NotFoundException', async () => {
       reportRepository.findById.mockResolvedValue(
-        makeIncidentReport({ tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000' }),
+        makeIncidentReport({
+          tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
+        }),
       );
 
       await expect(
@@ -124,7 +126,9 @@ describe('UpdateIncidentReportHandler', () => {
   describe('when STAFF edits their own report', () => {
     it('updates successfully', async () => {
       reportRepository.findById.mockResolvedValue(
-        makeIncidentReport({ createdBy: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000' }),
+        makeIncidentReport({
+          createdBy: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+        }),
       );
 
       const result = await handler.execute(

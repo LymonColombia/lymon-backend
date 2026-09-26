@@ -7,9 +7,7 @@ import { PrismaService } from '@/infrastructure/persistence/prisma/prisma.servic
 import { type inventory_item_categories as CategoryRow } from '@/infrastructure/persistence/prisma/generated/client';
 
 @Injectable()
-export class PrismaInventoryItemCategoryRepository
-  implements InventoryItemCategoryRepository
-{
+export class PrismaInventoryItemCategoryRepository implements InventoryItemCategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(category: InventoryItemCategory): Promise<string> {

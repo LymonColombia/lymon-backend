@@ -50,11 +50,12 @@ const GUEST_SORT_COLUMN = {
 } as const;
 
 /** Highest wins when a guest has several reservations. */
-const LIFECYCLE_PRIORITY: Array<[ReservationStatusEnum, GuestLifecycleStatus]> = [
-  [ReservationStatusEnum.CHECKED_IN, GuestLifecycleStatus.CHECKED_IN],
-  [ReservationStatusEnum.CONFIRMED, GuestLifecycleStatus.UPCOMING_STAY],
-  [ReservationStatusEnum.CHECKED_OUT, GuestLifecycleStatus.PAST_GUEST],
-];
+const LIFECYCLE_PRIORITY: Array<[ReservationStatusEnum, GuestLifecycleStatus]> =
+  [
+    [ReservationStatusEnum.CHECKED_IN, GuestLifecycleStatus.CHECKED_IN],
+    [ReservationStatusEnum.CONFIRMED, GuestLifecycleStatus.UPCOMING_STAY],
+    [ReservationStatusEnum.CHECKED_OUT, GuestLifecycleStatus.PAST_GUEST],
+  ];
 
 @Injectable()
 export class PrismaReservationRepository
@@ -188,9 +189,14 @@ export class PrismaReservationRepository
     page: number,
     limit: number,
   ): Promise<Reservation[]> {
-    return this.findPage({ tenant_id: tenantId, unit_id: unitId }, page, limit, {
-      created_at: 'desc',
-    });
+    return this.findPage(
+      { tenant_id: tenantId, unit_id: unitId },
+      page,
+      limit,
+      {
+        created_at: 'desc',
+      },
+    );
   }
 
   async findByGuestId(
@@ -398,7 +404,9 @@ export class PrismaReservationRepository
   ): Prisma.reservationsWhereInput {
     return {
       guest_id: { in: guestIds },
-      ...(filters?.statuses?.length ? { status: { in: filters.statuses } } : {}),
+      ...(filters?.statuses?.length
+        ? { status: { in: filters.statuses } }
+        : {}),
       ...(filters?.fromDate || filters?.toDate
         ? {
             check_in: {
@@ -410,9 +418,7 @@ export class PrismaReservationRepository
     };
   }
 
-  private async exists(
-    where: Prisma.reservationsWhereInput,
-  ): Promise<boolean> {
+  private async exists(where: Prisma.reservationsWhereInput): Promise<boolean> {
     const row = await this.prisma.reservations.findFirst({
       where,
       select: { id: true },

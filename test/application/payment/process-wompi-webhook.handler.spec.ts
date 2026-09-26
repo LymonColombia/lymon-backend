@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { createTransactionManagerMock } from '@test/shared/mocks/services/transaction-manager.mock';
 import { createCartRepositoryMock } from '@test/shared/mocks/repositories/cart-repository.mock';
 import { createReservationRepositoryMock } from '@test/shared/mocks/repositories/reservation-repository.mock';
@@ -8,16 +7,11 @@ import { makeReservation } from '@test/shared/fixtures/reservation.fixture';
 import { PaymentSession } from '@/domain/payment/entities/payment-session.entity';
 import { ProcessWompiWebhookCommand } from '@/application/payment/commands/process-wompi-webhook/process-wompi-webhook.command';
 import { ProcessWompiWebhookHandler } from '@/application/payment/commands/process-wompi-webhook/process-wompi-webhook.handler';
-import { PAYMENT_SESSION_REPOSITORY } from '@/domain/payment/repositories/payment-session.repository';
-import { CART_REPOSITORY } from '@/domain/cart/repositories/cart.repository';
-import { RESERVATION_REPOSITORY } from '@/domain/reservation/repositories/reservation.repository';
-import { EXPERIENCE_PURCHASE_REPOSITORY } from '@/domain/experience-purchase/repositories/experience-purchase.repository';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-account-id.vo';
 import { CartId } from '@/domain/cart/value-objects/cart-id.vo';
 import { ReservationStatusEnum } from '@/domain/reservation/value-objects/reservation-status.vo';
 import { CartReservationItem } from '@/domain/cart/value-objects/cart-reservation-item.vo';
-import { ExperiencePurchaseStatusEnum } from '@/domain/experience-purchase/value-objects/experience-purchase-status.vo';
 
 const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
 const GUEST_ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';

@@ -16,7 +16,12 @@ import {
 describe('PrismaRefundRequestRepository', () => {
   const repo = new PrismaRefundRequestRepository(prisma);
 
-  let ids: { tenantId: string; propertyId: string; unitId: string; guestId: string };
+  let ids: {
+    tenantId: string;
+    propertyId: string;
+    unitId: string;
+    guestId: string;
+  };
   let userId: string;
 
   beforeEach(async () => {

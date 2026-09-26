@@ -4,7 +4,10 @@ import { Guest } from '@/domain/guest/entities/guest.entity';
 import { GuestStatusEnum } from '@/domain/guest/entities/guest.types';
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 import { GuestPreferenceCategoryEnum } from '@/domain/guest-preference/value-objects/guest-preference-category.vo';
-import { GuestTag, PLATFORM_TENANT_ID } from '@/domain/guest-tag/entities/guest-tag.entity';
+import {
+  GuestTag,
+  PLATFORM_TENANT_ID,
+} from '@/domain/guest-tag/entities/guest-tag.entity';
 import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-account-id.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
@@ -28,7 +31,12 @@ describe('PrismaGuestRepository', () => {
   });
 
   const newGuest = (
-    overrides: Partial<{ fullName: string; email: string; phone: string; doc: string }> = {},
+    overrides: Partial<{
+      fullName: string;
+      email: string;
+      phone: string;
+      doc: string;
+    }> = {},
   ) =>
     Guest.create({
       tenantId: TenantId.createFromString(tenantId),
@@ -144,7 +152,9 @@ describe('PrismaGuestRepository', () => {
   });
 
   it('searches across name, email, document and phone, case-insensitively and literally', async () => {
-    await repo.save(newGuest({ fullName: 'Ana Gomez', email: 'ana@example.com' }));
+    await repo.save(
+      newGuest({ fullName: 'Ana Gomez', email: 'ana@example.com' }),
+    );
     await repo.save(
       newGuest({
         fullName: 'Luis Perez',
@@ -168,16 +178,31 @@ describe('PrismaGuestRepository', () => {
   });
 
   it('matches the primary email case-insensitively and sorts pages by the mapped column', async () => {
-    await repo.save(newGuest({ fullName: 'Zoe', email: 'zoe@example.com', doc: '1' }));
-    await repo.save(newGuest({ fullName: 'Ana', email: 'ana@example.com', doc: '2' }));
+    await repo.save(
+      newGuest({ fullName: 'Zoe', email: 'zoe@example.com', doc: '1' }),
+    );
+    await repo.save(
+      newGuest({ fullName: 'Ana', email: 'ana@example.com', doc: '2' }),
+    );
 
     const tenant = TenantId.createFromString(tenantId);
-    expect(await repo.findByPrimaryEmail(tenant, ' Ana@Example.com ')).not.toBeNull();
+    expect(
+      await repo.findByPrimaryEmail(tenant, ' Ana@Example.com '),
+    ).not.toBeNull();
     expect(await repo.findByDocumentNumber(tenant, ' 1 ')).not.toBeNull();
     expect(await repo.countByTenantId(tenant)).toBe(2);
 
-    const byName = await repo.findByTenantIdPaginated(tenant, 1, 10, 'fullName', 'asc');
-    expect(byName.guests.map((guest) => guest.getFullName())).toEqual(['Ana', 'Zoe']);
+    const byName = await repo.findByTenantIdPaginated(
+      tenant,
+      1,
+      10,
+      'fullName',
+      'asc',
+    );
+    expect(byName.guests.map((guest) => guest.getFullName())).toEqual([
+      'Ana',
+      'Zoe',
+    ]);
   });
 
   it('links to a guest account and finds by it, then hard-deletes', async () => {

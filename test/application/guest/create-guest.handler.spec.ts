@@ -24,7 +24,9 @@ describe('CreateGuestHandler', () => {
   describe('when the primary email already exists in the tenant', () => {
     it('throws ConflictException', async () => {
       const existingGuest = Guest.create({
-        tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+        tenantId: TenantId.createFromString(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        ),
         identity: {},
         fullName: 'Existing Guest',
         primaryEmail: 'existing@example.com',
@@ -49,7 +51,9 @@ describe('CreateGuestHandler', () => {
   describe('when the document number already exists in the tenant', () => {
     it('throws ConflictException', async () => {
       const existingGuest = Guest.create({
-        tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+        tenantId: TenantId.createFromString(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        ),
         identity: { documentNumber: 'DOC123' },
         fullName: 'Existing Guest',
         primaryEmail: 'other@example.com',
@@ -122,7 +126,9 @@ describe('CreateGuestHandler', () => {
       expect(guestRepository.findByPrimaryEmail).toHaveBeenCalledTimes(1);
       const [calledTenantId] = guestRepository.findByPrimaryEmail.mock
         .calls[0] as [TenantId, string];
-      expect(calledTenantId.toString()).toBe('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+      expect(calledTenantId.toString()).toBe(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      );
       expect(guestRepository.findByPrimaryEmail).toHaveBeenCalledWith(
         expect.any(TenantId),
         'JANE@example.com',

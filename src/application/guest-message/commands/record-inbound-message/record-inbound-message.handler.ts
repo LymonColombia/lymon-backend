@@ -36,9 +36,7 @@ export class GuestMessageReceivedEvent {
 }
 
 @CommandHandler(RecordInboundMessageCommand)
-export class RecordInboundMessageHandler
-  implements ICommandHandler<RecordInboundMessageCommand>
-{
+export class RecordInboundMessageHandler implements ICommandHandler<RecordInboundMessageCommand> {
   private readonly logger = new Logger(RecordInboundMessageHandler.name);
 
   constructor(

@@ -15,12 +15,9 @@ describe('GetAvailableExperiencesQueryHandler', () => {
 
   beforeEach(() => {
     experienceRepository = createExperienceRepositoryMock();
-    handler = new GetAvailableExperiencesQueryHandler(
-      experienceRepository,
-      {
-        getPublicUrl: (k: string) => k,
-      } as any,
-    );
+    handler = new GetAvailableExperiencesQueryHandler(experienceRepository, {
+      getPublicUrl: (k: string) => k,
+    } as any);
   });
 
   describe('with no filters', () => {

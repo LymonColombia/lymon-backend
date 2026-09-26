@@ -5,7 +5,11 @@ import { GuestMessageChannel } from '../value-objects/guest-message-channel.vo';
 import { GuestMessageDirection } from '../value-objects/guest-message-direction.vo';
 import { GuestMessageId } from '../value-objects/guest-message-id.vo';
 import { GuestMessageStatus } from '../value-objects/guest-message-status.vo';
-import { CreateGuestMessageParams, GuestMessageAttachment, GuestMessageSentBy } from './guest-message.types';
+import {
+  CreateGuestMessageParams,
+  GuestMessageAttachment,
+  GuestMessageSentBy,
+} from './guest-message.types';
 
 export class GuestMessage {
   private constructor(
@@ -88,28 +92,72 @@ export class GuestMessage {
     );
   }
 
-  getId(): GuestMessageId { return this.id; }
-  getTenantId(): TenantId { return this.tenantId; }
-  getGuestId(): GuestId { return this.guestId; }
-  getChannel(): GuestMessageChannel { return this.channel; }
-  getDirection(): GuestMessageDirection { return this.direction; }
-  getStatus(): GuestMessageStatus { return this.status; }
-  getFrom(): string { return this.from; }
-  getTo(): string[] { return [...this.to]; }
-  getReservationId(): string | null { return this.reservationId; }
-  getProvider(): string | null { return this.provider; }
-  getProviderMessageId(): string | null { return this.providerMessageId; }
-  getTemplateId(): string | null { return this.templateId; }
-  getSentBy(): GuestMessageSentBy { return this.sentBy; }
-  getAttachments(): GuestMessageAttachment[] { return [...this.attachments]; }
-  getPreview(): string { return this.preview; }
-  getBody(): string | null { return this.body; }
-  getBodyHtml(): string | null { return this.bodyHtml; }
-  getFailureReason(): string | null { return this.failureReason; }
-  getCreatedAt(): Date { return this.createdAt; }
-  getUpdatedAt(): Date { return this.updatedAt; }
-  getDeletedAt(): Date | null { return this.deletedAt; }
-  getConversationId(): string | null { return this.conversationId; }
+  getId(): GuestMessageId {
+    return this.id;
+  }
+  getTenantId(): TenantId {
+    return this.tenantId;
+  }
+  getGuestId(): GuestId {
+    return this.guestId;
+  }
+  getChannel(): GuestMessageChannel {
+    return this.channel;
+  }
+  getDirection(): GuestMessageDirection {
+    return this.direction;
+  }
+  getStatus(): GuestMessageStatus {
+    return this.status;
+  }
+  getFrom(): string {
+    return this.from;
+  }
+  getTo(): string[] {
+    return [...this.to];
+  }
+  getReservationId(): string | null {
+    return this.reservationId;
+  }
+  getProvider(): string | null {
+    return this.provider;
+  }
+  getProviderMessageId(): string | null {
+    return this.providerMessageId;
+  }
+  getTemplateId(): string | null {
+    return this.templateId;
+  }
+  getSentBy(): GuestMessageSentBy {
+    return this.sentBy;
+  }
+  getAttachments(): GuestMessageAttachment[] {
+    return [...this.attachments];
+  }
+  getPreview(): string {
+    return this.preview;
+  }
+  getBody(): string | null {
+    return this.body;
+  }
+  getBodyHtml(): string | null {
+    return this.bodyHtml;
+  }
+  getFailureReason(): string | null {
+    return this.failureReason;
+  }
+  getCreatedAt(): Date {
+    return this.createdAt;
+  }
+  getUpdatedAt(): Date {
+    return this.updatedAt;
+  }
+  getDeletedAt(): Date | null {
+    return this.deletedAt;
+  }
+  getConversationId(): string | null {
+    return this.conversationId;
+  }
 
   assignConversation(id: string): void {
     this.conversationId = id;

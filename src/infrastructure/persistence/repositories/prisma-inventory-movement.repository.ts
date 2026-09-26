@@ -14,9 +14,7 @@ import {
 } from '@/infrastructure/persistence/prisma/generated/client';
 
 @Injectable()
-export class PrismaInventoryMovementRepository
-  implements InventoryMovementRepository
-{
+export class PrismaInventoryMovementRepository implements InventoryMovementRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   private client(context?: TransactionContextData) {

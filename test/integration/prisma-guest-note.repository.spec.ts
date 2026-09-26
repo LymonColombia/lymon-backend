@@ -85,10 +85,15 @@ describe('PrismaGuestNoteRepository', () => {
   it('scopes reads to the tenant and hides soft-deleted notes', async () => {
     await repo.save(newNote());
     const created = (await prisma.guest_notes.findFirst())!;
-    const otherTenant = TenantId.createFromString((await seedTenant({ name: 'Andina' })).id);
+    const otherTenant = TenantId.createFromString(
+      (await seedTenant({ name: 'Andina' })).id,
+    );
 
     expect(
-      await repo.findById(GuestNoteId.createFromString(created.id), otherTenant),
+      await repo.findById(
+        GuestNoteId.createFromString(created.id),
+        otherTenant,
+      ),
     ).toBeNull();
 
     await repo.delete(
@@ -113,10 +118,15 @@ describe('PrismaGuestNoteRepository', () => {
   it('refuses to delete a note belonging to another tenant', async () => {
     await repo.save(newNote());
     const created = (await prisma.guest_notes.findFirst())!;
-    const otherTenant = TenantId.createFromString((await seedTenant({ name: 'Andina' })).id);
+    const otherTenant = TenantId.createFromString(
+      (await seedTenant({ name: 'Andina' })).id,
+    );
 
     await repo.delete(GuestNoteId.createFromString(created.id), otherTenant);
 
-    expect((await prisma.guest_notes.findUnique({ where: { id: created.id } }))!.deleted_at).toBeNull();
+    expect(
+      (await prisma.guest_notes.findUnique({ where: { id: created.id } }))!
+        .deleted_at,
+    ).toBeNull();
   });
 });

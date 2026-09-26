@@ -25,7 +25,9 @@ describe('GetReservationsByTenantHandler', () => {
 
   it('returns paginated reservations for tenant', async () => {
     const r1 = Reservation.createConfirmed({
-      tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+      tenantId: TenantId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      ),
       propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
       unitId: UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'),
       guestId: GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d100000000'),
@@ -40,7 +42,9 @@ describe('GetReservationsByTenantHandler', () => {
     r1.setId(ReservationId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000'));
 
     const r2 = Reservation.createConfirmed({
-      tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+      tenantId: TenantId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      ),
       propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
       unitId: UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9cf00000000'),
       guestId: GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d200000000'),
@@ -59,7 +63,11 @@ describe('GetReservationsByTenantHandler', () => {
     reservationRepository.countByTenantId.mockResolvedValue(3 as any);
 
     const result = await handler.execute(
-      new GetReservationsByTenantQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 2),
+      new GetReservationsByTenantQuery(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        1,
+        2,
+      ),
     );
 
     expect(result).toBeInstanceOf(GetReservationsByTenantResult);
@@ -71,7 +79,9 @@ describe('GetReservationsByTenantHandler', () => {
 
   it("doesn't return tenant-2 reservations when queried by tenant-1", async () => {
     const r1 = Reservation.createConfirmed({
-      tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+      tenantId: TenantId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+      ),
       propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
       unitId: UnitId.create('unit-3'),
       guestId: GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d300000000'),
@@ -86,7 +96,9 @@ describe('GetReservationsByTenantHandler', () => {
     r1.setId(ReservationId.create('res-3'));
 
     const r2 = Reservation.createConfirmed({
-      tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c900000000'),
+      tenantId: TenantId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
+      ),
       propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9cd00000000'),
       unitId: UnitId.create('unit-4'),
       guestId: GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d400000000'),
@@ -106,14 +118,22 @@ describe('GetReservationsByTenantHandler', () => {
       );
     });
     reservationRepository.countByTenantId.mockImplementation((tenantId) => {
-      return Promise.resolve(tenantId === '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000' ? 1 : 1);
+      return Promise.resolve(
+        tenantId === '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000' ? 1 : 1,
+      );
     });
 
     const result = await handler.execute(
-      new GetReservationsByTenantQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 10),
+      new GetReservationsByTenantQuery(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        1,
+        10,
+      ),
     );
 
     expect(result.items).toHaveLength(1);
-    expect(result.items[0].tenantId).toBe('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+    expect(result.items[0].tenantId).toBe(
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+    );
   });
 });

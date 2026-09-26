@@ -8,7 +8,11 @@ export class RefundRequestStatus {
   private constructor(private readonly value: RefundRequestStatusEnum) {}
 
   static create(value: string): RefundRequestStatus {
-    if (!Object.values(RefundRequestStatusEnum).includes(value as RefundRequestStatusEnum)) {
+    if (
+      !Object.values(RefundRequestStatusEnum).includes(
+        value as RefundRequestStatusEnum,
+      )
+    ) {
       throw new Error(`Invalid refund request status: ${value}`);
     }
     return new RefundRequestStatus(value as RefundRequestStatusEnum);
@@ -31,8 +35,11 @@ export class RefundRequestStatus {
   }
 
   canTransitionTo(next: RefundRequestStatusEnum): boolean {
-    return this.value === RefundRequestStatusEnum.PENDING
-      && (next === RefundRequestStatusEnum.APPROVED || next === RefundRequestStatusEnum.DENIED);
+    return (
+      this.value === RefundRequestStatusEnum.PENDING &&
+      (next === RefundRequestStatusEnum.APPROVED ||
+        next === RefundRequestStatusEnum.DENIED)
+    );
   }
 
   toString(): string {

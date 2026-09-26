@@ -3,7 +3,7 @@ import { IMessageBodyProvider } from '@/application/shared/services/message-body
 
 @Injectable()
 export class NullMessageBodyProvider implements IMessageBodyProvider {
-  async getBody(_providerMessageId: string): Promise<string | null> {
-    return null;
+  getBody(): Promise<string | null> {
+    return Promise.resolve(null);
   }
 }

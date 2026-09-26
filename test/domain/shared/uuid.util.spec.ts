@@ -16,7 +16,9 @@ describe('uuidv7', () => {
 
   it('sorts by creation time across milliseconds', () => {
     const now = jest.spyOn(Date, 'now');
-    now.mockReturnValueOnce(1_700_000_000_000).mockReturnValueOnce(1_700_000_000_001);
+    now
+      .mockReturnValueOnce(1_700_000_000_000)
+      .mockReturnValueOnce(1_700_000_000_001);
     const [first, second] = [uuidv7(), uuidv7()];
     now.mockRestore();
 

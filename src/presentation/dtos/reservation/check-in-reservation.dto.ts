@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsOptional, ValidateNested } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { TravelerInfoDto } from './submit-check-in-info.dto';
 

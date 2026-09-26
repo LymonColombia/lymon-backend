@@ -1,5 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BadRequestException, Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UpdateGuestProfilePhotoCommand } from '@/application/guest-auth/commands/update-guest-profile-photo/update-guest-profile-photo.command';
 import { guestProfilePhotoPrefix } from '@/application/guest-auth/profile-photo/profile-photo-key';
 import {
@@ -17,9 +21,7 @@ export class UpdateGuestProfilePhotoResult {
 }
 
 @CommandHandler(UpdateGuestProfilePhotoCommand)
-export class UpdateGuestProfilePhotoHandler
-  implements ICommandHandler<UpdateGuestProfilePhotoCommand>
-{
+export class UpdateGuestProfilePhotoHandler implements ICommandHandler<UpdateGuestProfilePhotoCommand> {
   constructor(
     @Inject(GUEST_ACCOUNT_REPOSITORY)
     private readonly guestAccountRepository: GuestAccountRepository,
@@ -32,7 +34,9 @@ export class UpdateGuestProfilePhotoHandler
   ): Promise<UpdateGuestProfilePhotoResult> {
     // The key comes from the client; it must live under this guest's own prefix
     // so a guest can't claim someone else's (or an arbitrary) object.
-    if (!command.key.startsWith(guestProfilePhotoPrefix(command.guestAccountId))) {
+    if (
+      !command.key.startsWith(guestProfilePhotoPrefix(command.guestAccountId))
+    ) {
       throw new BadRequestException('Invalid profile photo key');
     }
 
