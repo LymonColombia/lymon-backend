@@ -209,6 +209,9 @@ quality gate. Code covered by either unit or integration tests counts as covered
 gate (new bugs, vulnerabilities, under 80% coverage on the lines your PR changes, …)
 fails the run. The details are on the SonarCloud page linked from the check.
 
+On pushes to `main`, Sonar only updates the dashboard and never fails the run: the gate
+is enforced before merge, so whatever is on `main` stays deployable.
+
 When the run ends, the machine and its database are destroyed.
 
 ## 8. Review and merge

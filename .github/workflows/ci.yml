@@ -112,8 +112,10 @@ jobs:
           name: coverage-integration
           path: coverage/integration
 
+      # The gate blocks PRs (required check). On main it only reports: main is already
+      # merged and must stay deployable, so a low grade there never fails the run.
       - uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          args: -Dsonar.qualitygate.wait=true
+          args: ${{ github.event_name == 'pull_request' && '-Dsonar.qualitygate.wait=true' || '' }}
