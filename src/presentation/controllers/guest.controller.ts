@@ -11,6 +11,8 @@ import { type GuestJwtPayload } from '@/application/guest-auth/services/guest-jw
 import { CreateGuestCommand } from '@/application/guest/commands/create-guest.command';
 import { CreateGuestResult } from '@/application/guest/commands/create-guest.result';
 import { SearchGuestsQuery } from '@/application/guest/queries/search-guests.query';
+import { FindGuestByDocumentNumberQuery } from '@/application/guest/queries/find-guest-by-document-number.query';
+import { Guest } from '@/domain/guest/entities/guest.entity';
 import { GetGuestByIdQuery } from '@/application/guest/queries/get-guest-by-id/get-guest-by-id.query';
 import type { GetGuestByIdResult } from '@/application/guest/queries/get-guest-by-id/get-guest-by-id.result';
 import { UpdateGuestProfileCommand } from '@/application/guest/commands/update-guest-profile/update-guest-profile.command';
@@ -59,6 +61,7 @@ export class GuestController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly searchGuestsQuery: SearchGuestsQuery,
+    private readonly findGuestByDocumentNumberQuery: FindGuestByDocumentNumberQuery,
   ) {}
 
   @Post()
@@ -105,10 +108,34 @@ export class GuestController {
     required: false,
     description: 'Search by name, email, document number or phone',
   })
+  @ApiQuery({
+    name: 'documentNumber',
+    required: false,
+    description: 'Exact-match lookup by document/ID number, takes precedence over q',
+  })
   @ApiResponse({ status: 200, description: 'Guests retrieved successfully' })
-  async getAll(@CurrentUser() user: JwtPayload, @Query('q') term = '') {
+  async getAll(
+    @CurrentUser() user: JwtPayload,
+    @Query('q') term = '',
+    @Query('documentNumber') documentNumber?: string,
+  ) {
+    const tenantId = TenantId.createFromString(user.tenantId);
+
+    if (documentNumber?.trim()) {
+      const guest = await this.findGuestByDocumentNumberQuery.execute(
+        tenantId,
+        documentNumber,
+      );
+
+      return {
+        message: 'Guests retrieved successfully',
+        data: guest ? [this.toGuestDto(guest)] : [],
+        total: guest ? 1 : 0,
+      };
+    }
+
     const { guests, total } = await this.searchGuestsQuery.execute(
-      TenantId.createFromString(user.tenantId),
+      tenantId,
       term,
       1,
       1000,
@@ -118,19 +145,23 @@ export class GuestController {
 
     return {
       message: 'Guests retrieved successfully',
-      data: guests.map((guest) => ({
-        id: guest.getId()?.toString() ?? '',
-        fullName: guest.getFullName(),
-        firstName: guest.getFirstName(),
-        lastName: guest.getLastName(),
-        primaryEmail: guest.getPrimaryEmail(),
-        phone: guest.getPhone(),
-        status: guest.getStatus(),
-        tags: guest.getTags().map((t) => t.getName()),
-        createdAt: guest.getCreatedAt(),
-        updatedAt: guest.getUpdatedAt(),
-      })),
+      data: guests.map((guest) => this.toGuestDto(guest)),
       total,
+    };
+  }
+
+  private toGuestDto(guest: Guest) {
+    return {
+      id: guest.getId()?.toString() ?? '',
+      fullName: guest.getFullName(),
+      firstName: guest.getFirstName(),
+      lastName: guest.getLastName(),
+      primaryEmail: guest.getPrimaryEmail(),
+      phone: guest.getPhone(),
+      status: guest.getStatus(),
+      tags: guest.getTags().map((t) => t.getName()),
+      createdAt: guest.getCreatedAt(),
+      updatedAt: guest.getUpdatedAt(),
     };
   }
 
