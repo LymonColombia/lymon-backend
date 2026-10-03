@@ -66,7 +66,9 @@ describe('PrismaPropertyRepository', () => {
       select: { id: true, slug: true },
     });
     expect(new Set(slugs.map((row) => row.slug)).size).toBe(2);
-    expect(slugs.every((row) => row.slug.startsWith('playa-norte-'))).toBe(true);
+    expect(slugs.every((row) => row.slug.startsWith('playa-norte-'))).toBe(
+      true,
+    );
 
     const before = slugs.find((row) => row.id === first)!.slug;
     const loaded = (await repo.findById(PropertyId.create(first)))!;
@@ -108,7 +110,9 @@ describe('PrismaPropertyRepository', () => {
         created.slug,
       ),
     ).not.toBeNull();
-    expect(await repo.countByTenantId(TenantId.createFromString(tenantId))).toBe(1);
+    expect(
+      await repo.countByTenantId(TenantId.createFromString(tenantId)),
+    ).toBe(1);
 
     await repo.delete(PropertyId.create(id));
 
@@ -119,8 +123,12 @@ describe('PrismaPropertyRepository', () => {
         created.slug,
       ),
     ).toBeNull();
-    expect(await repo.countByTenantId(TenantId.createFromString(tenantId))).toBe(0);
-    expect(await repo.findByTenantId(TenantId.createFromString(tenantId))).toEqual([]);
+    expect(
+      await repo.countByTenantId(TenantId.createFromString(tenantId)),
+    ).toBe(0);
+    expect(
+      await repo.findByTenantId(TenantId.createFromString(tenantId)),
+    ).toEqual([]);
   });
 
   it('participates in a transaction and rolls back with it', async () => {

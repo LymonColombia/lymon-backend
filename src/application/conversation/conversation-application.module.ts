@@ -8,7 +8,10 @@ import { GetConversationsByTenantHandler } from './queries/get-conversations-by-
 import { GetConversationThreadHandler } from './queries/get-conversation-thread/get-conversation-thread.handler';
 import { GetConversationsByGuestIdHandler } from './queries/get-conversations-by-guest-id/get-conversations-by-guest-id.handler';
 
-const CommandHandlers = [MarkConversationReadHandler, ArchiveConversationHandler];
+const CommandHandlers = [
+  MarkConversationReadHandler,
+  ArchiveConversationHandler,
+];
 const QueryHandlers = [
   GetConversationsByTenantHandler,
   GetConversationThreadHandler,

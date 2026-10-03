@@ -12,7 +12,6 @@ export class CreateUnitCommand {
       beds: Array<{ type: string; count: number }>;
     }>,
     public readonly bathroomsCount: number,
-    public readonly isShared: boolean,
     public readonly amenities: string[],
     public readonly pricePerNight: number,
     public readonly externalIds?: {

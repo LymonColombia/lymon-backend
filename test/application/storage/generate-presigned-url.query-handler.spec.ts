@@ -75,7 +75,9 @@ describe('GeneratePresignedUrlQueryHandler', () => {
       );
 
       expect(result.key).toMatch(
-        new RegExp(`^${TENANT_ID}/${MediaCategory.Properties}/\\d+-photo\\.jpg$`),
+        new RegExp(
+          `^${TENANT_ID}/${MediaCategory.Properties}/\\d+-photo\\.jpg$`,
+        ),
       );
     });
 

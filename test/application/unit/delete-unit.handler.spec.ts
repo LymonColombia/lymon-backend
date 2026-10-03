@@ -24,7 +24,7 @@ function makeUnit(overrides?: Partial<{ tenantId: string; id: string }>): Unit {
     basicInfo: { name: 'Unit Name', description: 'Unit Description' },
     inventoryConfig: { inventoryCount: 1 },
     capacityConfig: { maxGuests: 4, standardGuests: 2 },
-    physicalFeatures: { bedrooms: [], bathroomsCount: 1, isShared: false },
+    physicalFeatures: { bedrooms: [], bathroomsCount: 1 },
     pricingConfig: { pricePerNight: 100 },
     amenities: ['wifi'],
     externalIds: ExternalIds.create(),

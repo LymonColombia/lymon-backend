@@ -16,8 +16,12 @@ describe('GuestMessage', () => {
   describe('create()', () => {
     it('creates a new guest message with generated id and current timestamps', () => {
       // Arrange
-      const tenantId = TenantId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId);
-      const guestId = GuestId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId);
+      const tenantId = TenantId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId,
+      );
+      const guestId = GuestId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId,
+      );
       const before = new Date();
 
       // Act
@@ -38,8 +42,12 @@ describe('GuestMessage', () => {
       // Assert
       expect(message.getId()).toBeDefined();
       expect(message.getId().toString()).toBeTruthy();
-      expect(message.getTenantId().toString()).toBe(GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId);
-      expect(message.getGuestId().toString()).toBe(GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId);
+      expect(message.getTenantId().toString()).toBe(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId,
+      );
+      expect(message.getGuestId().toString()).toBe(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId,
+      );
       expect(message.getChannel()).toBe(GuestMessageChannel.EMAIL);
       expect(message.getDirection()).toBe(GuestMessageDirection.OUTBOUND);
       expect(message.getStatus()).toBe(GuestMessageStatus.PENDING);
@@ -51,14 +59,22 @@ describe('GuestMessage', () => {
       expect(message.getFailureReason()).toBeNull();
       expect(message.getProviderMessageId()).toBeNull();
       expect(message.getDeletedAt()).toBeNull();
-      expect(message.getCreatedAt().getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(message.getCreatedAt().getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(message.getCreatedAt().getTime()).toBeGreaterThanOrEqual(
+        before.getTime(),
+      );
+      expect(message.getCreatedAt().getTime()).toBeLessThanOrEqual(
+        after.getTime(),
+      );
     });
 
     it('sets optional fields to null when not provided', () => {
       // Arrange
-      const tenantId = TenantId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId);
-      const guestId = GuestId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId);
+      const tenantId = TenantId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId,
+      );
+      const guestId = GuestId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId,
+      );
 
       // Act
       const message = GuestMessage.create({
@@ -86,8 +102,12 @@ describe('GuestMessage', () => {
 
     it('stores provided optional fields when given', () => {
       // Arrange
-      const tenantId = TenantId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId);
-      const guestId = GuestId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId);
+      const tenantId = TenantId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId,
+      );
+      const guestId = GuestId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId,
+      );
 
       // Act
       const message = GuestMessage.create({
@@ -126,9 +146,15 @@ describe('GuestMessage', () => {
   describe('reconstitute()', () => {
     it('reconstitutes a guest message with all persisted fields', () => {
       // Arrange
-      const id = GuestMessageId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.id);
-      const tenantId = TenantId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId);
-      const guestId = GuestId.createFromString(GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId);
+      const id = GuestMessageId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.id,
+      );
+      const tenantId = TenantId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId,
+      );
+      const guestId = GuestId.createFromString(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId,
+      );
       const createdAt = new Date('2026-01-01T10:00:00Z');
       const updatedAt = new Date('2026-01-02T10:00:00Z');
       const deletedAt = new Date('2026-01-03T10:00:00Z');
@@ -159,9 +185,15 @@ describe('GuestMessage', () => {
       });
 
       // Assert
-      expect(message.getId().toString()).toBe(GUEST_MESSAGE_FIXTURE_DEFAULTS.id);
-      expect(message.getTenantId().toString()).toBe(GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId);
-      expect(message.getGuestId().toString()).toBe(GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId);
+      expect(message.getId().toString()).toBe(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.id,
+      );
+      expect(message.getTenantId().toString()).toBe(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.tenantId,
+      );
+      expect(message.getGuestId().toString()).toBe(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.guestId,
+      );
       expect(message.getChannel()).toBe(GuestMessageChannel.EMAIL);
       expect(message.getDirection()).toBe(GuestMessageDirection.INBOUND);
       expect(message.getStatus()).toBe(GuestMessageStatus.READ);
@@ -192,7 +224,9 @@ describe('GuestMessage', () => {
 
       // Assert
       expect(message.getStatus()).toBe(GuestMessageStatus.SENT);
-      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        beforeUpdate.getTime(),
+      );
     });
 
     it('transitions through multiple status values correctly', () => {
@@ -224,7 +258,9 @@ describe('GuestMessage', () => {
 
       // Assert
       expect(message.getProviderMessageId()).toBe('brevo-msg-456');
-      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        beforeUpdate.getTime(),
+      );
     });
   });
 
@@ -240,7 +276,9 @@ describe('GuestMessage', () => {
       // Assert
       expect(message.getStatus()).toBe(GuestMessageStatus.FAILED);
       expect(message.getFailureReason()).toBe('SMTP connection refused');
-      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        beforeUpdate.getTime(),
+      );
     });
 
     it('overwrites an existing failure reason when called again', () => {
@@ -262,7 +300,9 @@ describe('GuestMessage', () => {
   describe('getTo()', () => {
     it('returns a copy of the to array to prevent mutation', () => {
       // Arrange
-      const message = makeGuestMessage({ to: ['a@example.com', 'b@example.com'] });
+      const message = makeGuestMessage({
+        to: ['a@example.com', 'b@example.com'],
+      });
 
       // Act
       const toArray = message.getTo();
@@ -299,7 +339,9 @@ describe('GuestMessage', () => {
 
       // Assert
       expect(message.getStatus()).toBe(GuestMessageStatus.DELIVERED);
-      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        beforeUpdate.getTime(),
+      );
     });
 
     it('sets status to DELIVERED even when already in a different terminal-adjacent state', () => {
@@ -325,7 +367,9 @@ describe('GuestMessage', () => {
 
       // Assert
       expect(message.getStatus()).toBe(GuestMessageStatus.BOUNCED);
-      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        beforeUpdate.getTime(),
+      );
     });
 
     it('sets status to BOUNCED from PENDING state', () => {
@@ -343,7 +387,9 @@ describe('GuestMessage', () => {
   describe('markRead()', () => {
     it('sets status to READ and refreshes updatedAt', () => {
       // Arrange
-      const message = makeGuestMessage({ status: GuestMessageStatus.DELIVERED });
+      const message = makeGuestMessage({
+        status: GuestMessageStatus.DELIVERED,
+      });
       const beforeUpdate = new Date();
 
       // Act
@@ -351,7 +397,9 @@ describe('GuestMessage', () => {
 
       // Assert
       expect(message.getStatus()).toBe(GuestMessageStatus.READ);
-      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+      expect(message.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        beforeUpdate.getTime(),
+      );
     });
 
     it('sets status to READ even when called from SENT state', () => {

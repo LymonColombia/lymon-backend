@@ -50,7 +50,9 @@ export class GetUnitRatingsHandler implements IQueryHandler<GetUnitRatingsQuery>
 
     const guests = await Promise.all(
       ratings.map((r) =>
-        this.guestRepository.findById(GuestId.createFromString(r.getGuestId().toString())),
+        this.guestRepository.findById(
+          GuestId.createFromString(r.getGuestId().toString()),
+        ),
       ),
     );
 

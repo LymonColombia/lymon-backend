@@ -54,7 +54,9 @@ describe('AssociateSupplierToItemHandler', () => {
       }),
     );
     inventoryItemRepository.save.mockResolvedValue('item-123');
-    supplierRepository.save.mockResolvedValue('65f1a1a2-b3c4-d5e6-f7a8-b9c400000000');
+    supplierRepository.save.mockResolvedValue(
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000',
+    );
 
     const result = await handler.execute(
       new AssociateSupplierToItemCommand(

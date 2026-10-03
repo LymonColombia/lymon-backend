@@ -29,7 +29,11 @@ describe('AssignGuestTagsHandler', () => {
     guestRepository = createGuestRepositoryMock();
     tagRepository = createGuestTagRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new AssignGuestTagsHandler(guestRepository, tagRepository, mockEventEmitter as any);
+    handler = new AssignGuestTagsHandler(
+      guestRepository,
+      tagRepository,
+      mockEventEmitter as any,
+    );
   });
 
   describe('when all tags exist in the catalog', () => {
@@ -163,7 +167,13 @@ describe('AssignGuestTagsHandler', () => {
       guestRepository.findById.mockResolvedValue(guest);
       guestRepository.save.mockResolvedValue(GUEST_ID);
 
-      const command = new AssignGuestTagsCommand(GUEST_ID, [], TENANT_ID, 'actor-id', 'actor@test.com');
+      const command = new AssignGuestTagsCommand(
+        GUEST_ID,
+        [],
+        TENANT_ID,
+        'actor-id',
+        'actor@test.com',
+      );
       await handler.execute(command);
 
       expect(tagRepository.findByNames).toHaveBeenCalledWith([], TENANT_ID);
@@ -180,7 +190,13 @@ describe('AssignGuestTagsHandler', () => {
       ]);
       guestRepository.findById.mockResolvedValue(null);
 
-      const command = new AssignGuestTagsCommand(GUEST_ID, ['vip'], TENANT_ID, 'actor-id', 'actor@test.com');
+      const command = new AssignGuestTagsCommand(
+        GUEST_ID,
+        ['vip'],
+        TENANT_ID,
+        'actor-id',
+        'actor@test.com',
+      );
 
       await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
     });
@@ -194,7 +210,13 @@ describe('AssignGuestTagsHandler', () => {
       const guest = makeGuest({ tenantId: 'different-tenant-000000000' });
       guestRepository.findById.mockResolvedValue(guest);
 
-      const command = new AssignGuestTagsCommand(GUEST_ID, ['vip'], TENANT_ID, 'actor-id', 'actor@test.com');
+      const command = new AssignGuestTagsCommand(
+        GUEST_ID,
+        ['vip'],
+        TENANT_ID,
+        'actor-id',
+        'actor@test.com',
+      );
 
       await expect(handler.execute(command)).rejects.toThrow(
         ForbiddenException,

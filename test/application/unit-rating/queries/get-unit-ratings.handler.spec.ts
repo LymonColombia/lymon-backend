@@ -7,7 +7,10 @@ import { GuestRepository } from '@/domain/guest/repositories/guest.repository';
 import { createUnitRatingRepositoryMock } from '@test/shared/mocks/repositories/unit-rating-repository.mock';
 import { createUnitRepositoryMock } from '@test/shared/mocks/repositories/unit-repository.mock';
 import { createGuestRepositoryMock } from '@test/shared/mocks/repositories/guest-repository.mock';
-import { makeUnitRating, UNIT_RATING_FIXTURE_DEFAULTS } from '@test/shared/fixtures/unit-rating.fixture';
+import {
+  makeUnitRating,
+  UNIT_RATING_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/unit-rating.fixture';
 import { makeGuest } from '@test/shared/fixtures/guest.fixture';
 import { Unit } from '@/domain/unit/entities/unit.entity';
 import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
@@ -27,7 +30,7 @@ function makeUnitFixture(overrides?: Partial<{ tenantId: string }>): Unit {
     basicInfo: { name: 'Test Unit', description: 'Desc' },
     inventoryConfig: { inventoryCount: 1 },
     capacityConfig: { maxGuests: 2, standardGuests: 2 },
-    physicalFeatures: { bedrooms: [], bathroomsCount: 1, isShared: false },
+    physicalFeatures: { bedrooms: [], bathroomsCount: 1 },
     pricingConfig: { pricePerNight: 80 },
     amenities: [],
     externalIds: ExternalIds.create(),
@@ -45,7 +48,11 @@ describe('GetUnitRatingsHandler', () => {
     unitRatingRepository = createUnitRatingRepositoryMock();
     unitRepository = createUnitRepositoryMock();
     guestRepository = createGuestRepositoryMock();
-    handler = new GetUnitRatingsHandler(unitRatingRepository, unitRepository, guestRepository);
+    handler = new GetUnitRatingsHandler(
+      unitRatingRepository,
+      unitRepository,
+      guestRepository,
+    );
   });
 
   it('returns paginated ratings with guest name for a valid unit', async () => {

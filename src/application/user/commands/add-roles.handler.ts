@@ -70,5 +70,4 @@ export class AddRolesHandler implements ICommandHandler<AddRolesCommand> {
       ),
     );
   }
-
 }

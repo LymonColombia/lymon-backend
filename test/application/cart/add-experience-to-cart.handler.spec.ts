@@ -19,6 +19,10 @@ import {
   ExperienceAvailabilityTypeEnum,
 } from '@/domain/experience/value-objects/experience-availability-type.vo';
 import { Experience } from '@/domain/experience/entities/experience.entity';
+import {
+  ExperienceScope,
+  ExperienceScopeEnum,
+} from '@/domain/experience/value-objects/experience-scope.vo';
 import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 
@@ -30,22 +34,18 @@ function makeArchivedExperience(): Experience {
   return Experience.reconstitute({
     id: ExperienceId.create(EXPERIENCE_ID),
     tenantId: TenantId.createFromString(TENANT_ID),
-    propertyId: null,
-    unitIds: [],
+    scope: ExperienceScope.create(ExperienceScopeEnum.GLOBAL),
+    city: 'Medellín',
     name: 'Test',
     description: 'Test experience',
     category: ExperienceCategory.create(ExperienceCategoryEnum.TRANSPORTATION),
     priceCop: 50000,
-    durationHours: 2,
     minimumParticipants: 1,
     capacity: 5,
-    location: { label: 'Lobby', lat: 4.6097, lng: -74.0817 },
     availabilityType: ExperienceAvailabilityType.create(
-      ExperienceAvailabilityTypeEnum.DATE_RANGE,
+      ExperienceAvailabilityTypeEnum.RECURRING,
     ),
-    startAt: new Date('2099-01-10'),
-    endAt: new Date('2099-01-20'),
-    blackoutRanges: [],
+    recurrence: { daysOfWeek: [1, 3, 5], startTime: '09:00', endTime: '17:00' },
     allowStandalonePurchase: true,
     allowReservationPurchase: false,
     minNoticeHours: 2,

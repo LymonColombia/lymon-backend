@@ -20,7 +20,10 @@ describe('GetGuestTagsHandler', () => {
     it('returns all tags as DTOs with id and name', async () => {
       tagRepository.findAll.mockResolvedValue([
         makeGuestTag({ name: 'vip' }),
-        makeGuestTag({ name: 'family', id: '65f1a1a2-b3c4-d5e6-f700-000200000000' }),
+        makeGuestTag({
+          name: 'family',
+          id: '65f1a1a2-b3c4-d5e6-f700-000200000000',
+        }),
       ]);
 
       const result = await handler.execute(new GetGuestTagsQuery(TENANT_ID));

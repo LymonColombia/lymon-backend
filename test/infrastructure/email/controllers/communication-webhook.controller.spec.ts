@@ -19,14 +19,16 @@ function makeDeliveryPayload(event: string, messageId = 'brevo-msg-001') {
   return { event, 'message-id': messageId };
 }
 
-function makeInboundPayload(overrides?: Partial<{
-  Sender: { Address: string };
-  Subject: string;
-  RawTextBody: string;
-  RawHtmlBody: string;
-  To: { Address: string }[];
-  MessageId: string;
-}>) {
+function makeInboundPayload(
+  overrides?: Partial<{
+    Sender: { Address: string };
+    Subject: string;
+    RawTextBody: string;
+    RawHtmlBody: string;
+    To: { Address: string }[];
+    MessageId: string;
+  }>,
+) {
   return {
     Sender: { Address: 'guest@example.com' },
     Subject: 'Question about check-in',
@@ -72,7 +74,9 @@ describe('CommunicationWebhookController', () => {
       ],
     }).compile();
 
-    controller = module.get<CommunicationWebhookController>(CommunicationWebhookController);
+    controller = module.get<CommunicationWebhookController>(
+      CommunicationWebhookController,
+    );
   }
 
   beforeEach(async () => {
@@ -89,13 +93,20 @@ describe('CommunicationWebhookController', () => {
       const payload = makeDeliveryPayload('delivered', 'brevo-msg-001');
 
       // Act
-      const result = await controller.receiveDeliveryEvent(RAW_BODY, payload, VALID_SIGNATURE);
+      const result = await controller.receiveDeliveryEvent(
+        RAW_BODY,
+        payload,
+        VALID_SIGNATURE,
+      );
 
       // Assert
       expect(result).toEqual({ accepted: true, processed: true });
       expect(commandBus.execute).toHaveBeenCalledTimes(1);
       expect(commandBus.execute).toHaveBeenCalledWith(
-        new UpdateMessageDeliveryStatusCommand('brevo-msg-001', DeliveryStatusEvent.DELIVERED),
+        new UpdateMessageDeliveryStatusCommand(
+          'brevo-msg-001',
+          DeliveryStatusEvent.DELIVERED,
+        ),
       );
     });
 
@@ -105,12 +116,19 @@ describe('CommunicationWebhookController', () => {
       const payload = makeDeliveryPayload('soft_bounce', 'brevo-msg-002');
 
       // Act
-      const result = await controller.receiveDeliveryEvent(RAW_BODY, payload, VALID_SIGNATURE);
+      const result = await controller.receiveDeliveryEvent(
+        RAW_BODY,
+        payload,
+        VALID_SIGNATURE,
+      );
 
       // Assert
       expect(result).toEqual({ accepted: true, processed: true });
       expect(commandBus.execute).toHaveBeenCalledWith(
-        new UpdateMessageDeliveryStatusCommand('brevo-msg-002', DeliveryStatusEvent.BOUNCED),
+        new UpdateMessageDeliveryStatusCommand(
+          'brevo-msg-002',
+          DeliveryStatusEvent.BOUNCED,
+        ),
       );
     });
 
@@ -120,12 +138,19 @@ describe('CommunicationWebhookController', () => {
       const payload = makeDeliveryPayload('hard_bounce', 'brevo-msg-003');
 
       // Act
-      const result = await controller.receiveDeliveryEvent(RAW_BODY, payload, VALID_SIGNATURE);
+      const result = await controller.receiveDeliveryEvent(
+        RAW_BODY,
+        payload,
+        VALID_SIGNATURE,
+      );
 
       // Assert
       expect(result).toEqual({ accepted: true, processed: true });
       expect(commandBus.execute).toHaveBeenCalledWith(
-        new UpdateMessageDeliveryStatusCommand('brevo-msg-003', DeliveryStatusEvent.BOUNCED),
+        new UpdateMessageDeliveryStatusCommand(
+          'brevo-msg-003',
+          DeliveryStatusEvent.BOUNCED,
+        ),
       );
     });
 
@@ -135,12 +160,19 @@ describe('CommunicationWebhookController', () => {
       const payload = makeDeliveryPayload('opened', 'brevo-msg-004');
 
       // Act
-      const result = await controller.receiveDeliveryEvent(RAW_BODY, payload, VALID_SIGNATURE);
+      const result = await controller.receiveDeliveryEvent(
+        RAW_BODY,
+        payload,
+        VALID_SIGNATURE,
+      );
 
       // Assert
       expect(result).toEqual({ accepted: true, processed: true });
       expect(commandBus.execute).toHaveBeenCalledWith(
-        new UpdateMessageDeliveryStatusCommand('brevo-msg-004', DeliveryStatusEvent.READ),
+        new UpdateMessageDeliveryStatusCommand(
+          'brevo-msg-004',
+          DeliveryStatusEvent.READ,
+        ),
       );
     });
 
@@ -150,7 +182,11 @@ describe('CommunicationWebhookController', () => {
       const payload = makeDeliveryPayload('delivered');
 
       // Act
-      const result = await controller.receiveDeliveryEvent(RAW_BODY, payload, 'bad-sig');
+      const result = await controller.receiveDeliveryEvent(
+        RAW_BODY,
+        payload,
+        'bad-sig',
+      );
 
       // Assert
       expect(result).toEqual({ accepted: true, processed: false });
@@ -163,7 +199,11 @@ describe('CommunicationWebhookController', () => {
       const payload = makeDeliveryPayload('unsubscribed', 'brevo-msg-005');
 
       // Act
-      const result = await controller.receiveDeliveryEvent(RAW_BODY, payload, VALID_SIGNATURE);
+      const result = await controller.receiveDeliveryEvent(
+        RAW_BODY,
+        payload,
+        VALID_SIGNATURE,
+      );
 
       // Assert
       expect(result).toEqual({ accepted: true, processed: false });
@@ -203,11 +243,21 @@ describe('CommunicationWebhookController', () => {
 
       // Act & Assert
       await expect(
-        controller.receiveInboundEmail(RAW_BODY, payload as any, TENANT_ID, VALID_SIGNATURE),
+        controller.receiveInboundEmail(
+          RAW_BODY,
+          payload as any,
+          TENANT_ID,
+          VALID_SIGNATURE,
+        ),
       ).rejects.toThrow(HttpException);
 
       await expect(
-        controller.receiveInboundEmail(RAW_BODY, payload as any, TENANT_ID, VALID_SIGNATURE),
+        controller.receiveInboundEmail(
+          RAW_BODY,
+          payload as any,
+          TENANT_ID,
+          VALID_SIGNATURE,
+        ),
       ).rejects.toMatchObject({ status: HttpStatus.NOT_IMPLEMENTED });
     });
 
@@ -218,7 +268,12 @@ describe('CommunicationWebhookController', () => {
 
       // Act
       await expect(
-        controller.receiveInboundEmail(RAW_BODY, payload as any, TENANT_ID, VALID_SIGNATURE),
+        controller.receiveInboundEmail(
+          RAW_BODY,
+          payload as any,
+          TENANT_ID,
+          VALID_SIGNATURE,
+        ),
       ).rejects.toThrow(HttpException);
 
       // Assert
@@ -334,12 +389,19 @@ describe('CommunicationWebhookController', () => {
     it('re-throws non-DomainException errors from the command bus', async () => {
       // Arrange
       verifier.verify.mockReturnValue(true);
-      commandBus.execute.mockRejectedValue(new Error('Unexpected internal failure'));
+      commandBus.execute.mockRejectedValue(
+        new Error('Unexpected internal failure'),
+      );
       const payload = makeInboundPayload();
 
       // Act & Assert
       await expect(
-        controller.receiveInboundEmail(RAW_BODY, payload as any, TENANT_ID, VALID_SIGNATURE),
+        controller.receiveInboundEmail(
+          RAW_BODY,
+          payload as any,
+          TENANT_ID,
+          VALID_SIGNATURE,
+        ),
       ).rejects.toThrow('Unexpected internal failure');
     });
 
@@ -351,12 +413,21 @@ describe('CommunicationWebhookController', () => {
       });
 
       // Act
-      await controller.receiveInboundEmail(RAW_BODY, payload as any, TENANT_ID, VALID_SIGNATURE);
+      await controller.receiveInboundEmail(
+        RAW_BODY,
+        payload as any,
+        TENANT_ID,
+        VALID_SIGNATURE,
+      );
 
       // Assert
-      const dispatchedCommand: RecordInboundMessageCommand =
-        (commandBus.execute as jest.Mock).mock.calls[0][0];
-      expect(dispatchedCommand.to).toEqual(['hotel@lymon.co', 'support@lymon.co']);
+      const dispatchedCommand: RecordInboundMessageCommand = (
+        commandBus.execute as jest.Mock
+      ).mock.calls[0][0];
+      expect(dispatchedCommand.to).toEqual([
+        'hotel@lymon.co',
+        'support@lymon.co',
+      ]);
     });
 
     it('passes null MessageId to command when payload MessageId is absent', async () => {
@@ -365,11 +436,17 @@ describe('CommunicationWebhookController', () => {
       const payload = makeInboundPayload({ MessageId: undefined });
 
       // Act
-      await controller.receiveInboundEmail(RAW_BODY, payload as any, TENANT_ID, VALID_SIGNATURE);
+      await controller.receiveInboundEmail(
+        RAW_BODY,
+        payload as any,
+        TENANT_ID,
+        VALID_SIGNATURE,
+      );
 
       // Assert
-      const dispatchedCommand: RecordInboundMessageCommand =
-        (commandBus.execute as jest.Mock).mock.calls[0][0];
+      const dispatchedCommand: RecordInboundMessageCommand = (
+        commandBus.execute as jest.Mock
+      ).mock.calls[0][0];
       expect(dispatchedCommand.providerMessageId).toBeNull();
     });
   });

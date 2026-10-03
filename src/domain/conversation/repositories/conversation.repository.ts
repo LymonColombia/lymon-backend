@@ -14,7 +14,10 @@ export interface ConversationFilters {
 export interface ConversationRepository {
   save(conversation: Conversation): Promise<void>;
   findById(id: ConversationId): Promise<Conversation | null>;
-  findByTenantAndGuest(tenantId: string, guestId: string): Promise<Conversation | null>;
+  findByTenantAndGuest(
+    tenantId: string,
+    guestId: string,
+  ): Promise<Conversation | null>;
   findByTenantPaginated(
     tenantId: string,
     filters: ConversationFilters,

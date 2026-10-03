@@ -25,9 +25,18 @@ import { createReservationRepositoryMock } from '@test/shared/mocks/repositories
 import { createPropertyRepositoryMock } from '@test/shared/mocks/repositories/property-repository.mock';
 import { createGuestMessageRepositoryMock } from '@test/shared/mocks/repositories/guest-message-repository.mock';
 import { createConversationRepositoryMock } from '@test/shared/mocks/repositories/conversation-repository.mock';
-import { makeGuest, GUEST_FIXTURE_DEFAULTS } from '@test/shared/fixtures/guest.fixture';
-import { makeConversation, CONVERSATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/conversation.fixture';
-import { makeReservation, RESERVATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/reservation.fixture';
+import {
+  makeGuest,
+  GUEST_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/guest.fixture';
+import {
+  makeConversation,
+  CONVERSATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/conversation.fixture';
+import {
+  makeReservation,
+  RESERVATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/reservation.fixture';
 
 const TENANT_ID = GUEST_FIXTURE_DEFAULTS.tenantId;
 const GUEST_ID = GUEST_FIXTURE_DEFAULTS.id;
@@ -85,7 +94,9 @@ describe('SendGuestMessageHandler', () => {
 
     jest.clearAllMocks();
 
-    guestRepository.findById.mockResolvedValue(makeGuest({ id: GUEST_ID, tenantId: TENANT_ID }));
+    guestRepository.findById.mockResolvedValue(
+      makeGuest({ id: GUEST_ID, tenantId: TENANT_ID }),
+    );
     reservationRepository.findByGuestId.mockResolvedValue([]);
     guestMessageRepository.save.mockResolvedValue(undefined);
     conversationRepository.findByTenantAndGuest.mockResolvedValue(null);
@@ -95,7 +106,10 @@ describe('SendGuestMessageHandler', () => {
   describe('Happy path', () => {
     it('saves the message with PENDING/OUTBOUND status and emits guest-message.created and audit events', async () => {
       // Arrange
-      const command = makeCommand('Test Subject', 'Hello, this is the message body');
+      const command = makeCommand(
+        'Test Subject',
+        'Hello, this is the message body',
+      );
 
       // Act
       const result = await handler.execute(command);
@@ -110,7 +124,9 @@ describe('SendGuestMessageHandler', () => {
       expect(firstSaveCall.getStatus()).toBe(GuestMessageStatus.PENDING);
       expect(firstSaveCall.getBody()).toBeNull();
       expect(firstSaveCall.getBodyHtml()).toBeNull();
-      expect(firstSaveCall.getTo()).toEqual([GUEST_FIXTURE_DEFAULTS.primaryEmail]);
+      expect(firstSaveCall.getTo()).toEqual([
+        GUEST_FIXTURE_DEFAULTS.primaryEmail,
+      ]);
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         GUEST_MESSAGE_CREATED_EVENT,
@@ -141,7 +157,10 @@ describe('SendGuestMessageHandler', () => {
       await handler.execute(command);
 
       // Assert
-      expect(conversationRepository.findByTenantAndGuest).toHaveBeenCalledWith(TENANT_ID, GUEST_ID);
+      expect(conversationRepository.findByTenantAndGuest).toHaveBeenCalledWith(
+        TENANT_ID,
+        GUEST_ID,
+      );
       expect(conversationRepository.save).toHaveBeenCalledTimes(1);
       const savedConversation = conversationRepository.save.mock.calls[0][0];
       expect(savedConversation.getTenantId()).toBe(TENANT_ID);
@@ -156,7 +175,9 @@ describe('SendGuestMessageHandler', () => {
         guestId: GUEST_ID,
         unreadCountForGuest: 0,
       });
-      conversationRepository.findByTenantAndGuest.mockResolvedValue(existingConversation);
+      conversationRepository.findByTenantAndGuest.mockResolvedValue(
+        existingConversation,
+      );
       const command = makeCommand('Follow-up', 'Second message');
 
       // Act
@@ -165,7 +186,9 @@ describe('SendGuestMessageHandler', () => {
       // Assert
       expect(conversationRepository.save).toHaveBeenCalledTimes(1);
       const savedConversation = conversationRepository.save.mock.calls[0][0];
-      expect(savedConversation.getId().toString()).toBe(CONVERSATION_FIXTURE_DEFAULTS.id);
+      expect(savedConversation.getId().toString()).toBe(
+        CONVERSATION_FIXTURE_DEFAULTS.id,
+      );
     });
 
     it('assigns the conversation id back to the guest message after the conversation is saved', async () => {
@@ -198,8 +221,14 @@ describe('SendGuestMessageHandler', () => {
 
     it('uses templateId to render HTML when templateId is provided', async () => {
       // Arrange
-      templateService.renderTemplate.mockReturnValue('<p>Template rendered</p>');
-      const command = makeCommand('Welcome', 'Welcome body text', 'GUEST_WELCOME');
+      templateService.renderTemplate.mockReturnValue(
+        '<p>Template rendered</p>',
+      );
+      const command = makeCommand(
+        'Welcome',
+        'Welcome body text',
+        'GUEST_WELCOME',
+      );
 
       // Act
       const result = await handler.execute(command);
@@ -207,7 +236,10 @@ describe('SendGuestMessageHandler', () => {
       // Assert
       expect(templateService.renderTemplate).toHaveBeenCalledWith(
         'guest-message',
-        expect.objectContaining({ body: 'Welcome body text', subject: 'Welcome' }),
+        expect.objectContaining({
+          body: 'Welcome body text',
+          subject: 'Welcome',
+        }),
       );
       expect(result.id).toBeTruthy();
 
@@ -219,14 +251,19 @@ describe('SendGuestMessageHandler', () => {
     });
 
     it('persists the reservationId of the guest last reservation on the saved message', async () => {
-      const reservation = makeReservation({ guestId: GUEST_ID, tenantId: TENANT_ID });
+      const reservation = makeReservation({
+        guestId: GUEST_ID,
+        tenantId: TENANT_ID,
+      });
       reservationRepository.findByGuestId.mockResolvedValue([reservation]);
 
       const command = makeCommand('Subject', 'Hello');
       await handler.execute(command);
 
       const savedMessage = guestMessageRepository.save.mock.calls[0][0];
-      expect(savedMessage.getReservationId()).toBe(RESERVATION_FIXTURE_DEFAULTS.id);
+      expect(savedMessage.getReservationId()).toBe(
+        RESERVATION_FIXTURE_DEFAULTS.id,
+      );
     });
 
     it('persists reservationId as null when the guest has no reservations', async () => {
@@ -259,7 +296,9 @@ describe('SendGuestMessageHandler', () => {
       const command = makeCommand();
 
       // Act / Assert
-      await expect(handler.execute(command)).rejects.toThrow(BadRequestException);
+      await expect(handler.execute(command)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(handler.execute(command)).rejects.toThrow(
         'Debe proporcionar un mensaje de texto libre o un ID de plantilla',
       );
@@ -271,19 +310,30 @@ describe('SendGuestMessageHandler', () => {
       guestRepository.findById.mockResolvedValue(null);
 
       // Act / Assert
-      await expect(handler.execute(makeCommand('Subject', 'Hello'))).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(makeCommand('Subject', 'Hello'))).rejects.toThrow('Huésped no encontrado');
+      await expect(
+        handler.execute(makeCommand('Subject', 'Hello')),
+      ).rejects.toThrow(NotFoundException);
+      await expect(
+        handler.execute(makeCommand('Subject', 'Hello')),
+      ).rejects.toThrow('Huésped no encontrado');
     });
 
     it('throws NotFoundException when guest belongs to a different tenant', async () => {
       // Arrange
       guestRepository.findById.mockResolvedValue(
-        makeGuest({ id: GUEST_ID, tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000' }),
+        makeGuest({
+          id: GUEST_ID,
+          tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000',
+        }),
       );
 
       // Act / Assert
-      await expect(handler.execute(makeCommand('Subject', 'Hello'))).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(makeCommand('Subject', 'Hello'))).rejects.toThrow('Huésped no encontrado');
+      await expect(
+        handler.execute(makeCommand('Subject', 'Hello')),
+      ).rejects.toThrow(NotFoundException);
+      await expect(
+        handler.execute(makeCommand('Subject', 'Hello')),
+      ).rejects.toThrow('Huésped no encontrado');
     });
 
     it('does not emit events and does not save when guest is not found', async () => {
@@ -291,7 +341,9 @@ describe('SendGuestMessageHandler', () => {
       guestRepository.findById.mockResolvedValue(null);
 
       // Act / Assert
-      await expect(handler.execute(makeCommand('Subject', 'Hello'))).rejects.toThrow(NotFoundException);
+      await expect(
+        handler.execute(makeCommand('Subject', 'Hello')),
+      ).rejects.toThrow(NotFoundException);
 
       expect(eventEmitter.emit).not.toHaveBeenCalled();
       expect(guestMessageRepository.save).not.toHaveBeenCalled();

@@ -33,7 +33,8 @@ export class PrismaTenantRepository implements TenantRepository {
       description: tenant.getDescription(),
       logo_key: tenant.getLogoKey(),
       // TenantTheme is a plain VO interface; Prisma's Json input wants an index signature.
-      theme: (tenant.getTheme() as Prisma.InputJsonObject | null) ?? Prisma.DbNull,
+      theme:
+        (tenant.getTheme() as Prisma.InputJsonObject | null) ?? Prisma.DbNull,
       updated_at: tenant.getUpdatedAt(),
       deleted_at: tenant.getDeletedAt(),
       trial_ends_at: tenant.getTrialEndsAt(),

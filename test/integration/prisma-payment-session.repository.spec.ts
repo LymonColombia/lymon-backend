@@ -22,11 +22,17 @@ describe('PrismaPaymentSessionRepository', () => {
     tenantId = (await seedTenant()).id;
     accountId = (
       await prisma.guest_accounts.create({
-        data: { email: 'ana@example.com', password_hash: 'h', full_name: 'Ana' },
+        data: {
+          email: 'ana@example.com',
+          password_hash: 'h',
+          full_name: 'Ana',
+        },
       })
     ).id;
     cartId = await carts.save(
-      Cart.create({ guestAccountId: GuestAccountId.createFromString(accountId) }),
+      Cart.create({
+        guestAccountId: GuestAccountId.createFromString(accountId),
+      }),
     );
   });
 

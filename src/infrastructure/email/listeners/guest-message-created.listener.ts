@@ -26,7 +26,8 @@ export class GuestMessageCreatedListener {
   async handleGuestMessageCreated(event: GuestMessageCreatedEvent) {
     try {
       const messageId = GuestMessageId.createFromString(event.guestMessageId);
-      const guestMessage = await this.guestMessageRepository.findById(messageId);
+      const guestMessage =
+        await this.guestMessageRepository.findById(messageId);
 
       if (guestMessage?.getStatus() !== GuestMessageStatus.PENDING) {
         return;

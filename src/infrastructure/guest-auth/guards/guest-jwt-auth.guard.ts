@@ -36,10 +36,14 @@ export class GuestJwtAuthGuard extends AuthGuard('guest-jwt') {
   handleRequest<TUser = any>(err: any, user: any, info?: any): TUser {
     if (err || !user) {
       this.logger.warn(
-        `Guest auth failed: err=${err?.message ?? err} info=${info?.message ?? info}`,
+        `Guest auth failed: err=${describe(err)} info=${describe(info)}`,
       );
       throw err || new UnauthorizedException('Invalid or missing guest token');
     }
     return user as TUser;
   }
+}
+
+function describe(value: unknown): string {
+  return value instanceof Error ? value.message : String(value);
 }

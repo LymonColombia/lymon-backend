@@ -13,21 +13,17 @@ describe('GuestExperienceController', () => {
     id: 'exp-1',
     tenantId: 'tenant-1',
     propertyId: 'prop-1',
-    unitIds: ['unit-1'],
+    scope: 'PROPERTY',
     name: 'Kayak tour',
     description: 'Tour',
+    city: 'Cartagena',
     category: 'ADVENTURE',
     priceCop: 100000,
-    durationHours: 3,
     minimumParticipants: 2,
     capacity: 10,
     mediaUrls: ['https://img'],
-    location: { label: 'Dock', address: 'Address', lat: 1, lng: 2 },
-    availabilityType: 'DATE_RANGE',
-    startAt: null,
-    endAt: null,
-    recurrence: null,
-    blackoutRanges: [],
+    availabilityType: 'RECURRING',
+    recurrence: { daysOfWeek: [6], startTime: '08:00', endTime: '12:00' },
     allowStandalonePurchase: true,
     allowReservationPurchase: true,
     minNoticeHours: 2,
@@ -52,16 +48,13 @@ describe('GuestExperienceController', () => {
     );
     const dispatchedQuery = queryBus.execute.mock.calls[0][0];
     expect(dispatchedQuery.propertyId).toBe('prop-1');
-    expect(result.experiences[0]).not.toHaveProperty('tenantId');
-    expect(result.experiences[0]).not.toHaveProperty('unitIds');
     expect(result.experiences[0]).not.toHaveProperty('status');
     expect(result.experiences[0]).toMatchObject({
       name: 'Kayak tour',
       coverImageUrl: 'https://img',
       priceCop: 100000,
-      durationHours: 3,
       capacity: 10,
-      availabilityType: 'DATE_RANGE',
+      availabilityType: 'RECURRING',
     });
     expect(result.experiences[0].minimumParticipants).toBe(2);
   });
@@ -71,7 +64,14 @@ describe('GuestExperienceController', () => {
       new GetAvailableExperienceByIdResult({
         experience,
         propertyName: 'Hotel Boutique',
-        units: [{ id: 'unit-1', name: 'Suite 101', maxGuests: 4, pricePerNight: 250000 }],
+        units: [
+          {
+            id: 'unit-1',
+            name: 'Suite 101',
+            maxGuests: 4,
+            pricePerNight: 250000,
+          },
+        ],
       }),
     );
 

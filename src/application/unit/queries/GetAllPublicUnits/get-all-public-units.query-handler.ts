@@ -78,7 +78,9 @@ export class GetAllPublicUnitsQueryHandler implements IQueryHandler<
       const total = availableUnits.length;
       const skip = (query.page - 1) * query.limit;
       const paginatedUnits = availableUnits.slice(skip, skip + query.limit);
-      const dtos = paginatedUnits.map((u) => mapUnitToPublicDto(u, (k) => this.storage.getPublicUrl(k)));
+      const dtos = paginatedUnits.map((u) =>
+        mapUnitToPublicDto(u, (k) => this.storage.getPublicUrl(k)),
+      );
 
       return new GetAllPublicUnitsResult(dtos, total, query.page, query.limit);
     }
@@ -92,7 +94,9 @@ export class GetAllPublicUnitsQueryHandler implements IQueryHandler<
       query.sortByPrice,
       query.name,
     );
-    const dtos = units.map((u) => mapUnitToPublicDto(u, (k) => this.storage.getPublicUrl(k)));
+    const dtos = units.map((u) =>
+      mapUnitToPublicDto(u, (k) => this.storage.getPublicUrl(k)),
+    );
 
     return new GetAllPublicUnitsResult(dtos, total, query.page, query.limit);
   }

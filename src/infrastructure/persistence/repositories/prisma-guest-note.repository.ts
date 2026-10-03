@@ -40,7 +40,10 @@ export class PrismaGuestNoteRepository implements GuestNoteRepository {
     });
   }
 
-  async findById(id: GuestNoteId, tenantId: TenantId): Promise<GuestNote | null> {
+  async findById(
+    id: GuestNoteId,
+    tenantId: TenantId,
+  ): Promise<GuestNote | null> {
     const row = await this.prisma.guest_notes.findFirst({
       where: {
         id: id.toString(),
@@ -51,7 +54,10 @@ export class PrismaGuestNoteRepository implements GuestNoteRepository {
     return row ? this.toDomain(row) : null;
   }
 
-  async findByGuestId(guestId: GuestId, tenantId: TenantId): Promise<GuestNote[]> {
+  async findByGuestId(
+    guestId: GuestId,
+    tenantId: TenantId,
+  ): Promise<GuestNote[]> {
     const rows = await this.prisma.guest_notes.findMany({
       where: {
         guest_id: guestId.toString(),

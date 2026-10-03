@@ -29,7 +29,9 @@ class CheckoutCartExperienceItemDto {
   @Type(() => Number)
   quantity: number;
 
-  @ApiPropertyOptional({ description: 'ISO date string for fixed-date experiences' })
+  @ApiPropertyOptional({
+    description: 'ISO date string for fixed-date experiences',
+  })
   @IsOptional()
   @IsDateString()
   selectedDate?: string;

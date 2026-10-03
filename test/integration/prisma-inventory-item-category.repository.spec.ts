@@ -51,9 +51,9 @@ describe('PrismaInventoryItemCategoryRepository', () => {
     await repo.save(newCategory('Alpha'));
 
     expect(
-      (
-        await repo.findByTenantId(TenantId.createFromString(tenantId))
-      ).map((category) => category.getName()),
+      (await repo.findByTenantId(TenantId.createFromString(tenantId))).map(
+        (category) => category.getName(),
+      ),
     ).toEqual(['Alpha', 'Zeta']);
   });
 

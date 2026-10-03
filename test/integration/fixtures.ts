@@ -8,7 +8,9 @@ const suffix = (bytes = 3) => randomBytes(bytes).toString('hex');
  * Minimal valid rows, inserted straight through Prisma. Repository specs use these to
  * set up the FK targets they need without depending on other repositories.
  */
-export async function seedTenant(overrides: { name?: string; slug?: string } = {}) {
+export async function seedTenant(
+  overrides: { name?: string; slug?: string } = {},
+) {
   const name = overrides.name ?? 'Costa Hoteles';
   return prisma.tenants.create({
     data: {
@@ -64,7 +66,10 @@ export async function seedUnit(
   });
 }
 
-export async function seedRole(name = 'ADMIN', permissions: string[] = ['property:read']) {
+export async function seedRole(
+  name = 'ADMIN',
+  permissions: string[] = ['property:read'],
+) {
   return prisma.roles.create({ data: { name, permissions } });
 }
 
@@ -94,8 +99,19 @@ export async function seedGuest(
 }
 
 export async function seedReservation(
-  ids: { tenantId: string; propertyId: string; unitId: string; guestId: string },
-  overrides: { status?: string; source?: string; checkIn?: Date; checkOut?: Date; totalPrice?: number } = {},
+  ids: {
+    tenantId: string;
+    propertyId: string;
+    unitId: string;
+    guestId: string;
+  },
+  overrides: {
+    status?: string;
+    source?: string;
+    checkIn?: Date;
+    checkOut?: Date;
+    totalPrice?: number;
+  } = {},
 ) {
   return prisma.reservations.create({
     data: {

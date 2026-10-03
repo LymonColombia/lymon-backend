@@ -29,5 +29,16 @@
   "setupFiles": [
     "<rootDir>/test/integration/setup-env.ts"
   ],
-  "globalSetup": "<rootDir>/test/integration/global-setup.ts"
+  "globalSetup": "<rootDir>/test/integration/global-setup.ts",
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/**/*.d.ts",
+    "!src/main.ts",
+    "!src/**/*.module.ts",
+    "!src/infrastructure/persistence/prisma/generated/**"
+  ],
+  "coverageDirectory": "<rootDir>/coverage/integration",
+  "coverageReporters": [
+    "lcov"
+  ]
 }

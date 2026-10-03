@@ -16,9 +16,7 @@ import {
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 
 @QueryHandler(GetGuestRatingsQuery)
-export class GetGuestRatingsHandler
-  implements IQueryHandler<GetGuestRatingsQuery>
-{
+export class GetGuestRatingsHandler implements IQueryHandler<GetGuestRatingsQuery> {
   constructor(
     @Inject(UNIT_RATING_REPOSITORY)
     private readonly unitRatingRepository: UnitRatingRepository,
@@ -52,6 +50,12 @@ export class GetGuestRatingsHandler
       }),
     );
 
-    return new GetGuestRatingsResult(dtos, total, query.page, query.limit, averageRating);
+    return new GetGuestRatingsResult(
+      dtos,
+      total,
+      query.page,
+      query.limit,
+      averageRating,
+    );
   }
 }

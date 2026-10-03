@@ -35,7 +35,6 @@ function createGuestReservationsReadRepositoryMock(): jest.Mocked<GuestReservati
   };
 }
 
-
 function makeGuest(guestId: string, tenantId: string): Guest {
   const identity: GuestIdentity = {};
   const summary: GuestSummary = {
@@ -123,8 +122,14 @@ describe('GetReservationsByGuestIdHandler', () => {
   });
 
   it('returns paginated reservations across all tenants for the guestAccountId', async () => {
-    const guest1 = makeGuest(GUEST_ID_1, '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
-    const guest2 = makeGuest(GUEST_ID_2, '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000');
+    const guest1 = makeGuest(
+      GUEST_ID_1,
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+    );
+    const guest2 = makeGuest(
+      GUEST_ID_2,
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
+    );
     const res1 = makeReservation(
       '65f1a1a2-b3c4-d5e6-f7a8-b9e100000000',
       GUEST_ID_1,

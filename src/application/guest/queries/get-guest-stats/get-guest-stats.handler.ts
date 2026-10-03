@@ -1,5 +1,8 @@
 import { IQueryHandler, QueryHandler, QueryBus } from '@nestjs/cqrs';
-import { GetGuestStatsQuery, GUEST_STAT_QUERIES } from './get-guest-stats.query';
+import {
+  GetGuestStatsQuery,
+  GUEST_STAT_QUERIES,
+} from './get-guest-stats.query';
 
 @QueryHandler(GetGuestStatsQuery)
 export class GetGuestStatsHandler implements IQueryHandler<GetGuestStatsQuery> {

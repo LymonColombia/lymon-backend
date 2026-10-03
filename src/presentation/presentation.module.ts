@@ -33,7 +33,12 @@ import { GuestExperiencePurchasesController } from '@/presentation/controllers/g
 import { ExperiencePurchasesController } from '@/presentation/controllers/experience-purchases.controller';
 
 @Module({
-imports: [CqrsModule, ApplicationModule, CommunicationWebhookModule, PersistenceModule],
+  imports: [
+    CqrsModule,
+    ApplicationModule,
+    CommunicationWebhookModule,
+    PersistenceModule,
+  ],
   controllers: [
     CommunicationWebhookController,
     AuthController,

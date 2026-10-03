@@ -43,7 +43,9 @@ describe('PrismaTenantRepository', () => {
     loaded.updateProfile('Andina');
     await repo.save(loaded);
 
-    const renamed = (await prisma.tenants.findUnique({ where: { id: tenant.id } }))!;
+    const renamed = (await prisma.tenants.findUnique({
+      where: { id: tenant.id },
+    }))!;
     expect(renamed.slug).not.toBe(`andina-${suffix4}`);
     expect(renamed.slug).toBe(`andina-${tenant.id.slice(-6)}`);
   });
@@ -51,14 +53,18 @@ describe('PrismaTenantRepository', () => {
   it('regenerates the slug only when the name changes', async () => {
     await repo.save(newTenant());
     const created = (await prisma.tenants.findFirst())!;
-    const loaded = (await repo.findById(TenantId.createFromString(created.id)))!;
+    const loaded = (await repo.findById(
+      TenantId.createFromString(created.id),
+    ))!;
 
     await repo.save(loaded);
     expect((await prisma.tenants.findFirst())!.slug).toBe(created.slug);
 
     loaded.updateProfile('Andina Rentals');
     await repo.save(loaded);
-    expect((await prisma.tenants.findFirst())!.slug).toMatch(/^andina-rentals-/);
+    expect((await prisma.tenants.findFirst())!.slug).toMatch(
+      /^andina-rentals-/,
+    );
   });
 
   it('round-trips through findById, findBySlug and findByOwnerEmail', async () => {
@@ -67,7 +73,9 @@ describe('PrismaTenantRepository', () => {
 
     const byId = await repo.findById(TenantId.createFromString(created.id));
     const bySlug = await repo.findBySlug(created.slug);
-    const byEmail = await repo.findByOwnerEmail(Email.create('owner@costa.com'));
+    const byEmail = await repo.findByOwnerEmail(
+      Email.create('owner@costa.com'),
+    );
 
     for (const found of [byId, bySlug, byEmail]) {
       expect(found).not.toBeNull();
@@ -89,7 +97,9 @@ describe('PrismaTenantRepository', () => {
       data: { deleted_at: new Date() },
     });
 
-    expect(await repo.findById(TenantId.createFromString(created.id))).toBeNull();
+    expect(
+      await repo.findById(TenantId.createFromString(created.id)),
+    ).toBeNull();
     expect(await repo.findBySlug(created.slug)).toBeNull();
     expect(await repo.findByOwnerEmail(email)).toBeNull();
     expect(await repo.exists(email)).toBe(false);

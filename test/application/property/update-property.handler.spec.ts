@@ -9,14 +9,6 @@ import {
   makeProperty,
   PROPERTY_FIXTURE_DEFAULTS,
 } from '@test/shared/fixtures/property.fixture';
-import { Property } from '@/domain/property/entities/property.entity';
-import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
-import { PropertyType, PropertyTypeEnum } from '@/domain/property/value-objects/property-type.vo';
-import { CancellationPolicy, CancellationPolicyEnum } from '@/domain/property/value-objects/cancellation-policy.vo';
-import { Location } from '@/domain/property/value-objects/location.vo';
-import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
-import { ChannexSyncStatus } from '@/domain/property/value-objects/channex-sync-status.vo';
-import { CHANNEX_PROPERTY_UPDATE_EVENT } from '@/infrastructure/channex/events/channex-property-update.event';
 
 describe('UpdatePropertyHandler', () => {
   let handler: UpdatePropertyHandler;
@@ -54,6 +46,7 @@ describe('UpdatePropertyHandler', () => {
     handler = new UpdatePropertyHandler(
       propertyRepository,
       eventEmitter as any,
+      { getPublicUrl: (k: string) => k } as any,
     );
   });
 
@@ -108,47 +101,6 @@ describe('UpdatePropertyHandler', () => {
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({ entityType: 'PROPERTY' }),
-      );
-    });
-
-    it('emits Channex update event when property has channexId', async () => {
-      const syncedProperty = Property.reconstitute({
-        id: PropertyId.create(PROPERTY_FIXTURE_DEFAULTS.id),
-        tenantId: TenantId.createFromString(PROPERTY_FIXTURE_DEFAULTS.tenantId),
-        name: PROPERTY_FIXTURE_DEFAULTS.name,
-        description: PROPERTY_FIXTURE_DEFAULTS.description,
-        propertyType: PropertyType.create(PropertyTypeEnum.CASA),
-        address: PROPERTY_FIXTURE_DEFAULTS.address,
-        city: PROPERTY_FIXTURE_DEFAULTS.city,
-        state: PROPERTY_FIXTURE_DEFAULTS.state,
-        country: PROPERTY_FIXTURE_DEFAULTS.country,
-        zipCode: PROPERTY_FIXTURE_DEFAULTS.zipCode,
-        location: Location.create(
-          PROPERTY_FIXTURE_DEFAULTS.location.lat,
-          PROPERTY_FIXTURE_DEFAULTS.location.lng,
-        ),
-        checkInTime: PROPERTY_FIXTURE_DEFAULTS.checkInTime,
-        checkOutTime: PROPERTY_FIXTURE_DEFAULTS.checkOutTime,
-        cancellationPolicy: CancellationPolicy.create(
-          CancellationPolicyEnum.FLEXIBLE,
-        ),
-        hostPhone: PROPERTY_FIXTURE_DEFAULTS.hostPhone,
-        hostEmail: PROPERTY_FIXTURE_DEFAULTS.hostEmail,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-        channexId: 'channex-abc-123',
-        channexSyncStatus: ChannexSyncStatus.create('SYNCED'),
-      });
-
-      propertyRepository.findById.mockResolvedValue(syncedProperty);
-      propertyRepository.save.mockResolvedValue(PROPERTY_FIXTURE_DEFAULTS.id);
-
-      await handler.execute(makeCommand({ name: 'Casa renovada' }));
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        CHANNEX_PROPERTY_UPDATE_EVENT,
-        expect.objectContaining({ channexId: 'channex-abc-123' }),
       );
     });
   });

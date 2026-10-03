@@ -12,9 +12,7 @@ import { PrismaService } from '@/infrastructure/persistence/prisma/prisma.servic
 import { type guest_preference_catalog_items as CatalogItemRow } from '@/infrastructure/persistence/prisma/generated/client';
 
 @Injectable()
-export class PrismaGuestPreferenceCatalogRepository
-  implements GuestPreferenceCatalogRepository
-{
+export class PrismaGuestPreferenceCatalogRepository implements GuestPreferenceCatalogRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(item: GuestPreferenceCatalogItem): Promise<string> {

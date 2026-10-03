@@ -24,7 +24,11 @@ describe('PrismaCartRepository', () => {
     unitId = (await seedUnit(tenantId, propertyId)).id;
     accountId = (
       await prisma.guest_accounts.create({
-        data: { email: 'ana@example.com', password_hash: 'h', full_name: 'Ana' },
+        data: {
+          email: 'ana@example.com',
+          password_hash: 'h',
+          full_name: 'Ana',
+        },
       })
     ).id;
   });
@@ -61,7 +65,9 @@ describe('PrismaCartRepository', () => {
     cart.addExperienceItem(
       CartItem.create({
         tenantId,
-        experienceId: ExperienceId.create('11111111-1111-4111-8111-111111111111'),
+        experienceId: ExperienceId.create(
+          '11111111-1111-4111-8111-111111111111',
+        ),
         experienceName: 'Sunset tour',
         selectedDate,
         quantity: 2,
@@ -127,9 +133,9 @@ describe('PrismaCartRepository', () => {
     await repo.save(cart);
 
     expect(await repo.findOpenByGuest(accountVo)).toBeNull();
-    expect((await repo.findByGuestAccountId(accountVo))!.getStatus().toString()).toBe(
-      CartStatusEnum.PENDING_PAYMENT,
-    );
+    expect(
+      (await repo.findByGuestAccountId(accountVo))!.getStatus().toString(),
+    ).toBe(CartStatusEnum.PENDING_PAYMENT);
   });
 
   it('lists stale pending-payment carts', async () => {
@@ -140,7 +146,9 @@ describe('PrismaCartRepository', () => {
     await repo.save(cart);
 
     expect(
-      await repo.findPendingPaymentCartsOlderThan(new Date(Date.now() - 60_000)),
+      await repo.findPendingPaymentCartsOlderThan(
+        new Date(Date.now() - 60_000),
+      ),
     ).toEqual([]);
 
     await prisma.carts.update({

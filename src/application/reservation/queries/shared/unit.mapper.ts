@@ -25,7 +25,6 @@ export function mapUnitToPublicDto(
     unit.getStandardGuests(),
     bedrooms,
     unit.getBathroomsCount(),
-    unit.getIsShared(),
     unit.getAmenities(),
     unit.getPricePerNight(),
     unit.getTenantId().toString(),

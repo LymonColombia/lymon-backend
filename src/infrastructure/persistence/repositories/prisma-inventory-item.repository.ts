@@ -148,9 +148,7 @@ export class PrismaInventoryItemRepository implements InventoryItemRepository {
         unit: row.unit,
         minStock: Number(row.min_stock),
         currentStock: Number(row.current_stock),
-        supplierId: row.supplier_id
-          ? SupplierId.create(row.supplier_id)
-          : null,
+        supplierId: row.supplier_id ? SupplierId.create(row.supplier_id) : null,
       },
       timestamps: {
         createdAt: row.created_at,

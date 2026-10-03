@@ -62,9 +62,9 @@ describe('PrismaConversationRepository', () => {
       data: { unread_count_for_staff: 2, last_message_at: new Date() },
     });
 
-    expect(
-      (await repo.findByTenantPaginated(tenantId, {}, 1, 10)).total,
-    ).toBe(2);
+    expect((await repo.findByTenantPaginated(tenantId, {}, 1, 10)).total).toBe(
+      2,
+    );
     expect(
       (
         await repo.findByTenantPaginated(

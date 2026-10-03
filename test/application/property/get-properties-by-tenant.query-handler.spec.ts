@@ -24,7 +24,11 @@ describe('GetPropertiesByTenantQueryHandler', () => {
       propertyRepository.findByTenantId.mockResolvedValue(props);
 
       const result = await handler.execute(
-        new GetPropertiesByTenantQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 1, 2),
+        new GetPropertiesByTenantQuery(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          1,
+          2,
+        ),
       );
 
       expect(result).toBeInstanceOf(GetPropertiesByTenantResult);
@@ -43,7 +47,11 @@ describe('GetPropertiesByTenantQueryHandler', () => {
       propertyRepository.findByTenantId.mockResolvedValue(props);
 
       const result = await handler.execute(
-        new GetPropertiesByTenantQuery('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000', 2, 2),
+        new GetPropertiesByTenantQuery(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+          2,
+          2,
+        ),
       );
 
       expect(result.properties).toHaveLength(1);

@@ -1,283 +1,94 @@
-# Lymon Backend
+# Lyhost Backend
 
-**Multi-tenant hotel & property management platform — API backend**
+API for **Lyhost**, a multi-tenant SaaS for hotel and property management.
+One backend for tenants to run their properties and units, reservations,
+guests (CRM, messaging, guest portal), experiences and payments, inventory,
+staff shifts, incident reports, and metrics.
 
-Built with NestJS, Clean Architecture, and CQRS.
+**Stack:** NestJS 11 · TypeScript · PostgreSQL 18 (Prisma 7)
 
----
+## Quick start
 
-## Table of Contents
+### 1. Prerequisites
 
-- [About the Project](#about-the-project)
-  - [Built With](#built-with)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-- [API Reference](#api-reference)
-- [Architecture & Design](#architecture--design)
-  - [Clean Architecture Layers](#clean-architecture-layers)
-  - [CQRS](#cqrs)
-- [Contributing](#contributing)
+- **Node.js 20+**
+- **pnpm** (don't use npm or yarn in this repo)
+- **Docker** with Compose: only Postgres runs in a container; the API runs on your machine
 
----
-
-## About the Project
-
-Lymon Backend is the API for a multi-tenant SaaS platform that lets
-properties (hotels, hostels, short-term rentals) manage reservations, units,
-guests, staff, billing, and the full guest experience through a single
-backend. Each tenant is isolated by `tenantId`, with role- and
-permission-based access control embedded in JWTs.
-
-### Built With
-
-| Layer | Technology |
-|---|---|
-| Framework | [NestJS](https://nestjs.com/) 11 |
-| Language | TypeScript 5.7 |
-| Database | PostgreSQL 18 (via Prisma 7) |
-| Architecture | Clean Architecture + CQRS (`@nestjs/cqrs`) |
-| Auth | JWT (`@nestjs/jwt`, Passport) + bcrypt |
-| File storage | Cloudflare R2 (S3-compatible) |
-| Email | Brevo (transactional + inbound webhook) |
-| API docs | Swagger / OpenAPI |
-| Testing | Jest (unit/e2e), Cypress (security), k6 (performance) |
-| Package manager | pnpm |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- [pnpm](https://pnpm.io/)
-- A PostgreSQL 18 instance. For local work: `pnpm db:up`
-  (Docker, listens on port 5433; fill it with `pnpm db:deploy`)
-- (Optional, for file uploads) A Cloudflare R2 bucket
-- (Optional, for transactional email) A Brevo account
-
-### Installation
-
-1. Clone the repo and install dependencies:
-
-   ```bash
-   git clone <repo-url>
-   cd lymon-backend
-   pnpm install
-   ```
-
-2. Copy the environment template and fill in your values:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   | Variable | Purpose |
-   |---|---|
-   | `DATABASE_URL` | PostgreSQL connection string |
-   | `JWT_SECRET` | Secret used to sign auth tokens |
-   | `APP_URL` | Base URL of this API (used in emails/links) |
-   | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL` | Cloudflare R2 file storage |
-   | `EMAIL_INBOUND_ENABLED`, `EMAIL_WEBHOOK_SECRET` | Brevo inbound email webhook |
-
-3. Start the app in watch mode:
-
-   ```bash
-   pnpm start:dev
-   ```
-
-### Usage
+### 2. Install dependencies
 
 ```bash
-pnpm start:dev      # dev server with hot-reload
-pnpm build          # production build
-pnpm start:prod     # run the built app
-pnpm test           # unit tests
-pnpm test:db        # repository tests against a real Postgres (needs Docker)
-pnpm test:e2e       # end-to-end tests
-pnpm test:cov       # unit tests with coverage
-pnpm lint           # eslint --fix
-
-pnpm db:up          # start the local Postgres container
-pnpm db:down        # stop it and delete its volume
-pnpm db:deploy      # apply pending migrations
-pnpm db:migrate     # create a migration from prisma/schema changes, and apply it
-pnpm db:reset       # drop everything and replay the migration chain
+git clone https://github.com/LymonColombia/lymon-backend.git
+# or over SSH: git clone git@github.com:LymonColombia/lymon-backend.git
+cd lymon-backend
+pnpm install          # also generates the Prisma client
 ```
 
-### Changing the schema
+### 3. Configure the environment
 
-`prisma/schema/*.prisma` is the source of truth. Edit a model, run `pnpm db:migrate
---name <what_changed>`, then **read the generated SQL** before committing it — CHECK
-constraints live only in the migration files, so a generated migration can silently drop
-them. Commit the schema change and its migration together.
-
-Once running, the API is available at `http://localhost:<PORT>` and
-interactive docs at `http://localhost:<PORT>/api/docs`.
-
----
-
-## API Reference
-
-Full, always-up-to-date API reference is generated from the code via
-**Swagger**. Don't look for a hand-written endpoint list — run the app and
-open:
-
-**`http://localhost:<PORT>/api/docs`** — interactive Swagger UI
-**`http://localhost:<PORT>/api/docs-json`** — raw OpenAPI JSON
-
----
-
-## Architecture & Design
-
-### Clean Architecture Layers
-
-The codebase is organized into four layers under `src/`, following Clean
-Architecture. Dependencies only point inward:
-
-```
-presentation/    → HTTP layer: controllers, DTOs, Swagger decorators
-       ↓
-infrastructure/  → external concerns: PostgreSQL, JWT, email, storage
-       ↓
-application/     → use cases: Commands/Queries + their handlers
-       ↓
-domain/          → entities, value objects, repository interfaces
-                   (zero framework dependencies)
+```bash
+cp .env.example .env
 ```
 
-`infrastructure` depends on `application`, `application` depends on
-`domain`, and nothing depends on `presentation` except the framework
-bootstrap. Repository **interfaces** live in `domain/`; concrete
-implementations (e.g. Prisma) live in `infrastructure/`. Handlers depend
-on the interface via dependency injection and have no knowledge of PostgreSQL.
+The defaults are enough to run locally. Replace the `JWT_SECRET` placeholder with any
+random string.
 
-Each layer is further split by feature, so related code stays co-located.
-Example — the `unit` feature:
+| Variable | Needed locally? | What it does |
+|---|---|---|
+| `DATABASE_URL` | yes (default works) | Points at the Docker Postgres on port **5433** |
+| `JWT_SECRET` | **yes** | Signs auth tokens; the app won't start without it |
+| `isDevelopment` | yes (`true`) | Enables Swagger and seeds demo data on boot |
+| `PORT` | no | Defaults to `3000` |
+| `R2_*` | no | Cloudflare R2 file uploads; uploads fail without it |
+| `BREVO_API_KEY`, `SENDER_EMAIL` | no | Sends transactional email (verification, password reset) |
+| `WOMPI_*` | no | Payment gateway callbacks |
 
-```
-src/domain/unit/
-├── entities/unit.entity.ts
-├── repositories/unit.repository.ts   ← interface
-└── value-objects/
+### 4. Start the database and the API
 
-src/application/unit/
-├── commands/create-unit.command.ts
-├── commands/create-unit.handler.ts
-├── commands/update-unit.command.ts
-├── commands/delete-unit.command.ts
-└── queries/GetUnitsByProperty/
-
-src/infrastructure/persistence/
-├── repositories/prisma-unit.repository.ts  ← implementation
-└── prisma/prisma.service.ts
-
-src/presentation/
-├── controllers/unit.controller.ts
-└── dtos/unit/
+```bash
+pnpm dev
 ```
 
-See [`docs/adr/001-arquitectura-limpia.md`](docs/adr/001-arquitectura-limpia.md)
-for the full rationale.
+This starts Postgres (`docker compose`, container `lymon-pg`), applies every migration in
+`prisma/migrations`, and runs the API in watch mode. When the log shows
+`Application running on: http://localhost:3000`, the API is up.
 
-### CQRS
+### 5. Try it
 
-Write operations are **Commands**, read operations are **Queries**, each
-dispatched through NestJS's `CommandBus` / `QueryBus`
-(`@nestjs/cqrs`). A command/query is a plain data object; its logic lives in
-a paired handler.
+Open Swagger at **http://localhost:3000/api/docs**.
 
-**Query example** — `src/application/unit/queries/GetUnitsByProperty/`:
+On first boot the app seeds a demo tenant (a property, a unit, roles and guest tags) and
+these accounts, already email-verified:
 
-```ts
-// get-units-by-property.query.ts
-export class GetUnitsByPropertyQuery implements IQuery {
-  constructor(
-    public readonly tenantId: string,
-    public readonly propertyId: string,
-    public readonly page: number = 1,
-    public readonly limit: number = 10,
-  ) {}
-}
+| Account | Email | Password | Login endpoint |
+|---|---|---|---|
+| Tenant owner (staff) | `dev.owner@lymon.local` | `DevPassword123!` | `POST /auth/login` |
+| Guest | `dev.guest@lymon.local` | `DevPassword123!` | `POST /guest/auth/login` |
 
-// get-units-by-property.query-handler.ts
-@QueryHandler(GetUnitsByPropertyQuery)
-export class GetUnitsByPropertyQueryHandler
-  implements IQueryHandler<GetUnitsByPropertyQuery, GetUnitsByPropertyResult>
-{
-  constructor(
-    @Inject(PROPERTY_REPOSITORY)
-    private readonly propertyRepository: PropertyRepository,
-    @Inject(UNIT_REPOSITORY)
-    private readonly unitRepository: UnitRepository,
-  ) {}
+Log in, copy the `accessToken`, click **Authorize** in Swagger (`JWT-auth` for staff,
+`GuestJWT-auth` for guests), and call any endpoint.
 
-  async execute(
-    query: GetUnitsByPropertyQuery,
-  ): Promise<GetUnitsByPropertyResult> {
-    // verify property belongs to tenant, then fetch + return units
-  }
-}
+### Everyday commands
+
+```bash
+pnpm start:dev        # API only (database already running)
+pnpm test             # unit tests
+pnpm test:db          # repository tests against a real Postgres
+pnpm build            # production build
+
+pnpm db:down          # stop Postgres and wipe its data
+pnpm dev:fresh        # wipe the database and start over
 ```
 
-Controllers dispatch through the bus using **generics on `.execute()`**
-(not a variable type annotation):
+### Troubleshooting
 
-```ts
-// unit.controller.ts
-const query = new GetUnitsByPropertyQuery(user.tenantId, propertyId, page, limit);
-
-const result = await this.queryBus.execute<
-  GetUnitsByPropertyQuery,
-  GetUnitsByPropertyResult
->(query);
-```
-
-Handlers are registered per module (e.g. `CommandHandlers` /
-`QueryHandlers` arrays in each `*.module.ts`) and provided to Nest's DI
-container. See
-[`docs/adr/002-cqrs.md`](docs/adr/002-cqrs.md) for the full decision and
-[`docs/adr/`](docs/adr/) for the rest of the architecture decision log
-(auth, permissions, multi-tenancy, reservations, etc.).
-
----
+- **`Can't reach database server at 127.0.0.1:5433`**: Docker isn't running, or the
+  container failed to start. Check it with `docker ps`.
+- **`JWT_SECRET no está definida`**: `JWT_SECRET` is missing from `.env`.
+- **Port 5433 already in use**: stop whatever is using it, or change the port in
+  `docker-compose.yml` and in `DATABASE_URL`.
+- **Seeded accounts missing**: make sure `.env` has exactly `isDevelopment=true`, then restart.
 
 ## Contributing
 
-`LYMON-XXX` is the ID of the Jira item you're working from (Task, User
-Story, Subtask, or Bug) — it drives both the branch name and the commit
-message.
-
-- **Branch naming:**
-
-  ```
-  LYMON-XXX-branch-name
-  ```
-
-  Example: `LYMON-1103-add-tenant-slug-generation`
-
-- **Commit message format:**
-
-  ```
-  LYMON-XXX type(scope): description
-  ```
-
-  where `type` follows Conventional Commits (`feat`, `fix`, `refactor`,
-  `test`, `chore`, ...) and `scope` is the affected module. Example:
-
-  ```
-  LYMON-1103 feat(tenant): implement unique slug generation for tenants
-  ```
-
-- Branch off `staging` (not `main`) and open PRs back into `staging`.
-- **Every new feature needs a unit test** added under `test/`, mirroring the
-  `src/` layer it belongs to (e.g. a handler in
-  `src/application/unit/commands/...` gets its spec in
-  `test/application/unit/...`), using the module's existing testing tool:
-  **Jest** for unit/integration specs (`*.spec.ts`), **Cypress** for
-  security specs (`cypress/security/`). No PR merges without one.
-- Run `pnpm test` and `pnpm build` before opening a PR.
-- Architectural decisions go in `docs/adr/` as a new numbered ADR — see
-  existing ones for the format.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow from Jira ticket to merged PR.

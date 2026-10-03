@@ -43,7 +43,7 @@ function makeUnitFixture(
     basicInfo: { name: 'Test Unit', description: 'A test unit' },
     inventoryConfig: { inventoryCount: 1 },
     capacityConfig: { maxGuests: 2, standardGuests: 2 },
-    physicalFeatures: { bedrooms: [], bathroomsCount: 1, isShared: false },
+    physicalFeatures: { bedrooms: [], bathroomsCount: 1 },
     pricingConfig: { pricePerNight: 100 },
     amenities: [],
     externalIds: ExternalIds.create(),
@@ -168,7 +168,9 @@ describe('CreateUnitRatingHandler', () => {
       });
       jest
         .spyOn(otherGuest, 'getId')
-        .mockReturnValue(GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000'));
+        .mockReturnValue(
+          GuestId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000'),
+        );
       reservationRepository.findById.mockResolvedValue(reservation);
       guestRepository.findByGuestAccountId.mockResolvedValue(otherGuest);
 

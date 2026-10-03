@@ -1,4 +1,6 @@
-jest.mock('uuid', () => ({ v4: () => 'conv-uuid-aaaa-bbbb-cccc-ddddeeeeeeee' }));
+jest.mock('uuid', () => ({
+  v4: () => 'conv-uuid-aaaa-bbbb-cccc-ddddeeeeeeee',
+}));
 
 import { Conversation } from '@/domain/conversation/entities/conversation.entity';
 import { ConversationId } from '@/domain/conversation/value-objects/conversation-id.vo';
@@ -29,8 +31,12 @@ describe('Conversation', () => {
       // Assert
       expect(conversation.getId()).toBeDefined();
       expect(conversation.getId().toString()).toBeTruthy();
-      expect(conversation.getTenantId()).toBe(CONVERSATION_FIXTURE_DEFAULTS.tenantId);
-      expect(conversation.getGuestId()).toBe(CONVERSATION_FIXTURE_DEFAULTS.guestId);
+      expect(conversation.getTenantId()).toBe(
+        CONVERSATION_FIXTURE_DEFAULTS.tenantId,
+      );
+      expect(conversation.getGuestId()).toBe(
+        CONVERSATION_FIXTURE_DEFAULTS.guestId,
+      );
       expect(conversation.getReservationId()).toBeNull();
       expect(conversation.getChannels()).toEqual([]);
       expect(conversation.getSubject()).toBe('Welcome email');
@@ -38,8 +44,12 @@ describe('Conversation', () => {
       expect(conversation.getUnreadCountForStaff()).toBe(0);
       expect(conversation.getUnreadCountForGuest()).toBe(0);
       expect(conversation.getStatus()).toBe(ConversationStatus.OPEN);
-      expect(conversation.getCreatedAt().getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(conversation.getCreatedAt().getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(conversation.getCreatedAt().getTime()).toBeGreaterThanOrEqual(
+        before.getTime(),
+      );
+      expect(conversation.getCreatedAt().getTime()).toBeLessThanOrEqual(
+        after.getTime(),
+      );
     });
 
     it('stores reservationId when provided', () => {
@@ -71,7 +81,9 @@ describe('Conversation', () => {
   describe('reconstitute()', () => {
     it('reconstitutes a conversation with all persisted fields', () => {
       // Arrange
-      const id = ConversationId.createFromString(CONVERSATION_FIXTURE_DEFAULTS.id);
+      const id = ConversationId.createFromString(
+        CONVERSATION_FIXTURE_DEFAULTS.id,
+      );
       const createdAt = new Date('2026-01-01T10:00:00Z');
       const updatedAt = new Date('2026-01-02T12:00:00Z');
       const lastMessageAt = new Date('2026-01-02T11:00:00Z');
@@ -94,14 +106,22 @@ describe('Conversation', () => {
       });
 
       // Assert
-      expect(conversation.getId().toString()).toBe(CONVERSATION_FIXTURE_DEFAULTS.id);
-      expect(conversation.getTenantId()).toBe(CONVERSATION_FIXTURE_DEFAULTS.tenantId);
-      expect(conversation.getGuestId()).toBe(CONVERSATION_FIXTURE_DEFAULTS.guestId);
+      expect(conversation.getId().toString()).toBe(
+        CONVERSATION_FIXTURE_DEFAULTS.id,
+      );
+      expect(conversation.getTenantId()).toBe(
+        CONVERSATION_FIXTURE_DEFAULTS.tenantId,
+      );
+      expect(conversation.getGuestId()).toBe(
+        CONVERSATION_FIXTURE_DEFAULTS.guestId,
+      );
       expect(conversation.getReservationId()).toBe('res-abc');
       expect(conversation.getChannels()).toEqual([GuestMessageChannel.EMAIL]);
       expect(conversation.getSubject()).toBe('Check-in instructions');
       expect(conversation.getLastMessageAt()).toBe(lastMessageAt);
-      expect(conversation.getLastMessagePreview()).toBe('Please arrive after 3pm');
+      expect(conversation.getLastMessagePreview()).toBe(
+        'Please arrive after 3pm',
+      );
       expect(conversation.getUnreadCountForStaff()).toBe(2);
       expect(conversation.getUnreadCountForGuest()).toBe(1);
       expect(conversation.getStatus()).toBe(ConversationStatus.OPEN);
@@ -114,7 +134,9 @@ describe('Conversation', () => {
     it('increments unreadCountForStaff when the message is inbound', () => {
       // Arrange
       const conversation = makeConversation({ unreadCountForStaff: 0 });
-      const message = makeGuestMessage({ direction: GuestMessageDirection.INBOUND });
+      const message = makeGuestMessage({
+        direction: GuestMessageDirection.INBOUND,
+      });
 
       // Act
       conversation.appendMessage(message);
@@ -127,7 +149,9 @@ describe('Conversation', () => {
     it('increments unreadCountForGuest when the message is outbound', () => {
       // Arrange
       const conversation = makeConversation({ unreadCountForGuest: 0 });
-      const message = makeGuestMessage({ direction: GuestMessageDirection.OUTBOUND });
+      const message = makeGuestMessage({
+        direction: GuestMessageDirection.OUTBOUND,
+      });
 
       // Act
       conversation.appendMessage(message);
@@ -152,7 +176,9 @@ describe('Conversation', () => {
 
     it('does not duplicate the channel when the same channel is already in the list', () => {
       // Arrange
-      const conversation = makeConversation({ channels: [GuestMessageChannel.EMAIL] });
+      const conversation = makeConversation({
+        channels: [GuestMessageChannel.EMAIL],
+      });
       const message = makeGuestMessage({ channel: GuestMessageChannel.EMAIL });
 
       // Act
@@ -164,14 +190,18 @@ describe('Conversation', () => {
 
     it('updates lastMessagePreview and lastMessageAt from the appended message', () => {
       // Arrange
-      const conversation = makeConversation({ lastMessagePreview: 'old preview' });
+      const conversation = makeConversation({
+        lastMessagePreview: 'old preview',
+      });
       const message = makeGuestMessage({ preview: 'new preview from message' });
 
       // Act
       conversation.appendMessage(message);
 
       // Assert
-      expect(conversation.getLastMessagePreview()).toBe('new preview from message');
+      expect(conversation.getLastMessagePreview()).toBe(
+        'new preview from message',
+      );
       expect(conversation.getLastMessageAt()).toEqual(message.getCreatedAt());
     });
 
@@ -185,7 +215,9 @@ describe('Conversation', () => {
       conversation.appendMessage(message);
 
       // Assert
-      expect(conversation.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(conversation.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        before.getTime(),
+      );
     });
   });
 
@@ -203,7 +235,10 @@ describe('Conversation', () => {
 
     it('does not modify unreadCountForGuest', () => {
       // Arrange
-      const conversation = makeConversation({ unreadCountForStaff: 3, unreadCountForGuest: 2 });
+      const conversation = makeConversation({
+        unreadCountForStaff: 3,
+        unreadCountForGuest: 2,
+      });
 
       // Act
       conversation.markReadByStaff();
@@ -221,14 +256,18 @@ describe('Conversation', () => {
       conversation.markReadByStaff();
 
       // Assert
-      expect(conversation.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(conversation.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        before.getTime(),
+      );
     });
   });
 
   describe('archive()', () => {
     it('sets status to ARCHIVED', () => {
       // Arrange
-      const conversation = makeConversation({ status: ConversationStatus.OPEN });
+      const conversation = makeConversation({
+        status: ConversationStatus.OPEN,
+      });
 
       // Act
       conversation.archive();
@@ -246,14 +285,18 @@ describe('Conversation', () => {
       conversation.archive();
 
       // Assert
-      expect(conversation.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(conversation.getUpdatedAt().getTime()).toBeGreaterThanOrEqual(
+        before.getTime(),
+      );
     });
   });
 
   describe('snooze()', () => {
     it('sets status to SNOOZED', () => {
       // Arrange
-      const conversation = makeConversation({ status: ConversationStatus.OPEN });
+      const conversation = makeConversation({
+        status: ConversationStatus.OPEN,
+      });
 
       // Act
       conversation.snooze();
@@ -266,7 +309,9 @@ describe('Conversation', () => {
   describe('reopen()', () => {
     it('sets status back to OPEN from ARCHIVED', () => {
       // Arrange
-      const conversation = makeConversation({ status: ConversationStatus.ARCHIVED });
+      const conversation = makeConversation({
+        status: ConversationStatus.ARCHIVED,
+      });
 
       // Act
       conversation.reopen();
@@ -277,7 +322,9 @@ describe('Conversation', () => {
 
     it('sets status back to OPEN from SNOOZED', () => {
       // Arrange
-      const conversation = makeConversation({ status: ConversationStatus.SNOOZED });
+      const conversation = makeConversation({
+        status: ConversationStatus.SNOOZED,
+      });
 
       // Act
       conversation.reopen();
@@ -290,7 +337,9 @@ describe('Conversation', () => {
   describe('getChannels()', () => {
     it('returns a copy of the channels array to prevent external mutation', () => {
       // Arrange
-      const conversation = makeConversation({ channels: [GuestMessageChannel.EMAIL] });
+      const conversation = makeConversation({
+        channels: [GuestMessageChannel.EMAIL],
+      });
 
       // Act
       const channels = conversation.getChannels();

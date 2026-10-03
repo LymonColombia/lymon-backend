@@ -4,8 +4,12 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { UserId } from '@/domain/user/entities/user.entity';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 
-const TENANT_ID = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
-const STAFF_ID = UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000');
+const TENANT_ID = TenantId.createFromString(
+  '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+);
+const STAFF_ID = UserId.createFromString(
+  '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
+);
 const PROPERTY_ID = PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000');
 
 function buildCreateParams(overrides?: { weekdays?: number[] }) {

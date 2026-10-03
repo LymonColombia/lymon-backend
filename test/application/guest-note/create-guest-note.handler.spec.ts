@@ -42,7 +42,11 @@ describe('CreateGuestNoteHandler', () => {
     guestRepository = createGuestRepositoryMock();
     guestNoteRepository = createGuestNoteRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new CreateGuestNoteHandler(guestNoteRepository, guestRepository, mockEventEmitter as any);
+    handler = new CreateGuestNoteHandler(
+      guestNoteRepository,
+      guestRepository,
+      mockEventEmitter as any,
+    );
   });
 
   describe('Validation errors (DTO equivalent coverage in handler)', () => {

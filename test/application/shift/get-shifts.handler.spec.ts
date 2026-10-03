@@ -12,7 +12,9 @@ function makeShift(overrides?: { weekdays?: number[] | null }): Shift {
   return Shift.reconstitute({
     id: ShiftId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9d000000000'),
     tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
-    staffMemberIds: [UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000')],
+    staffMemberIds: [
+      UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
+    ],
     propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c300000000'),
     name: 'Morning Cleaning',
     startDate: new Date('2026-03-01T00:00:00.000Z'),

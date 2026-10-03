@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Experience } from '@/domain/experience/entities/experience.entity';
+import {
+  ExperienceScope,
+  ExperienceScopeEnum,
+} from '@/domain/experience/value-objects/experience-scope.vo';
 import type { ExperienceRepository } from '@/domain/experience/repositories/experience.repository';
 import { ExperienceAvailabilityType } from '@/domain/experience/value-objects/experience-availability-type.vo';
 import { ExperienceCategory } from '@/domain/experience/value-objects/experience-category.vo';
@@ -9,12 +13,9 @@ import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo
 import { ExperienceStatus } from '@/domain/experience/value-objects/experience-status.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
-import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
 import { createExperienceRepositoryMock } from '@test/shared/mocks/repositories/experience-repository.mock';
 import { createPropertyRepositoryMock } from '@test/shared/mocks/repositories/property-repository.mock';
-import { createUnitRepositoryMock } from '@test/shared/mocks/repositories/unit-repository.mock';
 import type { PropertyRepository } from '@/domain/property/repositories/property.repository';
-import type { UnitRepository } from '@/domain/unit/repositories/unit.repository';
 import { ExperienceController } from '@/presentation/controllers/experience.controller';
 import { GetExperiencesByTenantQuery } from '@/application/experience/queries/GetExperiencesByTenant/get-experiences-by-tenant.query';
 import { GetExperiencesByTenantQueryHandler } from '@/application/experience/queries/GetExperiencesByTenant/get-experiences-by-tenant.query-handler';
@@ -30,26 +31,16 @@ function makeExperience(overrides?: Partial<{ id: string; tenantId: string }>) {
   return Experience.reconstitute({
     id: ExperienceId.create(overrides?.id ?? EXPERIENCE_ID),
     tenantId: TenantId.createFromString(overrides?.tenantId ?? TENANT_ID),
+    scope: ExperienceScope.create(ExperienceScopeEnum.PROPERTY),
     propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
-    unitIds: [UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000')],
     name: 'Airport transfer',
     description: 'Private transfer service',
     city: 'Medellín',
     category: ExperienceCategory.create('TRANSPORTATION'),
     priceCop: 120000,
-    durationHours: 2,
     capacity: 8,
-    location: {
-      label: 'Main lobby',
-      address: 'Cra 10 #20-30, Bogota',
-      lat: 4.6097,
-      lng: -74.0817,
-    },
-    availabilityType: ExperienceAvailabilityType.create('DATE_RANGE'),
-    startAt: new Date('2099-01-10T10:00:00.000Z'),
-    endAt: new Date('2099-01-20T10:00:00.000Z'),
-    recurrence: undefined,
-    blackoutRanges: [],
+    availabilityType: ExperienceAvailabilityType.create('RECURRING'),
+    recurrence: { daysOfWeek: [1, 3, 5], startTime: '09:00', endTime: '17:00' },
     allowStandalonePurchase: true,
     allowReservationPurchase: true,
     minNoticeHours: 2,
@@ -66,14 +57,12 @@ describe('GetExperiencesByTenant', () => {
   let getByIdHandler: GetExperienceByIdQueryHandler;
   let experienceRepository: jest.Mocked<ExperienceRepository>;
   let propertyRepository: jest.Mocked<PropertyRepository>;
-  let unitRepository: jest.Mocked<UnitRepository>;
   let controller: ExperienceController;
   let queryBus: QueryBus;
 
   beforeEach(async () => {
     experienceRepository = createExperienceRepositoryMock();
     propertyRepository = createPropertyRepositoryMock();
-    unitRepository = createUnitRepositoryMock();
 
     const storage = { getPublicUrl: (k: string) => k } as any;
     handler = new GetExperiencesByTenantQueryHandler(
@@ -83,7 +72,6 @@ describe('GetExperiencesByTenant', () => {
     getByIdHandler = new GetExperienceByIdQueryHandler(
       experienceRepository,
       propertyRepository,
-      unitRepository,
       storage,
     );
 
@@ -154,7 +142,6 @@ describe('GetExperiencesByTenant', () => {
   it('getById handler returns mapped experience for same tenant', async () => {
     experienceRepository.findById.mockResolvedValue(makeExperience());
     propertyRepository.findById.mockResolvedValue(null);
-    unitRepository.findByIds.mockResolvedValue([]);
 
     const result = await getByIdHandler.execute(
       new GetExperienceByIdQuery(EXPERIENCE_ID, TENANT_ID),

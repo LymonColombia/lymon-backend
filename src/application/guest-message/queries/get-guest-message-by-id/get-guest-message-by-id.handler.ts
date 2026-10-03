@@ -9,9 +9,10 @@ import { GetGuestMessageByIdQuery } from './get-guest-message-by-id.query';
 import { GuestMessageDetailDto } from './get-guest-message-by-id.result';
 
 @QueryHandler(GetGuestMessageByIdQuery)
-export class GetGuestMessageByIdHandler
-  implements IQueryHandler<GetGuestMessageByIdQuery, GuestMessageDetailDto>
-{
+export class GetGuestMessageByIdHandler implements IQueryHandler<
+  GetGuestMessageByIdQuery,
+  GuestMessageDetailDto
+> {
   constructor(
     @Inject(GUEST_MESSAGE_REPOSITORY)
     private readonly guestMessageRepository: GuestMessageRepository,
@@ -19,7 +20,9 @@ export class GetGuestMessageByIdHandler
     private readonly messageBodyProvider: IMessageBodyProvider,
   ) {}
 
-  async execute(query: GetGuestMessageByIdQuery): Promise<GuestMessageDetailDto> {
+  async execute(
+    query: GetGuestMessageByIdQuery,
+  ): Promise<GuestMessageDetailDto> {
     const message = await this.guestMessageRepository.findById(
       GuestMessageId.createFromString(query.messageId),
     );

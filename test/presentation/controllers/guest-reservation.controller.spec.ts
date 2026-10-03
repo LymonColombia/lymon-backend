@@ -59,9 +59,14 @@ describe('GuestReservationController', () => {
   });
 
   it('opens booking detail for the authenticated guest account', async () => {
-    queryBus.execute.mockResolvedValue({ id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000' });
+    queryBus.execute.mockResolvedValue({
+      id: '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+    });
 
-    const result = await controller.findOne(guest, '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000');
+    const result = await controller.findOne(
+      guest,
+      '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000',
+    );
 
     expect(queryBus.execute).toHaveBeenCalledWith(
       expect.any(GetGuestReservationQuery),

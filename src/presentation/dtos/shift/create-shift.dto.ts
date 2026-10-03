@@ -21,7 +21,10 @@ export class CreateShiftDto {
   name!: string;
 
   @ApiPropertyOptional({
-    example: ['680c79f3-8b4f-98f4-f638-3b1200000000', '680c79f3-8b4f-98f4-f638-3b1400000000'],
+    example: [
+      '680c79f3-8b4f-98f4-f638-3b1200000000',
+      '680c79f3-8b4f-98f4-f638-3b1400000000',
+    ],
     description: 'Optional assigned staff user ids. Can be empty on create.',
   })
   @IsOptional()

@@ -13,7 +13,6 @@ import { Cart } from '@/domain/cart/entities/cart.entity';
 import { CartItem } from '@/domain/cart/value-objects/cart-item.vo';
 import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-account-id.vo';
 import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo';
-import { ExperienceStatusEnum } from '@/domain/experience/value-objects/experience-status.vo';
 import { DomainException } from '@/domain/shared/exceptions/domain.exception';
 
 @CommandHandler(AddExperienceToCartCommand)
@@ -35,7 +34,7 @@ export class AddExperienceToCartHandler implements ICommandHandler<AddExperience
     if (!experience) {
       throw new NotFoundException('Experience not found');
     }
-    if (experience.getStatus().toString() !== ExperienceStatusEnum.ACTIVE) {
+    if (!experience.getStatus().isActive()) {
       throw new DomainException('Experience is not available for purchase');
     }
 

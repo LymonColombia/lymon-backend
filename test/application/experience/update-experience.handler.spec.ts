@@ -22,8 +22,12 @@ import { ExperienceId } from '@/domain/experience/value-objects/experience-id.vo
 import { ExperienceStatus } from '@/domain/experience/value-objects/experience-status.vo';
 import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
 import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
-import { UnitId } from '@/domain/unit/value-objects/unit-id.vo';
+import {
+  ExperienceScope,
+  ExperienceScopeEnum,
+} from '@/domain/experience/value-objects/experience-scope.vo';
 import { createExperienceRepositoryMock } from '@test/shared/mocks/repositories/experience-repository.mock';
+import { createPropertyRepositoryMock } from '@test/shared/mocks/repositories/property-repository.mock';
 import { createEventEmitterMock } from '@test/shared/mocks/services/event-emitter.mock';
 import { createR2StorageServiceMock } from '@test/shared/mocks/services/r2-storage.mock';
 
@@ -42,27 +46,18 @@ function makeExperience(overrides?: {
   return Experience.reconstitute({
     id: ExperienceId.create(EXPERIENCE_ID),
     tenantId: TenantId.createFromString(overrides?.tenantId ?? TENANT_ID),
+    scope: ExperienceScope.create(ExperienceScopeEnum.PROPERTY),
     propertyId: PropertyId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c100000000'),
-    unitIds: [UnitId.create('65f1a1a2-b3c4-d5e6-f7a8-b9c800000000')],
     name: 'Airport transfer',
     description: 'Private transfer service',
     city: 'Medellín',
     category: ExperienceCategory.create('TRANSPORTATION'),
     priceCop: 120000,
-    durationHours: 2,
     capacity: 8,
-    location: {
-      label: 'Main lobby',
-      lat: 4.6097,
-      lng: -74.0817,
-    },
     availabilityType: ExperienceAvailabilityType.create(
-      ExperienceAvailabilityTypeEnum.DATE_RANGE,
+      ExperienceAvailabilityTypeEnum.RECURRING,
     ),
-    startAt: new Date('2099-01-10T10:00:00.000Z'),
-    endAt: new Date('2099-01-20T10:00:00.000Z'),
-    recurrence: undefined,
-    blackoutRanges: [],
+    recurrence: { daysOfWeek: [1, 3, 5], startTime: '09:00', endTime: '17:00' },
     allowStandalonePurchase: true,
     allowReservationPurchase: true,
     minNoticeHours: 2,
@@ -103,6 +98,7 @@ describe('UpdateExperienceHandler', () => {
 
     handler = new UpdateExperienceHandler(
       experienceRepository,
+      createPropertyRepositoryMock(),
       eventEmitter as any,
       r2StorageService as any,
     );
@@ -185,11 +181,11 @@ describe('UpdateExperienceHandler', () => {
     );
     experienceRepository.save.mockResolvedValue(EXPERIENCE_ID);
 
-    await handler.execute(
-      makeCommand({ changes: { mediaKeys: newKeys } }),
-    );
+    await handler.execute(makeCommand({ changes: { mediaKeys: newKeys } }));
 
-    expect(r2StorageService.deleteObjects).toHaveBeenCalledWith(['tenant/exp-1.jpg']);
+    expect(r2StorageService.deleteObjects).toHaveBeenCalledWith([
+      'tenant/exp-1.jpg',
+    ]);
   });
 
   it('does not call deleteObjects when mediaKeys is not in the command', async () => {

@@ -9,25 +9,29 @@ import {
 import { GuestId } from '@/domain/guest/value-objects/guest-id.vo';
 
 @QueryHandler(GetGuestBookingOriginsQuery)
-export class GetGuestBookingOriginsHandler
-  implements IQueryHandler<GetGuestBookingOriginsQuery, GetGuestBookingOriginsResult>
-{
+export class GetGuestBookingOriginsHandler implements IQueryHandler<
+  GetGuestBookingOriginsQuery,
+  GetGuestBookingOriginsResult
+> {
   constructor(
     @Inject(RESERVATION_REPOSITORY)
     private readonly reservationRepository: ReservationRepository,
   ) {}
 
-  async execute(query: GetGuestBookingOriginsQuery): Promise<GetGuestBookingOriginsResult> {
+  async execute(
+    query: GetGuestBookingOriginsQuery,
+  ): Promise<GetGuestBookingOriginsResult> {
     try {
       GuestId.createFromString(query.guestId);
     } catch {
       return new GetGuestBookingOriginsResult(0, []);
     }
 
-    const grouped = await this.reservationRepository.countByGuestIdGroupedBySource(
-      query.tenantId,
-      query.guestId,
-    );
+    const grouped =
+      await this.reservationRepository.countByGuestIdGroupedBySource(
+        query.tenantId,
+        query.guestId,
+      );
 
     const total = grouped.reduce((sum, item) => sum + item.count, 0);
 

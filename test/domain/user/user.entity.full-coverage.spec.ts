@@ -44,7 +44,9 @@ describe('User Entity - Full Coverage', () => {
     it('equals should return false for different values', () => {
       // Arrange
       const userId1 = UserId.createFromString('user-123');
-      const userId2 = UserId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c200000000');
+      const userId2 = UserId.createFromString(
+        '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
+      );
 
       // Act & Assert
       expect(userId1.equals(userId2)).toBe(false);
@@ -57,7 +59,9 @@ describe('User Entity - Full Coverage', () => {
         // Arrange
         const email = Email.create('owner@example.com');
         const passwordHash = 'hashed-password';
-        const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+        const tenantId = TenantId.createFromString(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        );
 
         // Act
         const user = User.createOwner(email, passwordHash, tenantId);
@@ -79,7 +83,9 @@ describe('User Entity - Full Coverage', () => {
         // Arrange
         const email = Email.create('staff@example.com');
         const passwordHash = 'hashed-password';
-        const tenantId = TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000');
+        const tenantId = TenantId.createFromString(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        );
         const roleAssignments: RoleAssignment[] = [
           {
             roleId: 'VIEWER',
@@ -93,7 +99,10 @@ describe('User Entity - Full Coverage', () => {
           },
           {
             roleId: 'EDITOR',
-            scope: { type: 'UNIT', resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'] },
+            scope: {
+              type: 'UNIT',
+              resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'],
+            },
           },
         ];
 
@@ -174,7 +183,10 @@ describe('User Entity - Full Coverage', () => {
       const retrievedAssignments = user.getRoleAssignments();
       retrievedAssignments.push({
         roleId: 'EDITOR',
-        scope: { type: 'UNIT', resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'] },
+        scope: {
+          type: 'UNIT',
+          resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'],
+        },
       });
 
       // Assert - original should still have only one assignment
@@ -191,7 +203,9 @@ describe('User Entity - Full Coverage', () => {
         id: userId,
         email: Email.create('test@example.com'),
         passwordHash: 'password',
-        tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+        tenantId: TenantId.createFromString(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        ),
         isOwnerFlag: true,
         roleAssignments: [],
         emailVerified: false,
@@ -482,7 +496,9 @@ describe('User Entity - Full Coverage', () => {
         id: UserId.createFromString('user-id'),
         email: Email.create('test@example.com'),
         passwordHash: 'password',
-        tenantId: TenantId.createFromString('65f1a1a2-b3c4-d5e6-f7a8-b9c000000000'),
+        tenantId: TenantId.createFromString(
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000',
+        ),
         isOwnerFlag: false,
         roleAssignments: [{ roleId: 'VIEWER', scope: { type: 'TENANT' } }],
         emailVerified: true,
@@ -522,7 +538,10 @@ describe('User Entity - Full Coverage', () => {
         },
         {
           roleId: 'VIEWER',
-          scope: { type: 'UNIT', resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'] },
+          scope: {
+            type: 'UNIT',
+            resourceIds: ['65f1a1a2-b3c4-d5e6-f7a8-b9c800000000'],
+          },
         },
       ];
 

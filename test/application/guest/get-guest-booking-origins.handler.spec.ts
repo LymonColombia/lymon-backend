@@ -24,14 +24,32 @@ describe('GetGuestBookingOriginsHandler', () => {
         { source: ReservationSourceEnum.VRBO, count: 1 },
       ]);
 
-      const result = await handler.execute(new GetGuestBookingOriginsQuery(tenantId, guestId));
+      const result = await handler.execute(
+        new GetGuestBookingOriginsQuery(tenantId, guestId),
+      );
 
       expect(result.total).toBe(7);
       expect(result.sources).toHaveLength(4);
-      expect(result.sources[0]).toEqual({ source: ReservationSourceEnum.BOOKING, count: 3, percentage: 43 });
-      expect(result.sources[1]).toEqual({ source: ReservationSourceEnum.DIRECT, count: 2, percentage: 29 });
-      expect(result.sources[2]).toEqual({ source: ReservationSourceEnum.AIRBNB, count: 1, percentage: 14 });
-      expect(result.sources[3]).toEqual({ source: ReservationSourceEnum.VRBO, count: 1, percentage: 14 });
+      expect(result.sources[0]).toEqual({
+        source: ReservationSourceEnum.BOOKING,
+        count: 3,
+        percentage: 43,
+      });
+      expect(result.sources[1]).toEqual({
+        source: ReservationSourceEnum.DIRECT,
+        count: 2,
+        percentage: 29,
+      });
+      expect(result.sources[2]).toEqual({
+        source: ReservationSourceEnum.AIRBNB,
+        count: 1,
+        percentage: 14,
+      });
+      expect(result.sources[3]).toEqual({
+        source: ReservationSourceEnum.VRBO,
+        count: 1,
+        percentage: 14,
+      });
     });
   });
 
@@ -41,11 +59,17 @@ describe('GetGuestBookingOriginsHandler', () => {
         { source: ReservationSourceEnum.AIRBNB, count: 5 },
       ]);
 
-      const result = await handler.execute(new GetGuestBookingOriginsQuery(tenantId, guestId));
+      const result = await handler.execute(
+        new GetGuestBookingOriginsQuery(tenantId, guestId),
+      );
 
       expect(result.total).toBe(5);
       expect(result.sources).toHaveLength(1);
-      expect(result.sources[0]).toEqual({ source: ReservationSourceEnum.AIRBNB, count: 5, percentage: 100 });
+      expect(result.sources[0]).toEqual({
+        source: ReservationSourceEnum.AIRBNB,
+        count: 5,
+        percentage: 100,
+      });
     });
   });
 
@@ -53,7 +77,9 @@ describe('GetGuestBookingOriginsHandler', () => {
     it('should return total 0 and empty sources array', async () => {
       reservationRepository.countByGuestIdGroupedBySource.mockResolvedValue([]);
 
-      const result = await handler.execute(new GetGuestBookingOriginsQuery(tenantId, guestId));
+      const result = await handler.execute(
+        new GetGuestBookingOriginsQuery(tenantId, guestId),
+      );
 
       expect(result.total).toBe(0);
       expect(result.sources).toEqual([]);
@@ -68,7 +94,9 @@ describe('GetGuestBookingOriginsHandler', () => {
 
       expect(result.total).toBe(0);
       expect(result.sources).toEqual([]);
-      expect(reservationRepository.countByGuestIdGroupedBySource).not.toHaveBeenCalled();
+      expect(
+        reservationRepository.countByGuestIdGroupedBySource,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -79,7 +107,9 @@ describe('GetGuestBookingOriginsHandler', () => {
         { source: ReservationSourceEnum.BOOKING, count: 1 },
       ]);
 
-      const result = await handler.execute(new GetGuestBookingOriginsQuery(tenantId, guestId));
+      const result = await handler.execute(
+        new GetGuestBookingOriginsQuery(tenantId, guestId),
+      );
 
       expect(result.total).toBe(3);
       expect(result.sources[0].percentage).toBe(67);

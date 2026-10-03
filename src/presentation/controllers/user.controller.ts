@@ -32,10 +32,8 @@ import { ChangePasswordDto } from '@/presentation/dtos/auth/change-password.dto'
 import { InviteStaffDto } from '@/presentation/dtos/tenant/invite-staff.dto';
 import { InviteStaffCommand } from '@/application/user/commands/invite-staff/invite-staff.command';
 import { RoleAssignment } from '@/domain/user/entities/user.entity';
-import { UpdateStaffDto } from '@/presentation/dtos/tenant/update-staff.dto';
 import { UpdateStaffProfileDto } from '@/presentation/dtos/tenant/update-staff-profile.dto';
 import { AddRolesDto } from '@/presentation/dtos/tenant/add-roles.dto';
-import { RemoveRoleDto } from '@/presentation/dtos/tenant/remove-role.dto';
 import { UpdateStaffCommand } from '@/application/user/commands/update-staff.command';
 import { AddRolesCommand } from '@/application/user/commands/add-roles.command';
 import { RemoveAllRolesCommand } from '@/application/user/commands/remove-all-roles.command';
@@ -286,14 +284,13 @@ export class UserController {
     @Body() dto: AddRolesDto,
     @CurrentUser() jwtPayload: JwtPayload,
   ) {
-    const command =
-      new (require('@/application/user/commands/add-roles.command').AddRolesCommand)(
-        userId,
-        dto.roleAssignments,
-        jwtPayload.tenantId,
-        jwtPayload.userId,
-        jwtPayload.email,
-      );
+    const command = new AddRolesCommand(
+      userId,
+      dto.roleAssignments,
+      jwtPayload.tenantId,
+      jwtPayload.userId,
+      jwtPayload.email,
+    );
     await this.commandBus.execute(command);
     return { message: 'Roles added successfully' };
   }
@@ -307,13 +304,12 @@ export class UserController {
     @Param('id') userId: string,
     @CurrentUser() jwtPayload: JwtPayload,
   ) {
-    const command =
-      new (require('@/application/user/commands/remove-all-roles.command').RemoveAllRolesCommand)(
-        userId,
-        jwtPayload.tenantId,
-        jwtPayload.userId,
-        jwtPayload.email,
-      );
+    const command = new RemoveAllRolesCommand(
+      userId,
+      jwtPayload.tenantId,
+      jwtPayload.userId,
+      jwtPayload.email,
+    );
     await this.commandBus.execute(command);
     return { message: 'All roles removed successfully' };
   }
@@ -362,20 +358,19 @@ export class UserController {
     @Query('resourceId') resourceId: string | undefined,
     @CurrentUser() jwtPayload: JwtPayload,
   ) {
-    let scope = undefined as any;
+    let scope: { type: string; resourceIds: string[] } | undefined;
     if (scopeType && resourceId) {
       scope = { type: scopeType, resourceIds: [resourceId] };
     }
 
-    const command =
-      new (require('@/application/user/commands/remove-role.command').RemoveRoleCommand)(
-        userId,
-        roleId,
-        scope,
-        jwtPayload.tenantId,
-        jwtPayload.userId,
-        jwtPayload.email,
-      );
+    const command = new RemoveRoleCommand(
+      userId,
+      roleId,
+      scope,
+      jwtPayload.tenantId,
+      jwtPayload.userId,
+      jwtPayload.email,
+    );
     await this.commandBus.execute(command);
     return { message: 'Role removed successfully' };
   }

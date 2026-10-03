@@ -9,9 +9,7 @@ import {
 } from '@/infrastructure/persistence/prisma/generated/client';
 
 @Injectable()
-export class PrismaIncidentReportRepository
-  implements IncidentReportRepository
-{
+export class PrismaIncidentReportRepository implements IncidentReportRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(report: IncidentReport): Promise<string> {

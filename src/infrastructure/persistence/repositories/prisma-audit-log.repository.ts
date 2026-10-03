@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  AuditLog,
-  AuditLogId,
-} from '@/domain/audit/entities/audit-log.entity';
+import { AuditLog, AuditLogId } from '@/domain/audit/entities/audit-log.entity';
 import {
   AuditAction,
   AuditEntityType,
@@ -93,7 +90,8 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
       entityType: row.entity_type as AuditEntityType,
       entityId: row.entity_id ?? undefined,
       metadata: (row.metadata as Record<string, unknown>) ?? undefined,
-      previousValue: (row.previous_value as Record<string, unknown>) ?? undefined,
+      previousValue:
+        (row.previous_value as Record<string, unknown>) ?? undefined,
       newValue: (row.new_value as Record<string, unknown>) ?? undefined,
       ipAddress: row.ip_address ?? undefined,
       createdAt: row.created_at,

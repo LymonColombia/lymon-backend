@@ -13,12 +13,17 @@ describe('PrismaRoleRepository', () => {
   });
 
   it('creates a role and reads its permission array back', async () => {
-    await repo.save(Role.createSystem('ADMIN', perms('property:read', 'property:write')));
+    await repo.save(
+      Role.createSystem('ADMIN', perms('property:read', 'property:write')),
+    );
 
     const roles = await repo.findSystemRoles();
     expect(roles).toHaveLength(1);
     expect(roles[0].getName()).toBe('ADMIN');
-    expect(roles[0].getPermissions()).toEqual(['property:read', 'property:write']);
+    expect(roles[0].getPermissions()).toEqual([
+      'property:read',
+      'property:write',
+    ]);
   });
 
   it('updates an existing role instead of inserting a second one', async () => {

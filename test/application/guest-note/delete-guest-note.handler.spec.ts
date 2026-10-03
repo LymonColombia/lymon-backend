@@ -17,7 +17,10 @@ describe('DeleteGuestNoteHandler', () => {
   beforeEach(() => {
     guestNoteRepository = createGuestNoteRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new DeleteGuestNoteHandler(guestNoteRepository, mockEventEmitter as any);
+    handler = new DeleteGuestNoteHandler(
+      guestNoteRepository,
+      mockEventEmitter as any,
+    );
   });
 
   describe('when the note does not exist', () => {

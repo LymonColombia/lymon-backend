@@ -12,7 +12,7 @@ import { QueryBus } from '@nestjs/cqrs';
 describe('GetGuestByIdHandler', () => {
   let handler: GetGuestByIdHandler;
   let guestRepository: jest.Mocked<GuestRepository>;
-  let queryBus : QueryBus;
+  let queryBus: QueryBus;
 
   beforeEach(() => {
     guestRepository = createGuestRepositoryMock();
@@ -45,7 +45,9 @@ describe('GetGuestByIdHandler', () => {
 
   describe('when the guest exists but belongs to a different tenant', () => {
     it('returns null for security (TC-02)', async () => {
-      const guest = makeGuest({ tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000' });
+      const guest = makeGuest({
+        tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c900000000',
+      });
       guestRepository.findById.mockResolvedValue(guest);
 
       const query = new GetGuestByIdQuery(
@@ -85,9 +87,7 @@ describe('GetGuestByIdHandler', () => {
         },
       });
 
-      jest
-        .spyOn(guest, 'getPhone')
-        .mockReturnValue(phone);
+      jest.spyOn(guest, 'getPhone').mockReturnValue(phone);
 
       guestRepository.findById.mockResolvedValue(guest);
 

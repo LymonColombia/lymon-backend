@@ -59,7 +59,7 @@ export class R2StorageService {
           Delete: { Objects: keys.map((k) => ({ Key: k })) },
         }),
       );
-    } catch (err) {
+    } catch (err: unknown) {
       // ponytail: orphan cleanup is best-effort; never fail the committed update. Add a retry queue if orphan buildup becomes real.
       console.error('R2 orphan cleanup failed', { keys, err });
     }
