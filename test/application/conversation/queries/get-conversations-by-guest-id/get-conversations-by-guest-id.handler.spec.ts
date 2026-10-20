@@ -6,7 +6,10 @@ import { GetConversationsByGuestIdResult } from '@/application/conversation/quer
 import { ConversationRepository } from '@/domain/conversation/repositories/conversation.repository';
 import { ConversationStatus } from '@/domain/conversation/value-objects/conversation-status.vo';
 import { createConversationRepositoryMock } from '@test/shared/mocks/repositories/conversation-repository.mock';
-import { makeConversation, CONVERSATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/conversation.fixture';
+import {
+  makeConversation,
+  CONVERSATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/conversation.fixture';
 
 const TENANT_ID = CONVERSATION_FIXTURE_DEFAULTS.tenantId;
 const GUEST_ID = CONVERSATION_FIXTURE_DEFAULTS.guestId;
@@ -24,7 +27,10 @@ describe('GetConversationsByGuestIdHandler', () => {
   describe('Happy path', () => {
     it('returns a result with conversation summaries for the given guest', async () => {
       // Arrange
-      const conversation = makeConversation({ tenantId: TENANT_ID, guestId: GUEST_ID });
+      const conversation = makeConversation({
+        tenantId: TENANT_ID,
+        guestId: GUEST_ID,
+      });
       conversationRepository.findByGuestId.mockResolvedValue([conversation]);
       const query = new GetConversationsByGuestIdQuery(TENANT_ID, GUEST_ID);
 
@@ -51,13 +57,19 @@ describe('GetConversationsByGuestIdHandler', () => {
       await handler.execute(query);
 
       // Assert
-      expect(conversationRepository.findByGuestId).toHaveBeenCalledWith(TENANT_ID, GUEST_ID);
+      expect(conversationRepository.findByGuestId).toHaveBeenCalledWith(
+        TENANT_ID,
+        GUEST_ID,
+      );
     });
 
     it('returns multiple conversation summaries when the guest has several conversations', async () => {
       // Arrange
       const conv1 = makeConversation({ subject: 'First thread' });
-      const conv2 = makeConversation({ subject: 'Second thread', status: ConversationStatus.ARCHIVED });
+      const conv2 = makeConversation({
+        subject: 'Second thread',
+        status: ConversationStatus.ARCHIVED,
+      });
       conversationRepository.findByGuestId.mockResolvedValue([conv1, conv2]);
       const query = new GetConversationsByGuestIdQuery(TENANT_ID, GUEST_ID);
 
@@ -101,7 +113,9 @@ describe('GetConversationsByGuestIdHandler', () => {
   describe('Error cases', () => {
     it('propagates repository errors to the caller', async () => {
       // Arrange
-      conversationRepository.findByGuestId.mockRejectedValue(new Error('DB timeout'));
+      conversationRepository.findByGuestId.mockRejectedValue(
+        new Error('DB timeout'),
+      );
       const query = new GetConversationsByGuestIdQuery(TENANT_ID, GUEST_ID);
 
       // Act / Assert

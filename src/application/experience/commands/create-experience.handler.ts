@@ -45,7 +45,8 @@ export class CreateExperienceHandler implements ICommandHandler<CreateExperience
   async execute(
     command: CreateExperienceCommand,
   ): Promise<CreateExperienceResult> {
-    const { tenantId, propertyId, experience } = this.buildDomainObjects(command);
+    const { tenantId, propertyId, experience } =
+      this.buildDomainObjects(command);
 
     const property = propertyId
       ? await this.propertyRepository.findById(propertyId)

@@ -72,7 +72,9 @@ describe('GetTenantProfileQueryHandler', () => {
     });
 
     it('returns null logoUrl when no key is stored', async () => {
-      tenantRepository.findById.mockResolvedValue(makeTenant({ logoKey: null }));
+      tenantRepository.findById.mockResolvedValue(
+        makeTenant({ logoKey: null }),
+      );
 
       const result = await handler.execute(
         new GetTenantProfileQuery(TENANT_FIXTURE_DEFAULTS.id),

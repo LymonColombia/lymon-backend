@@ -29,7 +29,10 @@ describe('UpdateMessageDeliveryStatusHandler', () => {
     guestMessageRepository = createGuestMessageRepositoryMock();
     eventEmitter = { emit: jest.fn() } as unknown as jest.Mocked<EventEmitter2>;
 
-    handler = new UpdateMessageDeliveryStatusHandler(guestMessageRepository, eventEmitter);
+    handler = new UpdateMessageDeliveryStatusHandler(
+      guestMessageRepository,
+      eventEmitter,
+    );
 
     jest.clearAllMocks();
   });
@@ -50,9 +53,9 @@ describe('UpdateMessageDeliveryStatusHandler', () => {
       await handler.execute(command);
 
       // Assert
-      expect(guestMessageRepository.findByProviderMessageId).toHaveBeenCalledWith(
-        PROVIDER_MESSAGE_ID,
-      );
+      expect(
+        guestMessageRepository.findByProviderMessageId,
+      ).toHaveBeenCalledWith(PROVIDER_MESSAGE_ID);
       expect(message.getStatus()).toBe(GuestMessageStatus.DELIVERED);
       expect(guestMessageRepository.save).toHaveBeenCalledTimes(1);
       expect(guestMessageRepository.save).toHaveBeenCalledWith(message);
@@ -161,7 +164,10 @@ describe('UpdateMessageDeliveryStatusHandler', () => {
       // Arrange
       guestMessageRepository.findByProviderMessageId.mockResolvedValue(null);
 
-      const command = makeCommand(DeliveryStatusEvent.DELIVERED, 'unknown-msg-id');
+      const command = makeCommand(
+        DeliveryStatusEvent.DELIVERED,
+        'unknown-msg-id',
+      );
 
       // Act & Assert — must not throw
       await expect(handler.execute(command)).resolves.toBeUndefined();
@@ -179,7 +185,9 @@ describe('UpdateMessageDeliveryStatusHandler', () => {
       await handler.execute(command);
 
       // Assert
-      expect(guestMessageRepository.findByProviderMessageId).toHaveBeenCalledWith(unknownId);
+      expect(
+        guestMessageRepository.findByProviderMessageId,
+      ).toHaveBeenCalledWith(unknownId);
     });
   });
 
@@ -193,7 +201,9 @@ describe('UpdateMessageDeliveryStatusHandler', () => {
       const command = makeCommand(DeliveryStatusEvent.DELIVERED);
 
       // Act & Assert
-      await expect(handler.execute(command)).rejects.toThrow('DB connection lost');
+      await expect(handler.execute(command)).rejects.toThrow(
+        'DB connection lost',
+      );
       expect(guestMessageRepository.save).not.toHaveBeenCalled();
     });
 

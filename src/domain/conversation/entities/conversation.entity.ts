@@ -105,17 +105,43 @@ export class Conversation {
     this.updatedAt = new Date();
   }
 
-  getId(): ConversationId { return this.id; }
-  getTenantId(): string { return this.tenantId; }
-  getGuestId(): string { return this.guestId; }
-  getReservationId(): string | null { return this.reservationId; }
-  getChannels(): GuestMessageChannel[] { return [...this.channels]; }
-  getSubject(): string { return this.subject; }
-  getLastMessageAt(): Date { return this.lastMessageAt; }
-  getLastMessagePreview(): string { return this.lastMessagePreview; }
-  getUnreadCountForStaff(): number { return this.unreadCountForStaff; }
-  getUnreadCountForGuest(): number { return this.unreadCountForGuest; }
-  getStatus(): ConversationStatus { return this.status; }
-  getCreatedAt(): Date { return this.createdAt; }
-  getUpdatedAt(): Date { return this.updatedAt; }
+  getId(): ConversationId {
+    return this.id;
+  }
+  getTenantId(): string {
+    return this.tenantId;
+  }
+  getGuestId(): string {
+    return this.guestId;
+  }
+  getReservationId(): string | null {
+    return this.reservationId;
+  }
+  getChannels(): GuestMessageChannel[] {
+    return [...this.channels];
+  }
+  getSubject(): string {
+    return this.subject;
+  }
+  getLastMessageAt(): Date {
+    return this.lastMessageAt;
+  }
+  getLastMessagePreview(): string {
+    return this.lastMessagePreview;
+  }
+  getUnreadCountForStaff(): number {
+    return this.unreadCountForStaff;
+  }
+  getUnreadCountForGuest(): number {
+    return this.unreadCountForGuest;
+  }
+  getStatus(): ConversationStatus {
+    return this.status;
+  }
+  getCreatedAt(): Date {
+    return this.createdAt;
+  }
+  getUpdatedAt(): Date {
+    return this.updatedAt;
+  }
 }

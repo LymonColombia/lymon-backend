@@ -17,7 +17,6 @@ export function toReservationDto(r: Reservation): ReservationDto {
   dto.pricePerNight = r.getPricePerNight();
   dto.totalPrice = r.getTotalPrice();
   dto.notes = r.getNotes();
-  dto.externalReservationId = r.getExternalReservationId();
   dto.cancelledAt = r.getCancelledAt();
   dto.cancellationReason = r.getCancellationReason();
   dto.checkInActualAt = r.getCheckInActualAt();

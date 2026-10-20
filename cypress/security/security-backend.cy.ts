@@ -263,7 +263,8 @@ describe('Backend Security Tests', () => {
       }).then((response) => {
         const body = JSON.stringify(response.body);
         expect(body).not.to.include('database');
-        expect(body).not.to.include('MongoDB');
+        expect(body).not.to.include('PostgreSQL');
+        expect(body).not.to.include('prisma');
         expect(body).not.to.include('query');
       });
     });

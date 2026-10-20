@@ -31,7 +31,6 @@ interface CreateReservationParams {
   guestsCount: number;
   pricePerNight: number;
   notes?: string | null;
-  externalReservationId?: string | null;
 }
 
 export class Reservation {
@@ -48,7 +47,6 @@ export class Reservation {
     private readonly pricePerNight: number,
     private totalPrice: number,
     private notes: string | null,
-    private readonly externalReservationId: string | null,
     private cancelledAt: Date | null,
     private cancellationReason: string | null,
     private checkInActualAt: Date | null,
@@ -76,7 +74,6 @@ export class Reservation {
       params.pricePerNight,
       totalPrice,
       params.notes ?? null,
-      params.externalReservationId ?? null,
       null,
       null,
       null,
@@ -108,7 +105,6 @@ export class Reservation {
       data.pricePerNight,
       data.totalPrice,
       data.notes,
-      data.externalReservationId,
       data.cancelledAt,
       data.cancellationReason,
       data.checkInActualAt,
@@ -248,10 +244,6 @@ export class Reservation {
 
   getNotes(): string | null {
     return this.notes;
-  }
-
-  getExternalReservationId(): string | null {
-    return this.externalReservationId;
   }
 
   getCancelledAt(): Date | null {

@@ -8,9 +8,9 @@ describe('TenantController', () => {
   let queryBus: { execute: jest.Mock };
 
   const user = {
-    userId: '65f1a1a2b3c4d5e6f7a8b9c1',
+    userId: '65f1a1a2-b3c4-d5e6-f7a8-b9c100000000',
     email: 'owner@test.com',
-    tenantId: '65f1a1a2b3c4d5e6f7a8b9c2',
+    tenantId: '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
     activePlan: 'TRIAL',
     isOwner: true,
     emailVerified: true,

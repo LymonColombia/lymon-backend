@@ -43,9 +43,15 @@ describe('GetGuestMessageByIdHandler', () => {
         status: GuestMessageStatus.SENT,
       });
       guestMessageRepository.findById.mockResolvedValue(message);
-      messageBodyProvider.getBody.mockResolvedValue('Full email body from provider');
+      messageBodyProvider.getBody.mockResolvedValue(
+        'Full email body from provider',
+      );
 
-      const query = new GetGuestMessageByIdQuery(TENANT_ID, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        TENANT_ID,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act
       const result = await handler.execute(query);
@@ -68,7 +74,11 @@ describe('GetGuestMessageByIdHandler', () => {
       guestMessageRepository.findById.mockResolvedValue(message);
       messageBodyProvider.getBody.mockResolvedValue(null);
 
-      const query = new GetGuestMessageByIdQuery(TENANT_ID, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        TENANT_ID,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act
       const result = await handler.execute(query);
@@ -87,7 +97,11 @@ describe('GetGuestMessageByIdHandler', () => {
       });
       guestMessageRepository.findById.mockResolvedValue(message);
 
-      const query = new GetGuestMessageByIdQuery(TENANT_ID, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        TENANT_ID,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act
       const result = await handler.execute(query);
@@ -105,7 +119,11 @@ describe('GetGuestMessageByIdHandler', () => {
       });
       guestMessageRepository.findById.mockResolvedValue(message);
 
-      const query = new GetGuestMessageByIdQuery(TENANT_ID, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        TENANT_ID,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act
       const result = await handler.execute(query);
@@ -118,7 +136,9 @@ describe('GetGuestMessageByIdHandler', () => {
       expect(result.status).toBe(GuestMessageStatus.DELIVERED);
       expect(result.sentBy).toEqual(GUEST_MESSAGE_FIXTURE_DEFAULTS.sentBy);
       expect(result.attachments).toEqual([]);
-      expect(result.createdAt).toEqual(GUEST_MESSAGE_FIXTURE_DEFAULTS.createdAt);
+      expect(result.createdAt).toEqual(
+        GUEST_MESSAGE_FIXTURE_DEFAULTS.createdAt,
+      );
     });
   });
 
@@ -127,31 +147,47 @@ describe('GetGuestMessageByIdHandler', () => {
       // Arrange
       guestMessageRepository.findById.mockResolvedValue(null);
 
-      const query = new GetGuestMessageByIdQuery(TENANT_ID, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        TENANT_ID,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act & Assert
       await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(query)).rejects.toThrow('Mensaje no encontrado');
+      await expect(handler.execute(query)).rejects.toThrow(
+        'Mensaje no encontrado',
+      );
     });
 
     it('throws NotFoundException when message belongs to a different tenant', async () => {
       // Arrange
-      const differentTenantId = '65f1a1a2b3c4d5e6f7a8b9ff';
+      const differentTenantId = '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000';
       const message = makeGuestMessage({ tenantId: TENANT_ID });
       guestMessageRepository.findById.mockResolvedValue(message);
 
-      const query = new GetGuestMessageByIdQuery(differentTenantId, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        differentTenantId,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act & Assert
       await expect(handler.execute(query)).rejects.toThrow(NotFoundException);
-      await expect(handler.execute(query)).rejects.toThrow('Mensaje no encontrado');
+      await expect(handler.execute(query)).rejects.toThrow(
+        'Mensaje no encontrado',
+      );
     });
 
     it('does not call messageBodyProvider when message is not found', async () => {
       // Arrange
       guestMessageRepository.findById.mockResolvedValue(null);
 
-      const query = new GetGuestMessageByIdQuery(TENANT_ID, GUEST_ID, MESSAGE_ID);
+      const query = new GetGuestMessageByIdQuery(
+        TENANT_ID,
+        GUEST_ID,
+        MESSAGE_ID,
+      );
 
       // Act
       await expect(handler.execute(query)).rejects.toThrow(NotFoundException);

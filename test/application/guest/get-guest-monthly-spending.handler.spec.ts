@@ -6,8 +6,8 @@ describe('GetGuestMonthlySpendingHandler', () => {
   let handler: GetGuestMonthlySpendingHandler;
   let reservationRepository: ReturnType<typeof createReservationRepositoryMock>;
 
-  const tenantId = '65f1a1a2b3c4d5e6f7a8b9c2';
-  const guestId = '65f1a1a2b3c4d5e6f7a8b9c0';
+  const tenantId = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
+  const guestId = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
 
   beforeEach(() => {
     reservationRepository = createReservationRepositoryMock();
@@ -93,7 +93,10 @@ describe('GetGuestMonthlySpendingHandler', () => {
 
   describe('UT-03: Invalid guestId returns 12 zero-items without calling repository', () => {
     it('should return 12 zero items when guestId is not a valid ObjectId', async () => {
-      const query = new GetGuestMonthlySpendingQuery(tenantId, 'not-an-object-id');
+      const query = new GetGuestMonthlySpendingQuery(
+        tenantId,
+        'not-an-object-id',
+      );
       const result = await handler.execute(query);
 
       expect(result.items).toHaveLength(12);
@@ -120,8 +123,18 @@ describe('GetGuestMonthlySpendingHandler', () => {
       const result = await handler.execute(query);
 
       const monthNames = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
 
       for (const item of result.items) {
@@ -135,15 +148,25 @@ describe('GetGuestMonthlySpendingHandler', () => {
       const currentYear = now.getUTCFullYear();
       const currentMonth = now.getUTCMonth() + 1;
       const monthNames = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
       const expectedCurrentLabel = `${monthNames[currentMonth - 1]} ${currentYear}`;
 
       const query = new GetGuestMonthlySpendingQuery(tenantId, guestId);
       const result = await handler.execute(query);
 
-      const lastItem = result.items.at(-1)!
+      const lastItem = result.items.at(-1)!;
       expect(lastItem.label).toBe(expectedCurrentLabel);
     });
   });

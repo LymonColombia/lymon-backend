@@ -134,6 +134,17 @@ describe('RegisterTenantHandler', () => {
       );
     });
 
+    it('still returns the result when the verification email fails', async () => {
+      emailService.sendVerificationEmail.mockRejectedValue(
+        new Error('Failed to send email: unauthorized'),
+      );
+
+      const result = await handler.execute(makeCommand());
+
+      expect(result).toBeInstanceOf(RegisterTenantResult);
+      expect(result.accessToken).toBe('access-token');
+    });
+
     it('emits TENANT_REGISTERED audit event', async () => {
       await handler.execute(makeCommand());
 

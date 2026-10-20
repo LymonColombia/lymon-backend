@@ -21,6 +21,8 @@ import { CurrentGuest } from '@/infrastructure/guest-auth/decorators/current-gue
 import { type GuestJwtPayload } from '@/application/guest-auth/services/guest-jwt.service';
 import { GetExperiencePurchasesByGuestQuery } from '@/application/experience-purchase/queries/get-experience-purchases-by-guest/get-experience-purchases-by-guest.query';
 import { GetExperiencePurchaseByIdQuery } from '@/application/experience-purchase/queries/get-experience-purchase-by-id/get-experience-purchase-by-id.query';
+import type { GetExperiencePurchasesByGuestResult } from '@/application/experience-purchase/queries/get-experience-purchases-by-guest/get-experience-purchases-by-guest.handler';
+import type { GetExperiencePurchaseByIdHandler } from '@/application/experience-purchase/queries/get-experience-purchase-by-id/get-experience-purchase-by-id.handler';
 import { CancelExperiencePurchaseCommand } from '@/application/experience-purchase/commands/cancel-experience-purchase/cancel-experience-purchase.command';
 
 @ApiTags('guest-experience-purchases')
@@ -48,7 +50,10 @@ export class GuestExperiencePurchasesController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.queryBus.execute(
+    return this.queryBus.execute<
+      GetExperiencePurchasesByGuestQuery,
+      GetExperiencePurchasesByGuestResult
+    >(
       new GetExperiencePurchasesByGuestQuery(
         guest.guestAccountId,
         tenantId,
@@ -65,9 +70,10 @@ export class GuestExperiencePurchasesController {
     @CurrentGuest() guest: GuestJwtPayload,
     @Param('id') id: string,
   ) {
-    return this.queryBus.execute(
-      new GetExperiencePurchaseByIdQuery(id, guest.guestAccountId),
-    );
+    return this.queryBus.execute<
+      GetExperiencePurchaseByIdQuery,
+      Awaited<ReturnType<GetExperiencePurchaseByIdHandler['execute']>>
+    >(new GetExperiencePurchaseByIdQuery(id, guest.guestAccountId));
   }
 
   @Post(':id/cancel')

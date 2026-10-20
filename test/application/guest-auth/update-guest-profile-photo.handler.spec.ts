@@ -20,7 +20,10 @@ describe('UpdateGuestProfilePhotoHandler', () => {
   let handler: UpdateGuestProfilePhotoHandler;
   let guestAccountRepository: jest.Mocked<GuestAccountRepository>;
   let storageService: jest.Mocked<
-    Pick<R2StorageService, 'deleteObjects' | 'getPublicUrl' | 'keyFromPublicUrl'>
+    Pick<
+      R2StorageService,
+      'deleteObjects' | 'getPublicUrl' | 'keyFromPublicUrl'
+    >
   >;
 
   beforeEach(() => {

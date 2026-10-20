@@ -14,7 +14,7 @@ import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
 import { ReservationStatusEnum } from '@/domain/reservation/value-objects/reservation-status.vo';
 import { DomainException } from '@/domain/shared/exceptions/domain.exception';
 
-const GUEST_ACCOUNT_ID = '65f1a1a2b3c4d5e6f7a8b9d0';
+const GUEST_ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9d000000000';
 
 function makeGuestRecord(guestAccountId: string) {
   const guest = Guest.create({
@@ -146,7 +146,7 @@ describe('SubmitCheckInInfoHandler', () => {
     await expect(
       handler.execute(
         new SubmitCheckInInfoCommand(
-          '65f1a1a2b3c4d5e6f7a8b9ff',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9ff00000000',
           GUEST_ACCOUNT_ID,
           [makeTraveler()],
         ),

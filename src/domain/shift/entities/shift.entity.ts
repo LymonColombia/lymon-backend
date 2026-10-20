@@ -80,7 +80,9 @@ export class Shift {
       params.endHour,
       params.startMinutes,
       params.endMinutes,
-      params.weekdays && params.weekdays.length > 0 ? [...params.weekdays] : null,
+      params.weekdays && params.weekdays.length > 0
+        ? [...params.weekdays]
+        : null,
       params.notes?.trim() ?? null,
       params.createdBy ?? null,
       params.createdByEmail ?? null,
@@ -358,9 +360,10 @@ export class Shift {
     this.startMinutes = updates.startMinutes;
     this.endMinutes = updates.endMinutes;
     if (updates.weekdays !== undefined) {
-      this.weekdays = updates.weekdays && updates.weekdays.length > 0
-        ? [...updates.weekdays]
-        : null;
+      this.weekdays =
+        updates.weekdays && updates.weekdays.length > 0
+          ? [...updates.weekdays]
+          : null;
     }
 
     const trimmedNotes = updates.notes?.trim() ?? null;

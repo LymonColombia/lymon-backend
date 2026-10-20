@@ -1,16 +1,12 @@
 import { Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import {
-  CONVERSATION_REPOSITORY,
-} from '@/domain/conversation/repositories/conversation.repository';
+import { CONVERSATION_REPOSITORY } from '@/domain/conversation/repositories/conversation.repository';
 import type { ConversationRepository } from '@/domain/conversation/repositories/conversation.repository';
 import { ConversationId } from '@/domain/conversation/value-objects/conversation-id.vo';
 import { ArchiveConversationCommand } from './archive-conversation.command';
 
 @CommandHandler(ArchiveConversationCommand)
-export class ArchiveConversationHandler
-  implements ICommandHandler<ArchiveConversationCommand>
-{
+export class ArchiveConversationHandler implements ICommandHandler<ArchiveConversationCommand> {
   constructor(
     @Inject(CONVERSATION_REPOSITORY)
     private readonly conversationRepository: ConversationRepository,

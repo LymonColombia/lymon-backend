@@ -20,13 +20,13 @@ export class WompiPaymentGateway implements IPaymentGateway {
       this.configService.get<string>('WOMPI_REDIRECT_URL') ?? null;
   }
 
-  async buildCheckoutPayload(
+  buildCheckoutPayload(
     request: PaymentCheckoutRequest,
   ): Promise<PaymentCheckoutResponse> {
     const signatureIntegrity = this.buildSignature(request);
     const redirectUrl = request.redirectUrl ?? this.redirectUrl;
 
-    return {
+    return Promise.resolve({
       publicKey: this.publicKey,
       reference: request.reference,
       amountInCents: request.amountInCents,
@@ -35,7 +35,7 @@ export class WompiPaymentGateway implements IPaymentGateway {
       redirectUrl,
       expirationTime: request.expirationTime ?? null,
       customerData: request.customerData ?? null,
-    };
+    });
   }
 
   private buildSignature(request: PaymentCheckoutRequest): string {

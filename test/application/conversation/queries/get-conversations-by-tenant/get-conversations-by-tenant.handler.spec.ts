@@ -7,7 +7,10 @@ import { ConversationRepository } from '@/domain/conversation/repositories/conve
 import { ConversationStatus } from '@/domain/conversation/value-objects/conversation-status.vo';
 import { GuestMessageChannel } from '@/domain/guest-message/value-objects/guest-message-channel.vo';
 import { createConversationRepositoryMock } from '@test/shared/mocks/repositories/conversation-repository.mock';
-import { makeConversation, CONVERSATION_FIXTURE_DEFAULTS } from '@test/shared/fixtures/conversation.fixture';
+import {
+  makeConversation,
+  CONVERSATION_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/conversation.fixture';
 
 const TENANT_ID = CONVERSATION_FIXTURE_DEFAULTS.tenantId;
 
@@ -54,7 +57,12 @@ describe('GetConversationsByTenantHandler', () => {
         conversations: [],
         total: 0,
       });
-      const query = new GetConversationsByTenantQuery(TENANT_ID, 1, 10, GuestMessageChannel.EMAIL);
+      const query = new GetConversationsByTenantQuery(
+        TENANT_ID,
+        1,
+        10,
+        GuestMessageChannel.EMAIL,
+      );
 
       // Act
       await handler.execute(query);
@@ -127,13 +135,19 @@ describe('GetConversationsByTenantHandler', () => {
         conversations: [],
         total: 0,
       });
-      const query = new GetConversationsByTenantQuery(TENANT_ID, 1, 10, 'invalid-channel');
+      const query = new GetConversationsByTenantQuery(
+        TENANT_ID,
+        1,
+        10,
+        'invalid-channel',
+      );
 
       // Act
       await handler.execute(query);
 
       // Assert
-      const calledFilters = conversationRepository.findByTenantPaginated.mock.calls[0][1];
+      const calledFilters =
+        conversationRepository.findByTenantPaginated.mock.calls[0][1];
       expect(calledFilters.channel).toBeUndefined();
     });
 
@@ -179,7 +193,9 @@ describe('GetConversationsByTenantHandler', () => {
       const query = new GetConversationsByTenantQuery(TENANT_ID, 1, 10);
 
       // Act / Assert
-      await expect(handler.execute(query)).rejects.toThrow('DB connection failed');
+      await expect(handler.execute(query)).rejects.toThrow(
+        'DB connection failed',
+      );
     });
   });
 });

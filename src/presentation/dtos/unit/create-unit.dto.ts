@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsNumber,
   Min,
-  IsBoolean,
   IsArray,
   ValidateNested,
   IsEnum,
@@ -79,7 +78,7 @@ class ExternalIdsDto {
 
 export class CreateUnitDto {
   @ApiProperty({
-    example: '507f1f77bcf86cd799439011',
+    example: '507f1f77-bcf8-6cd7-9943-901100000000',
     description: 'Property ID to which this unit belongs',
   })
   @IsString()
@@ -139,13 +138,6 @@ export class CreateUnitDto {
   @IsNumber()
   @Min(0)
   bathroomsCount!: number;
-
-  @ApiProperty({
-    example: false,
-    description: 'Whether the unit is a shared space',
-  })
-  @IsBoolean()
-  isShared!: boolean;
 
   @ApiProperty({
     example: ['WiFi', 'Air Conditioning', 'TV', 'Mini Bar'],

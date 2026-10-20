@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PresentationModule } from '@/presentation/presentation.module';
 import { ApplicationModule } from '@/application/application.module';
@@ -23,13 +22,6 @@ import { PaymentModule } from '@/infrastructure/payment/payment.module';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
-      }),
-      inject: [ConfigService],
-    }),
     ScheduleModule.forRoot(),
     AuthModule,
     PresentationModule,

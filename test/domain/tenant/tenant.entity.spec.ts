@@ -4,7 +4,7 @@ import { Email } from '@/domain/shared/value-objects/email.vo';
 import { PlanType } from '@/domain/tenant/value-objects/plan-type.vo';
 
 describe('Tenant Entity - COMPREHENSIVE COVERAGE', () => {
-  const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
+  const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
   const OWNER_EMAIL = 'owner@example.com';
   const TENANT_NAME = 'Acme Corporation';
 
@@ -874,9 +874,15 @@ describe('Tenant Entity - COMPREHENSIVE COVERAGE', () => {
     });
 
     it('TT-064: should update all fields at once', () => {
-      tenant.updateProfile('New Company', '+1111111111', '456 Oak Ave', 'A new company', {
-        primary: '#123456',
-      });
+      tenant.updateProfile(
+        'New Company',
+        '+1111111111',
+        '456 Oak Ave',
+        'A new company',
+        {
+          primary: '#123456',
+        },
+      );
 
       expect(tenant.getName()).toBe('New Company');
       expect(tenant.getContactPhone()).toBe('+1111111111');
@@ -903,9 +909,15 @@ describe('Tenant Entity - COMPREHENSIVE COVERAGE', () => {
     });
 
     it('TT-066: should clear optional fields', () => {
-      tenant.updateProfile(undefined, '+1234567890', '123 Main', 'A description', {
-        primary: '#123456',
-      });
+      tenant.updateProfile(
+        undefined,
+        '+1234567890',
+        '123 Main',
+        'A description',
+        {
+          primary: '#123456',
+        },
+      );
 
       tenant.updateProfile(undefined, null, null, null, null);
 

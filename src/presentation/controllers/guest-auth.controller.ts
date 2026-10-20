@@ -72,7 +72,9 @@ export class GuestAuthController {
 
   @GuestPublic()
   @Get('verify-email')
-  @ApiOperation({ summary: 'Verify guest email address or confirm email change' })
+  @ApiOperation({
+    summary: 'Verify guest email address or confirm email change',
+  })
   @ApiResponse({ status: 200, description: 'Email verified' })
   @ApiResponse({ status: 400, description: 'Invalid or expired token' })
   async verifyEmail(@Query('token') token: string) {
@@ -83,7 +85,11 @@ export class GuestAuthController {
       >(new VerifyGuestEmailCommand(token));
       return { message: result.message };
     } catch (e) {
-      if (!(e instanceof BadRequestException || e instanceof UnauthorizedException)) {
+      if (
+        !(
+          e instanceof BadRequestException || e instanceof UnauthorizedException
+        )
+      ) {
         throw e;
       }
     }
@@ -92,7 +98,11 @@ export class GuestAuthController {
       await this.commandBus.execute(new ConfirmGuestEmailChangeCommand(token));
       return { message: 'Email updated successfully' };
     } catch (e) {
-      if (!(e instanceof BadRequestException || e instanceof UnauthorizedException)) {
+      if (
+        !(
+          e instanceof BadRequestException || e instanceof UnauthorizedException
+        )
+      ) {
         throw e;
       }
     }

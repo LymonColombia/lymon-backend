@@ -12,6 +12,17 @@ export interface ShiftFilters {
   propertyId?: PropertyId;
 }
 
+/** The time window a shift occupies, checked against a staff member's other shifts. */
+export interface ShiftWindow {
+  startDate: Date;
+  /** null = open-ended */
+  endDate: Date | null;
+  startMinutes: number;
+  endMinutes: number;
+  /** null/empty = every day */
+  weekdays?: number[] | null;
+}
+
 export interface ShiftRepository {
   save(shift: Shift): Promise<string>;
   delete(id: ShiftId): Promise<void>;
@@ -24,12 +35,8 @@ export interface ShiftRepository {
   findOverlappingByStaffInRange(
     tenantId: TenantId,
     staffMemberId: UserId,
-    startDate: Date,
-    endDate: Date | null,
-    startMinutes: number,
-    endMinutes: number,
+    window: ShiftWindow,
     excludeShiftId?: ShiftId,
-    weekdays?: number[] | null,
   ): Promise<Shift | null>;
   findOverlappingByStaff(
     tenantId: TenantId,

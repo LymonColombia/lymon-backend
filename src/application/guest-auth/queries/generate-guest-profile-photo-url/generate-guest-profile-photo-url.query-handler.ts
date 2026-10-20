@@ -12,13 +12,10 @@ import { GenerateGuestProfilePhotoUrlQuery } from './generate-guest-profile-phot
 import { GenerateGuestProfilePhotoUrlResult } from './generate-guest-profile-photo-url.result';
 
 @QueryHandler(GenerateGuestProfilePhotoUrlQuery)
-export class GenerateGuestProfilePhotoUrlQueryHandler
-  implements
-    IQueryHandler<
-      GenerateGuestProfilePhotoUrlQuery,
-      GenerateGuestProfilePhotoUrlResult
-    >
-{
+export class GenerateGuestProfilePhotoUrlQueryHandler implements IQueryHandler<
+  GenerateGuestProfilePhotoUrlQuery,
+  GenerateGuestProfilePhotoUrlResult
+> {
   constructor(
     @Inject(R2_STORAGE_SERVICE)
     private readonly storageService: R2StorageService,

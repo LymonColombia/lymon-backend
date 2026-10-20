@@ -28,8 +28,6 @@ export interface GuestReservationsReadRepository {
     filters?: GuestReservationFilters,
   ): Promise<number>;
   getLifecycleStatusByGuestIds(
-    guestIds: string[]
+    guestIds: string[],
   ): Promise<Map<string, GuestLifecycleStatus>>;
 }
-
-

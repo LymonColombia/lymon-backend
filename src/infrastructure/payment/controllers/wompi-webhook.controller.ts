@@ -87,6 +87,7 @@ export class WompiWebhookController {
       return '';
     }
 
-    return String(value);
+    // payload is parsed JSON, so non-strings are numbers/booleans: JSON.stringify matches String()
+    return typeof value === 'string' ? value : JSON.stringify(value);
   }
 }

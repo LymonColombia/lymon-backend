@@ -26,9 +26,7 @@ const EVENT_TO_STATUS: Record<DeliveryStatusEvent, GuestMessageStatus> = {
 };
 
 @CommandHandler(UpdateMessageDeliveryStatusCommand)
-export class UpdateMessageDeliveryStatusHandler
-  implements ICommandHandler<UpdateMessageDeliveryStatusCommand>
-{
+export class UpdateMessageDeliveryStatusHandler implements ICommandHandler<UpdateMessageDeliveryStatusCommand> {
   private readonly logger = new Logger(UpdateMessageDeliveryStatusHandler.name);
 
   constructor(

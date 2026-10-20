@@ -1,26 +1,25 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import {
-  CONVERSATION_REPOSITORY,
-} from '@/domain/conversation/repositories/conversation.repository';
+import { CONVERSATION_REPOSITORY } from '@/domain/conversation/repositories/conversation.repository';
 import type { ConversationRepository } from '@/domain/conversation/repositories/conversation.repository';
 import { Conversation } from '@/domain/conversation/entities/conversation.entity';
-import {
-  ConversationSummaryDto,
-} from '../get-conversations-by-tenant/get-conversations-by-tenant.result';
+import { ConversationSummaryDto } from '../get-conversations-by-tenant/get-conversations-by-tenant.result';
 import { GetConversationsByGuestIdQuery } from './get-conversations-by-guest-id.query';
 import { GetConversationsByGuestIdResult } from './get-conversations-by-guest-id.result';
 
 @QueryHandler(GetConversationsByGuestIdQuery)
-export class GetConversationsByGuestIdHandler
-  implements IQueryHandler<GetConversationsByGuestIdQuery, GetConversationsByGuestIdResult>
-{
+export class GetConversationsByGuestIdHandler implements IQueryHandler<
+  GetConversationsByGuestIdQuery,
+  GetConversationsByGuestIdResult
+> {
   constructor(
     @Inject(CONVERSATION_REPOSITORY)
     private readonly conversationRepository: ConversationRepository,
   ) {}
 
-  async execute(query: GetConversationsByGuestIdQuery): Promise<GetConversationsByGuestIdResult> {
+  async execute(
+    query: GetConversationsByGuestIdQuery,
+  ): Promise<GetConversationsByGuestIdResult> {
     const conversations = await this.conversationRepository.findByGuestId(
       query.tenantId,
       query.guestId,

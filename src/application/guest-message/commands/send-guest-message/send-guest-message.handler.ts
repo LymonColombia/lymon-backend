@@ -2,9 +2,7 @@ import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Conversation } from '@/domain/conversation/entities/conversation.entity';
-import {
-  CONVERSATION_REPOSITORY,
-} from '@/domain/conversation/repositories/conversation.repository';
+import { CONVERSATION_REPOSITORY } from '@/domain/conversation/repositories/conversation.repository';
 import type { ConversationRepository } from '@/domain/conversation/repositories/conversation.repository';
 import { GuestMessage } from '@/domain/guest-message/entities/guest-message.entity';
 import { GUEST_MESSAGE_REPOSITORY } from '@/domain/guest-message/repositories/guest-message.repository';
@@ -36,9 +34,7 @@ import {
 import { SendGuestMessageCommand } from './send-guest-message.command';
 
 @CommandHandler(SendGuestMessageCommand)
-export class SendGuestMessageHandler
-  implements ICommandHandler<SendGuestMessageCommand>
-{
+export class SendGuestMessageHandler implements ICommandHandler<SendGuestMessageCommand> {
   constructor(
     @Inject(GUEST_REPOSITORY)
     private readonly guestRepository: GuestRepository,
@@ -185,7 +181,9 @@ export class SendGuestMessageHandler
         htmlContent,
         [guest.getPrimaryEmail()],
         [guest.getFullName()],
-        guestMessage.getAttachments().map((att) => ({ url: att.url, name: att.name })),
+        guestMessage
+          .getAttachments()
+          .map((att) => ({ url: att.url, name: att.name })),
         propertyName,
       ),
     );

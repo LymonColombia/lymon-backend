@@ -1,0 +1,73 @@
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model shifts {
+  id                  String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id           String                @db.Uuid
+  property_id         String                @db.Uuid
+  name                String
+  start_date          DateTime              @db.Date
+  end_date            DateTime?             @db.Date
+  start_hour          DateTime              @db.Time(6)
+  end_hour            DateTime              @db.Time(6)
+  start_minutes       Int
+  end_minutes         Int
+  weekdays            Int[]                 @db.SmallInt
+  notes               String?
+  created_by          String?               @db.Uuid
+  created_by_email    String?               @db.Citext
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime              @default(now()) @db.Timestamptz(6)
+  shift_staff_members shift_staff_members[]
+  users               users?                @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties          properties            @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants             tenants               @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([tenant_id, property_id, start_date])
+}
+
+model shift_staff_members {
+  shift_id String @db.Uuid
+  user_id  String @db.Uuid
+  shifts   shifts @relation(fields: [shift_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users    users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([shift_id, user_id])
+  @@index([user_id])
+}
+
+model incident_reports {
+  id              String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id       String     @db.Uuid
+  property_id     String     @db.Uuid
+  created_by      String     @db.Uuid
+  title           String
+  description     String
+  attachment_urls String[]   @default([])
+  created_at      DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime   @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?  @db.Timestamptz(6)
+  users           users      @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties      properties @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants         tenants    @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([property_id, created_at(sort: Desc)], where: raw("(deleted_at IS NULL)"))
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model audit_logs {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id      String   @db.Uuid
+  user_id        String   @db.Uuid
+  user_email     String   @db.Citext
+  action         String
+  entity_type    String
+  entity_id      String?  @db.Uuid
+  metadata       Json?
+  previous_value Json?
+  new_value      Json?
+  ip_address     String?
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  tenants        tenants  @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([entity_type, entity_id])
+  @@index([tenant_id, created_at(sort: Desc)])
+}

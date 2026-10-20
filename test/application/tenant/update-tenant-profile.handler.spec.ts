@@ -42,7 +42,7 @@ describe('UpdateTenantProfileHandler', () => {
             null,
             null,
             null,
-            '65f1a1a2b3c4d5e6f7a8b9c2',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'owner@example.com',
           ), // (id, name, contactPhone, address, description, theme, logoKey, actorId, actorEmail)
         ),
@@ -63,7 +63,7 @@ describe('UpdateTenantProfileHandler', () => {
           'An updated description',
           { primary: '#1A73E8' },
           undefined,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'owner@example.com',
         ),
       );
@@ -90,7 +90,7 @@ describe('UpdateTenantProfileHandler', () => {
             undefined,
             undefined,
             'someone-else/logos/1.png',
-            '65f1a1a2b3c4d5e6f7a8b9c2',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'owner@example.com',
           ),
         ),
@@ -114,7 +114,7 @@ describe('UpdateTenantProfileHandler', () => {
           undefined,
           undefined,
           newKey,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'owner@example.com',
         ),
       );

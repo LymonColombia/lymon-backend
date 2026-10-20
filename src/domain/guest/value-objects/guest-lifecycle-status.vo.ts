@@ -15,7 +15,11 @@ export class GuestLifecycleStatusVO {
   }
 
   public static create(value: string): GuestLifecycleStatusVO {
-    if (!Object.values(GuestLifecycleStatus).includes(value as GuestLifecycleStatus)) {
+    if (
+      !Object.values(GuestLifecycleStatus).includes(
+        value as GuestLifecycleStatus,
+      )
+    ) {
       throw new BadRequestException(`Invalid lifecycle status: ${value}`);
     }
     return new GuestLifecycleStatusVO(value as GuestLifecycleStatus);

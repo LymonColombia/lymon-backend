@@ -7,7 +7,6 @@ export class UnitDto {
     public readonly maxGuests: number,
     public readonly standardGuests: number,
     public readonly bathroomsCount: number,
-    public readonly isShared: boolean,
     public readonly amenities: string[],
     public readonly pricePerNight: number,
     public readonly createdAt: Date,

@@ -15,7 +15,10 @@ import {
 import { RecordInboundMessageCommand } from '@/application/guest-message/commands/record-inbound-message/record-inbound-message.command';
 import { createGuestRepositoryMock } from '@test/shared/mocks/repositories/guest-repository.mock';
 import { createGuestMessageRepositoryMock } from '@test/shared/mocks/repositories/guest-message-repository.mock';
-import { makeGuest, GUEST_FIXTURE_DEFAULTS } from '@test/shared/fixtures/guest.fixture';
+import {
+  makeGuest,
+  GUEST_FIXTURE_DEFAULTS,
+} from '@test/shared/fixtures/guest.fixture';
 
 const TENANT_ID = GUEST_FIXTURE_DEFAULTS.tenantId;
 const SENDER_EMAIL = GUEST_FIXTURE_DEFAULTS.primaryEmail;
@@ -33,10 +36,14 @@ function makeCommand(
     TENANT_ID,
     overrides?.senderEmail ?? SENDER_EMAIL,
     'Re: Your reservation',
-    overrides?.body !== undefined ? overrides.body : 'Hello, I have a question.',
+    overrides?.body !== undefined
+      ? overrides.body
+      : 'Hello, I have a question.',
     overrides?.bodyHtml !== undefined ? overrides.bodyHtml : null,
     ['hotel@lymon.co'],
-    overrides?.providerMessageId !== undefined ? overrides.providerMessageId : PROVIDER_MESSAGE_ID,
+    overrides?.providerMessageId !== undefined
+      ? overrides.providerMessageId
+      : PROVIDER_MESSAGE_ID,
     'brevo',
   );
 }
@@ -88,7 +95,10 @@ describe('RecordInboundMessageHandler', () => {
 
     it('stores the body taken directly from the command payload without external fetch', async () => {
       // Arrange
-      const command = makeCommand({ body: 'Direct body from payload', bodyHtml: null });
+      const command = makeCommand({
+        body: 'Direct body from payload',
+        bodyHtml: null,
+      });
 
       // Act
       await handler.execute(command);
@@ -149,8 +159,9 @@ describe('RecordInboundMessageHandler', () => {
         expect.any(GuestMessageReceivedEvent),
       );
 
-      const emittedEvent: GuestMessageReceivedEvent = (eventEmitter.emit as jest.Mock).mock
-        .calls[0][1];
+      const emittedEvent: GuestMessageReceivedEvent = (
+        eventEmitter.emit as jest.Mock
+      ).mock.calls[0][1];
       expect(emittedEvent.guestMessageId).toBe(result.id);
       expect(emittedEvent.guestId).toBe(GUEST_FIXTURE_DEFAULTS.id);
       expect(emittedEvent.tenantId).toBe(TENANT_ID);
@@ -225,11 +236,15 @@ describe('RecordInboundMessageHandler', () => {
 
     it('propagates unexpected repository errors without swallowing them', async () => {
       // Arrange
-      guestRepository.findByPrimaryEmail.mockRejectedValue(new Error('DB connection lost'));
+      guestRepository.findByPrimaryEmail.mockRejectedValue(
+        new Error('DB connection lost'),
+      );
       const command = makeCommand();
 
       // Act & Assert
-      await expect(handler.execute(command)).rejects.toThrow('DB connection lost');
+      await expect(handler.execute(command)).rejects.toThrow(
+        'DB connection lost',
+      );
       expect(guestMessageRepository.save).not.toHaveBeenCalled();
     });
   });

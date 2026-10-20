@@ -18,7 +18,10 @@ describe('UpdateGuestNoteHandler', () => {
   beforeEach(() => {
     guestNoteRepository = createGuestNoteRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new UpdateGuestNoteHandler(guestNoteRepository, mockEventEmitter as any);
+    handler = new UpdateGuestNoteHandler(
+      guestNoteRepository,
+      mockEventEmitter as any,
+    );
   });
 
   describe('when no fields are provided', () => {
@@ -28,7 +31,7 @@ describe('UpdateGuestNoteHandler', () => {
           new UpdateGuestNoteCommand(
             GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
             GUEST_NOTE_FIXTURE_DEFAULTS.id,
-            '65f1a1a2b3c4d5e6f7a8b9c2',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'actor@test.com',
             undefined,
             undefined,
@@ -49,7 +52,7 @@ describe('UpdateGuestNoteHandler', () => {
           new UpdateGuestNoteCommand(
             GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
             GUEST_NOTE_FIXTURE_DEFAULTS.id,
-            '65f1a1a2b3c4d5e6f7a8b9c2',
+            '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
             'actor@test.com',
             'Updated content',
             undefined,
@@ -70,7 +73,7 @@ describe('UpdateGuestNoteHandler', () => {
         new UpdateGuestNoteCommand(
           GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
           GUEST_NOTE_FIXTURE_DEFAULTS.id,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'actor@test.com',
           'New note content',
           undefined,
@@ -93,7 +96,7 @@ describe('UpdateGuestNoteHandler', () => {
         new UpdateGuestNoteCommand(
           GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
           GUEST_NOTE_FIXTURE_DEFAULTS.id,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'actor@test.com',
           undefined,
           GuestNoteTypeEnum.INCIDENT,
@@ -116,7 +119,7 @@ describe('UpdateGuestNoteHandler', () => {
         new UpdateGuestNoteCommand(
           GUEST_NOTE_FIXTURE_DEFAULTS.tenantId,
           GUEST_NOTE_FIXTURE_DEFAULTS.id,
-          '65f1a1a2b3c4d5e6f7a8b9c2',
+          '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000',
           'actor@test.com',
           'Updated note text',
           GuestNoteTypeEnum.BEHAVIOR,

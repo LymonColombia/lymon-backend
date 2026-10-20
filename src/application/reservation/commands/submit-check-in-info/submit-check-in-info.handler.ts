@@ -1,8 +1,4 @@
-import {
-  Inject,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SubmitCheckInInfoCommand } from './submit-check-in-info.command';
 import {
@@ -17,9 +13,10 @@ import { ReservationId } from '@/domain/reservation/value-objects/reservation-id
 import { GuestAccountId } from '@/domain/guest-account/value-objects/guest-account-id.vo';
 
 @CommandHandler(SubmitCheckInInfoCommand)
-export class SubmitCheckInInfoHandler
-  implements ICommandHandler<SubmitCheckInInfoCommand, void>
-{
+export class SubmitCheckInInfoHandler implements ICommandHandler<
+  SubmitCheckInInfoCommand,
+  void
+> {
   constructor(
     @Inject(RESERVATION_REPOSITORY)
     private readonly reservationRepository: ReservationRepository,
@@ -48,8 +45,7 @@ export class SubmitCheckInInfoHandler
       );
     }
     if (
-      guestRecord.getGuestAccountId()!.toString() !==
-      guestAccountId.toString()
+      guestRecord.getGuestAccountId()!.toString() !== guestAccountId.toString()
     ) {
       throw new ForbiddenException(
         'You do not have access to this reservation.',

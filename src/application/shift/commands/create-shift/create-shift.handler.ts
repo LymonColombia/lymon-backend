@@ -77,12 +77,13 @@ export class CreateShiftCommandHandler implements ICommandHandler<CreateShiftCom
         await this.shiftRepository.findOverlappingByStaffInRange(
           tenantId,
           staffMemberId,
-          startDate,
-          endDate,
-          start,
-          end,
-          undefined,
-          command.weekdays,
+          {
+            startDate,
+            endDate,
+            startMinutes: start,
+            endMinutes: end,
+            weekdays: command.weekdays,
+          },
         );
 
       if (overlappingShift) {

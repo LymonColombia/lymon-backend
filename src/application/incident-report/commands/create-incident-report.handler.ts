@@ -6,6 +6,12 @@ import {
   type IncidentReportRepository,
 } from '@/domain/incident-report/repositories/incident-report.repository';
 import {
+  PROPERTY_REPOSITORY,
+  type PropertyRepository,
+} from '@/domain/property/repositories/property.repository';
+import { PropertyId } from '@/domain/property/value-objects/property-id.vo';
+import { TenantId } from '@/domain/tenant/value-objects/tenant-id.vo';
+import {
   AuditAction,
   AuditEntityType,
 } from '@/domain/audit/value-objects/audit-action.vo';
@@ -13,7 +19,7 @@ import {
   AuditLoggedEvent,
   AUDIT_LOG_EVENT,
 } from '@/infrastructure/audit/events/audit-logged.event';
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -22,12 +28,25 @@ export class CreateIncidentReportHandler implements ICommandHandler<CreateIncide
   constructor(
     @Inject(INCIDENT_REPORT_REPOSITORY)
     private readonly reportRepository: IncidentReportRepository,
+    @Inject(PROPERTY_REPOSITORY)
+    private readonly propertyRepository: PropertyRepository,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute(
     command: CreateIncidentReportCommand,
   ): Promise<CreateIncidentReportResult> {
+    const tenantId = TenantId.createFromString(command.tenantId);
+    const property = await this.propertyRepository.findById(
+      PropertyId.create(command.propertyId),
+    );
+    if (!property) {
+      throw new NotFoundException('Property not found');
+    }
+    if (!property.getTenantId().equals(tenantId)) {
+      throw new ForbiddenException('Property does not belong to this tenant');
+    }
+
     const report = IncidentReport.create(
       command.tenantId,
       command.propertyId,

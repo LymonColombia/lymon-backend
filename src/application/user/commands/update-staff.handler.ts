@@ -90,13 +90,11 @@ export class UpdateStaffHandler implements ICommandHandler<UpdateStaffCommand> {
     }
 
     if (typeof command.fullName !== 'undefined') {
-      // @ts-ignore - using domain method added to update fullName
-      (user as any).updateFullName(command.fullName);
+      user.updateFullName(command.fullName);
     }
 
     if (typeof command.document !== 'undefined') {
-      // @ts-ignore
-      (user as any).updateDocument(command.document);
+      user.updateDocument(command.document);
     }
 
     await this.userRepository.save(user);

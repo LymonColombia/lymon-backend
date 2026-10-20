@@ -36,7 +36,10 @@ describe('CreateCustomCatalogItemHandler', () => {
   beforeEach(() => {
     repository = createGuestPreferenceCatalogRepositoryMock();
     mockEventEmitter = { emit: jest.fn() };
-    handler = new CreateCustomCatalogItemHandler(repository, mockEventEmitter as any);
+    handler = new CreateCustomCatalogItemHandler(
+      repository,
+      mockEventEmitter as any,
+    );
   });
 
   // ── Scenario 2: Plan Gate ──────────────────────────────────────────────────

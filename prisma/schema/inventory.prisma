@@ -1,0 +1,76 @@
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model inventory_items {
+  id                        String                    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id                 String                    @db.Uuid
+  property_id               String                    @db.Uuid
+  sku                       String
+  name                      String
+  category_id               String                    @db.Uuid
+  unit                      String
+  min_stock                 Decimal                   @default(0) @db.Decimal(14, 3)
+  current_stock             Decimal                   @default(0) @db.Decimal(14, 3)
+  supplier_id               String?                   @db.Uuid
+  created_at                DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                  @default(now()) @db.Timestamptz(6)
+  deleted_at                DateTime?                 @db.Timestamptz(6)
+  inventory_item_categories inventory_item_categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  properties                properties                @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  suppliers                 suppliers?                @relation(fields: [supplier_id], references: [id], onUpdate: NoAction)
+  tenants                   tenants                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  inventory_movements       inventory_movements[]
+
+  @@unique([tenant_id, property_id, sku], map: "inventory_items_tenant_id_property_id_sku_idx", where: raw("(deleted_at IS NULL)"))
+  @@index([property_id])
+  @@index([tenant_id], where: raw("((current_stock <= min_stock) AND (deleted_at IS NULL))"))
+}
+
+model inventory_item_categories {
+  id              String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id       String            @db.Uuid
+  name            String
+  description     String?
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  tenants         tenants           @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  inventory_items inventory_items[]
+
+  @@unique([tenant_id, name])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model inventory_movements {
+  id              String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id       String          @db.Uuid
+  property_id     String          @db.Uuid
+  item_id         String          @db.Uuid
+  type            String
+  quantity        Decimal         @db.Decimal(14, 3)
+  reason          String
+  reference       String?
+  actor_id        String          @db.Uuid
+  actor_email     String          @db.Citext
+  created_at      DateTime        @default(now()) @db.Timestamptz(6)
+  inventory_items inventory_items @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  properties      properties      @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tenants         tenants         @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([item_id, created_at(sort: Desc)])
+}
+
+model suppliers {
+  id              String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenant_id       String            @db.Uuid
+  name            String
+  contact_email   String            @db.Citext
+  contact_phone   String
+  country         String
+  city            String
+  nit             String
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?         @db.Timestamptz(6)
+  inventory_items inventory_items[]
+  tenants         tenants           @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tenant_id, nit], map: "suppliers_tenant_id_nit_idx", where: raw("(deleted_at IS NULL)"))
+}

@@ -11,13 +11,10 @@ import {
 } from './get-guest-messages-by-guest-id.result';
 
 @QueryHandler(GetGuestMessagesByGuestIdQuery)
-export class GetGuestMessagesByGuestIdHandler
-  implements
-    IQueryHandler<
-      GetGuestMessagesByGuestIdQuery,
-      GetGuestMessagesByGuestIdResult
-    >
-{
+export class GetGuestMessagesByGuestIdHandler implements IQueryHandler<
+  GetGuestMessagesByGuestIdQuery,
+  GetGuestMessagesByGuestIdResult
+> {
   constructor(
     @Inject(GUEST_MESSAGE_REPOSITORY)
     private readonly guestMessageRepository: GuestMessageRepository,
@@ -33,7 +30,12 @@ export class GetGuestMessagesByGuestIdHandler
       guestId = GuestId.createFromString(query.guestId);
       tenantId = TenantId.createFromString(query.tenantId);
     } catch {
-      return new GetGuestMessagesByGuestIdResult([], 0, query.page, query.limit);
+      return new GetGuestMessagesByGuestIdResult(
+        [],
+        0,
+        query.page,
+        query.limit,
+      );
     }
 
     const { messages, total } =

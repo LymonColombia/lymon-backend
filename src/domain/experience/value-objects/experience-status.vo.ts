@@ -22,6 +22,10 @@ export class ExperienceStatus {
     return new ExperienceStatus(ExperienceStatusEnum.ACTIVE);
   }
 
+  isActive(): boolean {
+    return this.value === ExperienceStatusEnum.ACTIVE;
+  }
+
   toString(): string {
     return this.value;
   }

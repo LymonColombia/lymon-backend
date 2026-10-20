@@ -13,10 +13,10 @@ import { GetGuestAccountProfileQuery } from './get-guest-account-profile.query';
 import { GetGuestAccountProfileResult } from './get-guest-account-profile.result';
 
 @QueryHandler(GetGuestAccountProfileQuery)
-export class GetGuestAccountProfileQueryHandler
-  implements
-    IQueryHandler<GetGuestAccountProfileQuery, GetGuestAccountProfileResult>
-{
+export class GetGuestAccountProfileQueryHandler implements IQueryHandler<
+  GetGuestAccountProfileQuery,
+  GetGuestAccountProfileResult
+> {
   constructor(
     @Inject(GUEST_ACCOUNT_REPOSITORY)
     private readonly guestAccountRepository: GuestAccountRepository,

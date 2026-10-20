@@ -66,7 +66,6 @@ export class GetUnitsByPropertyQueryHandler implements IQueryHandler<
         unit.getMaxGuests(),
         unit.getStandardGuests(),
         unit.getBathroomsCount(),
-        unit.getIsShared(),
         unit.getAmenities(),
         unit.getPricePerNight(),
         unit.getCreatedAt(),

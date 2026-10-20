@@ -12,7 +12,9 @@ const base = {
 };
 
 const errorsFor = (overrides: Partial<typeof base>) =>
-  validateSync(plainToInstance(GeneratePresignedUrlDto, { ...base, ...overrides }));
+  validateSync(
+    plainToInstance(GeneratePresignedUrlDto, { ...base, ...overrides }),
+  );
 
 describe('GeneratePresignedUrlDto', () => {
   it('accepts a valid image upload', () => {

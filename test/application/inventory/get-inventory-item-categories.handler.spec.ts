@@ -37,7 +37,7 @@ describe('GetInventoryItemCategoriesQueryHandler', () => {
   describe('when tenant has categories', () => {
     const categoryA = makeInventoryItemCategory({ name: 'Limpieza' });
     const categoryB = makeInventoryItemCategory({
-      id: '7750a1b2c3d4e5f6a7b8c9d1',
+      id: '7750a1b2-c3d4-e5f6-a7b8-c9d100000000',
       name: 'Ropa de cama',
     });
 

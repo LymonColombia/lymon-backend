@@ -71,6 +71,8 @@ import { UpdateCatalogItemDto } from '@/presentation/dtos/catalog/update-catalog
 import { ToggleCatalogItemDto } from '@/presentation/dtos/catalog/toggle-catalog-item.dto';
 import { GetConversationsByTenantQuery } from '@/application/conversation/queries/get-conversations-by-tenant/get-conversations-by-tenant.query';
 import { GetConversationThreadQuery } from '@/application/conversation/queries/get-conversation-thread/get-conversation-thread.query';
+import { GetConversationsByTenantResult } from '@/application/conversation/queries/get-conversations-by-tenant/get-conversations-by-tenant.result';
+import { ConversationThreadResult } from '@/application/conversation/queries/get-conversation-thread/get-conversation-thread.result';
 import { MarkConversationReadCommand } from '@/application/conversation/commands/mark-conversation-read/mark-conversation-read.command';
 import { ArchiveConversationCommand } from '@/application/conversation/commands/archive-conversation/archive-conversation.command';
 import { GetGuestRatingsQuery } from '@/application/unit-rating/queries/get-guest-ratings/get-guest-ratings.query';
@@ -123,7 +125,9 @@ export class CrmController {
       sortDirection,
     );
 
-    const guestIds = guests.map((guest) => guest.getId()?.toString()).filter(Boolean) as string[];
+    const guestIds = guests
+      .map((guest) => guest.getId()?.toString())
+      .filter(Boolean) as string[];
 
     const lifecycleStatuses = await this.queryBus.execute<
       GetGuestLifecycleStatusQuery,
@@ -135,7 +139,7 @@ export class CrmController {
       data: {
         items: guests.map((guest) => {
           const currentId = guest.getId()?.toString() || '';
-          
+
           return {
             guestId: currentId,
             fullName: guest.getFullName(),
@@ -143,7 +147,9 @@ export class CrmController {
             phone: guest.getPhone(),
             status: guest.getStatus(),
             tags: guest.getTags().map((t) => t.getName()),
-            lifecycleStatus: lifecycleStatuses.get(currentId) || GuestLifecycleStatus.NO_RESERVATION,
+            lifecycleStatus:
+              lifecycleStatuses.get(currentId) ||
+              GuestLifecycleStatus.NO_RESERVATION,
           };
         }),
         pagination: {
@@ -232,7 +238,12 @@ export class CrmController {
     @CurrentUser() user: JwtPayload,
   ) {
     await this.commandBus.execute<DeleteGuestNoteCommand, void>(
-      new DeleteGuestNoteCommand(user.tenantId, noteId, user.userId, user.email),
+      new DeleteGuestNoteCommand(
+        user.tenantId,
+        noteId,
+        user.userId,
+        user.email,
+      ),
     );
   }
 
@@ -247,7 +258,12 @@ export class CrmController {
     @CurrentUser() user: JwtPayload,
   ) {
     await this.commandBus.execute<TogglePinGuestNoteCommand, void>(
-      new TogglePinGuestNoteCommand(user.tenantId, noteId, user.userId, user.email),
+      new TogglePinGuestNoteCommand(
+        user.tenantId,
+        noteId,
+        user.userId,
+        user.email,
+      ),
     );
     return { message: 'Guest note pin status toggled' };
   }
@@ -346,7 +362,10 @@ export class CrmController {
   @Get('guests/:guestId/spending/monthly')
   @UseGuards(PermissionGuard)
   @RequirePermission(Permission.CRM_VIEW)
-  @ApiOperation({ summary: 'Get monthly spending breakdown for a guest (last 12 rolling months)' })
+  @ApiOperation({
+    summary:
+      'Get monthly spending breakdown for a guest (last 12 rolling months)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Guest monthly spending retrieved successfully',
@@ -403,7 +422,10 @@ export class CrmController {
     required: false,
     description: 'Comma-separated stat keys. Unknown keys are ignored.',
   })
-  @ApiResponse({ status: 200, description: 'Guest stats retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Guest stats retrieved successfully',
+  })
   async getGuestStats(
     @Param('guestId') guestId: string,
     @CurrentUser() user: JwtPayload,
@@ -411,9 +433,12 @@ export class CrmController {
   ) {
     // ponytail: unknown keys silently dropped; empty include => all. Add 400 if FE needs strictness.
     const requested = include
-      ? (include.split(',').map((s) => s.trim()) as string[]).filter(
-          (s): s is GuestStatKey => (GUEST_STAT_KEYS as string[]).includes(s),
-        )
+      ? include
+          .split(',')
+          .map((s) => s.trim())
+          .filter((s): s is GuestStatKey =>
+            (GUEST_STAT_KEYS as string[]).includes(s),
+          )
       : GUEST_STAT_KEYS;
 
     const data = await this.queryBus.execute<
@@ -441,7 +466,13 @@ export class CrmController {
     @CurrentUser() user: JwtPayload,
   ) {
     await this.commandBus.execute(
-      new AssignGuestTagsCommand(guestId, tags, user.tenantId, user.userId, user.email),
+      new AssignGuestTagsCommand(
+        guestId,
+        tags,
+        user.tenantId,
+        user.userId,
+        user.email,
+      ),
     );
 
     return {
@@ -602,7 +633,8 @@ export class CrmController {
   @UseGuards(PermissionGuard)
   @RequirePermission(Permission.CRM_VIEW)
   @ApiOperation({
-    summary: 'Get paginated message history for a guest (preview only, no body)',
+    summary:
+      'Get paginated message history for a guest (preview only, no body)',
   })
   @ApiResponse({
     status: 200,
@@ -703,7 +735,13 @@ export class CrmController {
     @CurrentUser() user: JwtPayload,
   ) {
     await this.commandBus.execute(
-      new ToggleCatalogItemCommand(user.tenantId, itemId, dto.activate, user.userId, user.email),
+      new ToggleCatalogItemCommand(
+        user.tenantId,
+        itemId,
+        dto.activate,
+        user.userId,
+        user.email,
+      ),
     );
 
     return { message: 'Catalog item toggled successfully' };
@@ -827,29 +865,54 @@ export class CrmController {
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('channel') channel?: string,
     @Query('status') status?: string,
-    @Query('unreadOnly', new DefaultValuePipe(false), ParseBoolPipe) unreadOnly?: boolean,
+    @Query('unreadOnly', new DefaultValuePipe(false), ParseBoolPipe)
+    unreadOnly?: boolean,
   ) {
-    const result = await this.queryBus.execute(
-      new GetConversationsByTenantQuery(user.tenantId, page, limit, channel, status, unreadOnly),
+    const result = await this.queryBus.execute<
+      GetConversationsByTenantQuery,
+      GetConversationsByTenantResult
+    >(
+      new GetConversationsByTenantQuery(
+        user.tenantId,
+        page,
+        limit,
+        channel,
+        status,
+        unreadOnly,
+      ),
     );
     return {
       message: 'Conversations retrieved successfully',
-      data: { items: result.items, pagination: { total: result.total, page: result.page, limit: result.limit, totalPages: result.totalPages } },
+      data: {
+        items: result.items,
+        pagination: {
+          total: result.total,
+          page: result.page,
+          limit: result.limit,
+          totalPages: result.totalPages,
+        },
+      },
     };
   }
 
   @Get('conversations/:conversationId')
   @UseGuards(PermissionGuard)
   @RequirePermission(Permission.CRM_VIEW)
-  @ApiOperation({ summary: 'Get conversation thread with resolved message bodies' })
+  @ApiOperation({
+    summary: 'Get conversation thread with resolved message bodies',
+  })
   async getConversationThread(
     @Param('conversationId') conversationId: string,
     @CurrentUser() user: JwtPayload,
   ) {
-    const result = await this.queryBus.execute(
-      new GetConversationThreadQuery(user.tenantId, conversationId),
-    );
-    return { message: 'Conversation thread retrieved successfully', data: result };
+    const result = await this.queryBus.execute<
+      GetConversationThreadQuery,
+      ConversationThreadResult
+    >(new GetConversationThreadQuery(user.tenantId, conversationId));
+    return {
+      message: 'Conversation thread retrieved successfully',
+      data: result,
+    };
   }
 
   @Patch('conversations/:conversationId/read')

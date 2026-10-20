@@ -8,10 +8,10 @@ import { makeCart } from '@test/shared/fixtures/cart.fixture';
 import { makeUnit } from '@test/shared/fixtures/unit.fixture';
 import { makeReservation } from '@test/shared/fixtures/reservation.fixture';
 
-const GUEST_ACCOUNT_ID = '65f1a1a2b3c4d5e6f7a8b9c0';
-const TENANT_ID = '65f1a1a2b3c4d5e6f7a8b9c2';
-const PROPERTY_ID = '65f1a1a2b3c4d5e6f7a8b9c3';
-const UNIT_ID = '65f1a1a2b3c4d5e6f7a8b9c4';
+const GUEST_ACCOUNT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c000000000';
+const TENANT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c200000000';
+const PROPERTY_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c300000000';
+const UNIT_ID = '65f1a1a2-b3c4-d5e6-f7a8-b9c400000000';
 
 const command = new SetCartReservationCommand(
   GUEST_ACCOUNT_ID,
