@@ -111,7 +111,8 @@ export class GuestController {
   @ApiQuery({
     name: 'documentNumber',
     required: false,
-    description: 'Exact-match lookup by document/ID number, takes precedence over q',
+    description:
+      'Exact-match lookup by document/ID number, takes precedence over q',
   })
   @ApiResponse({ status: 200, description: 'Guests retrieved successfully' })
   async getAll(
